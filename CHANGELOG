@@ -3,7 +3,7 @@ VivialConnect Changelog
 
 Here you can see the full list of changes between each VivialConnect release.
 
-Version 0.3
+Version 0.2
 ------------
 
 Major release, unreleased
@@ -18,6 +18,6 @@ Bugfix release, unreleased
 Version 0.1.2
 ------------
 
-Released on January 16, 2017
+Released on February 2, 2017
 
-- Initial release
+- Initial Vivial Connect Python API release
