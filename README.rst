@@ -9,7 +9,9 @@ developers to easily and affordably send and receive communications for any appl
 Our API is Fun
 ``````````````
 
-Save code to ``example.py`` file::
+Save code to ``example.py`` file:
+
+.. code:: python
 
     from vivialconnect import Resource, Message
 
