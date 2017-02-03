@@ -25,7 +25,6 @@ setup(
     package_data={'vivialconnect': ['../VERSION']},
     install_requires=['requests >= 1.0.0', 'six'],
     long_description=long_description,
-    include_package_data=True,
     test_suite='test',
     classifiers=[
         'Development Status :: 4 - Beta',
