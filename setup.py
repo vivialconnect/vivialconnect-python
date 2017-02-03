@@ -22,7 +22,7 @@ setup(
     version=version,
     description='Vivial Connect API Client Library for Python',
     license='MIT',
-    author='Boris Musa',
+    author='Vivial Connect',
     author_email='support@support.vivialconnect.net',
     url='https://www.vivialconnect.net/',
     packages=['vivialconnect'],
@@ -30,5 +30,19 @@ setup(
     install_requires=['requests >= 1.0.0', 'six'],
     long_description=long_description,
     test_suite='test',
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Topic :: Communications :: Telephony',
+        'Topic :: Software Development :: Libraries :: Python Modules'
+    ],
     platforms='any',
 )
