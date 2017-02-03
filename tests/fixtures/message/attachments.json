@@ -1,0 +1,24 @@
+{
+    "attachments": [{
+        "id": 6242736,
+        "active": true,
+        "date_created": "2016-05-06T22:23:24-04:00",
+        "date_modified": "2016-05-07T22:23:24-04:00",
+        "content_type": "image/gif",
+        "file_name": "what.gif",
+        "key_name": "abcdee",
+        "size": 1024,
+        "message_id": 6242737
+    },
+    {
+        "id": 6242737,
+        "active": true,
+        "date_created": "2016-05-06T22:23:24-04:00",
+        "date_modified": "2016-05-07T22:23:24-04:00",
+        "content_type": "image/png",
+        "file_name": "what.png",
+        "key_name": "abcdef",
+        "size": 2048,
+        "message_id": 6242737
+    }]
+}
