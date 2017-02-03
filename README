@@ -6,7 +6,8 @@ Vivial Connect is a solution set specifically for developers looking for a simpl
 Our API is Fun
 ``````````````
 
-Save in a example.py:
+Save code to example.py file:
+
 .. code:: python
 
     from vivialconnect import Resource, Message
@@ -29,7 +30,8 @@ Save in a example.py:
 And Easy to Setup
 `````````````````
 
-And run it:
+Update your credentials, and run it:
+
 .. code:: bash
 
     $ pip install vivialconnect
