@@ -44,5 +44,6 @@ setup(
         'Topic :: Communications :: Telephony',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
+    keywords = ['vivial', 'vivialconnect'],
     platforms='any',
 )
