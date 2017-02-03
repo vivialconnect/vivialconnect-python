@@ -1,17 +1,16 @@
-import os
-import sys
+import re
+import ast
 from setuptools import setup
 
-with open('VERSION', 'rb') as f:
-    version = str(f.read().decode('utf-8')).replace('\n', '')
+_version_re = re.compile(r'VERSION\s+=\s+(.*)')
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'vivialconnect'))
+with open('vivialconnect/version.py', 'rb') as f:
+    version = str(ast.literal_eval(_version_re.search(
+        f.read().decode('utf-8')).group(1)))
 
-path, script = os.path.split(sys.argv[0])
-os.chdir(os.path.abspath(path))
-
-with open('README.rst', 'r') as f:
-    long_description = f.read()
+def readme():
+    with open('README.rst', 'r') as f:
+        return f.read()
 
 setup(
     name='vivialconnect',
@@ -22,9 +21,8 @@ setup(
     author_email='support@support.vivialconnect.net',
     url='https://www.vivialconnect.net/',
     packages=['vivialconnect', 'vivialconnect.common', 'vivialconnect.resources'],
-    package_data={'vivialconnect': ['../VERSION']},
     install_requires=['requests >= 1.0.0', 'six'],
-    long_description=long_description,
+    long_description=readme(),
     test_suite='test',
     classifiers=[
         'Development Status :: 4 - Beta',

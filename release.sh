@@ -126,7 +126,7 @@ if [[ ${update_version_files} == 1 ]]; then
     # Update version.py
     version_file="${SCRIPT_PATH}/vivialconnect/version.py"
     if [[ -e "${version_file}" ]]; then
-        sed -i.backup -E "s,\=.*,\=\"${VERSION}\"," "${version_file}"
+        sed -i.backup -E "s,\=.*,\= \"${VERSION}\"," "${version_file}"
         rm "${version_file}.backup"
     else
         echo "version=${VERSION}" > "${version_file}"
