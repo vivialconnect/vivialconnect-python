@@ -1,15 +1,13 @@
 Vivial Connect
 --------------
 
-Vivial Connect is a solution set specifically for developers looking for a simple,
-affordable and scalable messaging solution. Vivial Connect supports rapid development
-and deployment. Our API platform supports various mobile messaging needs, enabling
-developers to easily and affordably send and receive communications for any application.
+VivialConnect is a simple SMS/MSS API. It's designed specifically for developers seeking a simple, affordable and scalable messaging solution.
 
-Our API is Fun
-``````````````
+Our API is Fun...
+```````````````
+Register an API account here: https://www.vivialconnect.net/register and login to the website to buy your first phone number.
 
-Save code to ``example.py`` file:
+To test, copy this code to a file named ``example.py``
 
 .. code:: python
 
@@ -30,10 +28,11 @@ Save code to ``example.py`` file:
                  from_number='+19132597591',
                  body='Howdy, from Vivial Connect!')
 
-And Easy to Setup
+
+And Easy to Setup!
 `````````````````
 
-Update your credentials, and run it:
+Update the API key, secret and account id. Change 'from_number' to the number you purchased. Then run it:
 
 .. code:: bash
 
