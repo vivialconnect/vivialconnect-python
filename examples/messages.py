@@ -11,7 +11,6 @@ def send_message(to_number=None, from_number=None, body=None):
 
 def list_messages():
     count = Message.count()
-    print('Number of messages %d' % count)
     messages = Message.find()
     for message in messages:
         print(message.id, message.to_number,

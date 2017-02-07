@@ -13,6 +13,18 @@ from vivialconnect.common.util import Util
 class Account(Resource, Countable):
     """The Account resource is used for managing accounts and sub-accounts in the API.
 
+    Account properties
+
+    =============  ===========
+    Field          Description
+    =============  ===========
+    id             Unique identifier of the account object.
+    date_created   Creation date (UTC) of the account in ISO 8601 format.
+    date_modified  Last modification date (UTC) of the account in ISO 8601 format.
+    account_id     Unique identifier of the parent account. (Null if the account is primary.)
+    company_name   Primary account or subaccount name as it is displayed to users (for example, the name of your company, or for a subaccount, the name of a subclient your company represents).
+    =============  ===========
+
     Example request to retrieve a billing status for account id 12345::
 
         from vivialconnect import Resource, Account

@@ -11,6 +11,25 @@ class Configuration(Resource, Countable):
     """Use the Configuration resource to list, view, update, and manage
     callback configurations for your account.
 
+    Configuration properties
+  
+  	======================== ===========
+	Field                    Description
+	======================== ===========
+    id                       Unique identifier of the configuration object.
+    date_created             Creation date of the configuration in ISO 8601 UTC format.
+    date_modified            Last modification date of the configuration in ISO 8601 UTC format.
+    account_id               Unique identifier of the account or subaccount associated with the configuration.
+    name                     Display name of the configuration. *Max. length:* 256 characters.
+    phone_number             Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.
+    phone_number_type        Type of associated phone number. *Possible values:* local (non-toll-free) or tollfree.
+    message_status_callback  URL to receive message status callback requests for the associated phone number or outbound text message that specifies this configuration in its ``sms_configuration_id`` property.
+    sms_url                  URL for receiving SMS messages to the associated phone number or outbound text message that specifies this configuration in its ``sms_configuration_id property.`` *Max. length:* 256 characters.
+    sms_method               HTTP method used for the sms_url requests. Max. length: 8 characters. Possible values: ``GET`` or ``POST``. *Default value:* POST.              
+    sms_fallback_url         URL for receiving SMS messages if ``sms_url`` fails. Only valid if you provide a value for the ``sms_url`` parameter. *Max. length:* 256 characters.
+    sms_fallback_method      HTTP method used for ``sms_url_fallback`` requests. *Max. length:* 8 characters. *Possible values:* GET or POST. *Default value:* POST.
+    ======================== ===========
+
     Example request how to create a new configuration entry::
 
 	    from vivialconnect import Resource, Configuration

@@ -10,19 +10,129 @@ from vivialconnect.common.util import Util
 
 class Number(Resource, Countable):
     """The :class:`Number` resource provides functionality to work with account
-        associated and available phone numbers.
+    associated and available phone numbers.
 
-        Purchasing a Phone Number
+    Purchasing a Phone Number
 
-        Before you can send or receive text messages using Vivial Connect, you must
-        purchase at least one phone number and associate it with your account. The
-        API lets you choose from a list of US-only, non-toll-free available numbers.
-        When you query this list to find an available number that meets your needs,
-        you can tailor your search to target specific criteria, including:
+    Before you can send or receive text messages using Vivial Connect, you must
+    purchase at least one phone number and associate it with your account. The
+    API lets you choose from a list of US-only, non-toll-free available numbers.
+    When you query this list to find an available number that meets your needs,
+    you can tailor your search to target specific criteria, including:
 
-        * the city, US state, area code, or ZIP code where the number is located
-        * a number pattern you specify containing wildcards for individual digits
-        * an alphanumeric pattern you specify (for choosing numbers that spell a word)
+    * the city, US state, area code, or ZIP code where the number is located
+    * a number pattern you specify containing wildcards for individual digits
+    * an alphanumeric pattern you specify (for choosing numbers that spell a word)
+
+    Available numbers properties
+
+    ================= ===========
+    Field             Description
+    ================= ===========
+    name              Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.
+    phone_number      Available phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.
+    phone_number_type Type of available phone number. *Possible values:* local (non-toll-free) or tollfree.
+    city              City where the available phone number is located.
+    region            Two-letter US state abbreviation where the available phone number is located.
+    lata              Local address and transport area (LATA) where the available phone number is located.
+    rate_center       LATA rate center where the available phone number is located. Usually the same as city.
+    ================= ===========
+
+    Associated numbers properties
+
+    ======================= ===========
+    Field                   Description
+    ======================= ===========
+    id                      Unique identifier of the phone number object.
+    date_created            Creation date (UTC) of the phone number in ISO 8601 format.
+    date_modified           Last modification date (UTC) of the phone number in ISO 8601 format.
+    account_id              Unique identifier of the account or subaccount associated with the phone number.
+    master_account_id       For subaccounts, the account_id of the subaccount's parent (primary) account.
+    name                    Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.
+    phone_number            Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.
+    phone_number_type       Type of associated phone number. *Possible values:* local (non-toll-free) or tollfree.
+    message_status_callback URL to receive message status callback requests for messages sent via the API using this associated phone number. *Max. length:* 256 characters.
+    sms_configuration_id    Unique identifier of the message status callback configuration to be used to handle SMS messages sent to the associated number.
+    sms_url                 URL for receiving SMS messages to the associated phone number. *Max. length:* 256 characters.
+    sms_method              HTTP method used for the ``sms_url`` requests. *Max. length:* 8 characters. *Possible values:* ``GET`` or ``POST``. *Default value:* POST.
+    sms_fallback_url        URL for receiving SMS messages if ``sms_url`` fails. Only valid if you provide a value for the ``sms_url`` parameter. *Max. length:* 256 characters.
+    sms_fallback_method     HTTP method used for ``sms_url_fallback`` requests. *Max. length:* 8 characters. *Possible values:* ``GET`` or ``POST``. *Default value:* POST.
+    capabilities            Set of boolean flags indicating the capabilities supported by the associated phone number.     
+    city                    City where the available phone number is located.
+    region                  Two-letter US state abbreviation where the available phone number is located.
+    lata                    Local address and transport area (LATA) where the available phone number is located.
+    rate_center             LATA rate center where the available phone number is located. Usually the same as city.
+    ======================= ===========
+
+    Example request to retrieve a list of associated numbers::
+
+        from vivialconnect import Resource, Number
+
+        Resource.api_key = ""
+        Resource.api_secret = ""
+        Resource.api_account_id = "12345"
+
+        def list_associated_numbers():
+            numbers = Number.find()
+            for number in numbers:
+                print(number.id, number.name,
+                      number.phone_number_type,
+                      number.phone_number)
+
+        list_associated_numbers()
+
+
+    Example request to retrieve a list of available numbers::
+
+        from vivialconnect import Resource, Number
+
+        Resource.api_key = ""
+        Resource.api_secret = ""
+        Resource.api_account_id = "12345"
+
+        def list_available_numbers(country_code='US',
+                                   number_type='local',
+                                   area_code='913',
+                                   in_postal_code=None,
+                                   in_region=None,
+                                   limit=5):
+            numbers = Number.available(
+                country_code=country_code,
+                number_type=number_type,
+                area_code=area_code,
+                in_postal_code=in_postal_code,
+                in_region=in_region,
+                limit=limit)
+            for number in numbers:
+                print(number.name,
+                      number.phone_number_type,
+                      number.phone_number)
+
+        list_available_numbers()
+
+    Example request to buy a new phone number::
+
+        from vivialconnect import Resource, Number
+
+        Resource.api_key = ""
+        Resource.api_secret = ""
+        Resource.api_account_id = "12345"
+
+        def buy_number(name=None,
+                       phone_number=None,
+                       area_code=None,
+                       phone_number_type='local'):
+            number = Number()
+            number.name = name
+            number.phone_number = phone_number
+            number.area_code = area_code
+            number.phone_number_type = phone_number_type
+            number.buy()
+
+        buy_number(name='(913) 259-7591',
+                   phone_number='+19132597591',
+                   area_code='913',
+                   phone_number_type='local')
     """
 
     @classmethod
