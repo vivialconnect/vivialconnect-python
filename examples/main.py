@@ -8,7 +8,7 @@ from vivialconnect import Resource
 
 from messages import send_message, get_message, list_messages
 from accounts import billing_status, list_subaccounts, update_account, \
-    get_account, create_subaccount, delete_subaccount
+    get_account, create_subaccount
 from configurations import list_configurations, create_configuration, \
     get_configuration, delete_configuration
 from numbers import list_associated_numbers, list_available_numbers, \
@@ -19,8 +19,7 @@ home = os.path.dirname(os.path.abspath(__file__))
 
 Resource.api_key = ""
 Resource.api_secret = ""
-Resource.api_account_id = "10007"
-
+Resource.api_account_id = ""
 
 def main():
     parser = argparse.ArgumentParser()
@@ -28,18 +27,37 @@ def main():
         help='commands',
         dest='command')
 
+    # Accounts command
+    account_parser = subparsers.add_parser('account', help='Runs account examples')
+    account_parser.add_argument('--list', '-l', default=False, action='store_true',
+                                help='Lists sub-accounts associated with the main account')
+    account_parser.add_argument('--get', '-g', default=False, action='store_true',
+                                help='Get account resource')
+    account_parser.add_argument('--create', '-c', default=False, action='store_true',
+                                help='Create sub-account resource')
+    account_parser.add_argument('--update', '-u', default=False, action='store_true',
+                                help='Upate account or sub-account resource')
+    account_parser.add_argument('--billing-status', '-s', default=False, action='store_true',
+                                help='Get account billing status')
+    account_parser.add_argument('--id', '-i', required=False,
+                                type=str, action='store',
+                                help='Resource id')
+    account_parser.add_argument('--company-name', '-n', required=False,
+                                type=str, action='store',
+                                help='Company name')
+
     # Users command
     users_parser = subparsers.add_parser('user', help='Runs user examples')
     users_parser.add_argument('--list', '-l', default=False, action='store_true',
-                              help='Lists message resources')
+                              help='Lists users associated with your account')
     users_parser.add_argument('--get', '-g', default=False, action='store_true',
-                              help='Get message resource')
+                              help='Get user resource')
     users_parser.add_argument('--id', '-i', required=False,
                               type=str, action='store',
                               help='Resource id')
 
     # Mesages command
-    messages_parser = subparsers.add_parser('message', help='Run messages example')
+    messages_parser = subparsers.add_parser('message', help='Runs messages example')
     messages_parser.add_argument('--list', '-l', default=False, action='store_true',
                                  help='Lists message resources')
     messages_parser.add_argument('--send', '-s', default=False, action='store_true',
@@ -49,59 +67,137 @@ def main():
     messages_parser.add_argument('--id', '-i', required=False,
                                  type=str, action='store',
                                  help='Resource id')
+    messages_parser.add_argument('--body', '-b', required=False,
+                                 type=str, action='store',
+                                 help='Message body')
+    messages_parser.add_argument('--from-number', '-f', required=False,
+                                 type=str, action='store',
+                                 help='From phone number (+12123456789)')
+    messages_parser.add_argument('--to-number', '-t', required=False,
+                                 type=str, action='store',
+                                 help='To phone number (+12128765432)')
 
     # Config command
-    config_parser = subparsers.add_parser('config', help='Run configuration examples')
+    config_parser = subparsers.add_parser('config', help='Runs configuration examples')
     config_parser.add_argument('--list', '-l', default=False, action='store_true',
                                help='Lists configuration resources')
+    config_parser.add_argument('--get', '-g', default=False, action='store_true',
+                               help='get configuration resource')
     config_parser.add_argument('--create', '-c', default=False, action='store_true',
                                help='Creates configuration resource')
+    config_parser.add_argument('--delete', '-d', default=False, action='store_true',
+                               help='Delete configuration resource')
     config_parser.add_argument('--id', '-i', required=False,
                                type=str, action='store',
                                help='Resource id')
+    config_parser.add_argument('--phone-number', '-p', required=False,
+                               type=str, action='store',
+                               help='Phone number (+12124567890)')
+    config_parser.add_argument('--sms-url', '-u', required=False,
+                               type=str, action='store',
+                               help='SMS callback url')
+    config_parser.add_argument('--name', '-n', required=False,
+                               type=str, action='store',
+                               help='Configuration name')
+
+    # Number command
+    number_parser = subparsers.add_parser('number', help='Runs number examples')
+    number_parser.add_argument('--list-available', '-a', default=False, action='store_true',
+                               help='Lists available numbers')
+    number_parser.add_argument('--list-associated', '-l', default=False, action='store_true',
+                               help='Lists associated numbers')
+    number_parser.add_argument('--buy', '-b', default=False, action='store_true',
+                               help='Buy number')
+    number_parser.add_argument('--update', '-u', default=False, action='store_true',
+                               help='Update number')
+    number_parser.add_argument('--id', '-i', required=False,
+                               type=str, action='store',
+                               help='Resource id')
+    number_parser.add_argument('--phone-number-name', '-n', required=False,
+                               type=str, action='store',
+                               help='Phone number name')
+    number_parser.add_argument('--phone-number', '-p', required=False,
+                               type=str, action='store',
+                               help='Phone number (+12124567890)')
 
     args = parser.parse_args()
 
     if args.command == 'message':
         if args.send:
-            send_message(to_number='+11234567890',
-                         from_number='+19132597591',
-                         body='Howdy, from Vivial Connect!')
+            message = send_message(to_number=args.to_number,
+                                   from_number=args.from_number,
+                                   body=args.body)
+            print(message.id, message.from_number, message.to_number)
         if args.get:
-            get_message(args.id)
+            message = get_message(args.id)
+            print(message.id, message.from_number,
+                  message.to_number, message.body)
         if args.list:
-            list_messages()
+            for message in list_messages():
+                print(message.id, message.to_number,
+                      message.from_number, message.body)
     elif args.command == 'number':
-        list_available_numbers()
-        buy_number(name='(913) 259-7591',
-                   phone_number='+19132597591',
-                   area_code='913',
-                   phone_number_type='local')
-        list_associated_numbers()
-        update_number_name(22, name="KS - (913) 259-7591")
+        if args.list_available:
+            for number in list_available_numbers():
+                print(number.name, number.phone_number_type,
+                      number.phone_number)
+        if args.list_associated:
+            for number in list_associated_numbers():
+                print(number.id, number.name,
+                      number.phone_number_type,
+                      number.phone_number)
+        if args.buy:
+            area_code = args.phone_number[2:5] if args.phone_number.startswith('+') \
+                else args.phone_number[1:4]
+            number = buy_number(name=args.phone_number_name,
+                                phone_number=args.phone_number,
+                                area_code=area_code,
+                                phone_number_type='local')
+            print(number.id, number.name, number.phone_number)
+        if args.update:
+            number = update_number_name(args.id, name=args.phone_number_name)
+            print(number.id, number.name, number.phone_number)
     elif args.command == 'user':
         if args.list:
-            list_users()
+            for user in list_users():
+                print(user.id, user.first_name, user.last_name)
         if args.get:
-            get_user(args.id)
+            user = get_user(args.id)
+            print(user.id, user.first_name, user.last_name)
     elif args.command == 'account':
-        billing_status()
-        list_subaccounts()
-        get_account(Resource.api_account_id)
-        delete_subaccount(10018)
-        create_subaccount(company_name='Vivial Connect - IT')
-        update_account(Resource.api_account_id,
-                       company_name='Vivial Connect - Vivial, Inc')
+        if args.billing_status:
+            status = billing_status()
+            print(status)
+        if args.list:
+            for account in list_subaccounts():
+                print(account.id, account.company_name)
+        if args.get:
+            account = get_account(args.id)
+            print(account.id, account.company_name)
+        if args.create:
+            account = create_subaccount(company_name=args.company_name)
+            print(account.id, account.company_name)
+        if args.update:
+            account = update_account(args.id, company_name=args.company_name)
+            print(account.id, account.company_name)
     elif args.command == 'config':
         if args.list:
-            list_configurations()
-        if args.remove:
+            for config in list_configurations():
+                print(config.id, config.name, config.sms_url,
+                      config.message_status_callback)
+        if args.get:
+            config = get_configuration(args.id)
+            print(config.id, config.name, config.sms_url,
+                  config.message_status_callback)
+        if args.delete:
             delete_configuration(args.id)
+            print('Deleted configuration id', args.id)
         if args.create:
-            create_configuration(name='Configuration 1',
-                                 phone_number='+19132597591',
-                                 phone_number_type='local',
-                                 sms_url='https://localhost/receive')
+            config = create_configuration(name=args.name,
+                                          phone_number=args.phone_number,
+                                          phone_number_type='local',
+                                          sms_url=args.sms_url)
+            print(config.id, config.name, config.sms_url)
 
 if __name__ == "__main__":
     main()

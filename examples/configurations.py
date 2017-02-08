@@ -4,7 +4,7 @@ from vivialconnect import Configuration
 def list_configurations():
     configs = Configuration.find()
     for config in configs:
-        print(config.id, config.name)
+        yield config
 
 
 def create_configuration(name=None,
@@ -25,14 +25,15 @@ def create_configuration(name=None,
     config.sms_fallback_url = sms_fallback_url
     config.sms_fallback_method = sms_fallback_method
     config.save()
-    print(config.id, config.name)
+    return config
 
 
 def get_configuration(id):
     config = Configuration.find(id)
-    print(config.id, config.name)
+    return config
 
 
 def delete_configuration(id):
     config = Configuration.find(id)
     config.destroy()
+    return True
