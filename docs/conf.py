@@ -55,8 +55,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Vivial Connect'
-copyright = u'2017, Boris Musa'
-author = u'Boris Musa'
+copyright = u'2017, Vivial Connect'
+author = u'Vivial Connect'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
