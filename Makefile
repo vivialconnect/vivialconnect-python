@@ -7,6 +7,7 @@ clean:
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 	rm -fr dist/ *.egg-info/
+	$(MAKE) -C docs clean
 
 docs:
 	$(MAKE) -C docs html
