@@ -1,0 +1,1141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API Documentation &#8212; Vivial Connect 0.1.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Vivial Connect 0.1.2 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to Vivial Connect’s Python API documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="api-documentation">
+<h1>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-vivialconnect.resources.account">
+<span id="accounts"></span><h2>Accounts<a class="headerlink" href="#module-vivialconnect.resources.account" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-account"></span><dl class="class">
+<dt id="vivialconnect.resources.account.Account">
+<em class="property">class </em><code class="descclassname">vivialconnect.resources.account.</code><code class="descname">Account</code><span class="sig-paren">(</span><em>attributes=None</em>, <em>prefix_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/account.html#Account"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.account.Account" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Account resource is used for managing accounts and sub-accounts in the API.</p>
+<p>Account properties</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="93%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td>Unique identifier of the account object.</td>
+</tr>
+<tr class="row-odd"><td>date_created</td>
+<td>Creation date (UTC) of the account in ISO 8601 format.</td>
+</tr>
+<tr class="row-even"><td>date_modified</td>
+<td>Last modification date (UTC) of the account in ISO 8601 format.</td>
+</tr>
+<tr class="row-odd"><td>account_id</td>
+<td>Unique identifier of the parent account. (Null if the account is primary.)</td>
+</tr>
+<tr class="row-even"><td>company_name</td>
+<td>Primary account or subaccount name as it is displayed to users (for example, the name of your company, or for a subaccount, the name of a subclient your company represents).</td>
+</tr>
+</tbody>
+</table>
+<p>Example request to retrieve a billing status for account id 12345:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Account</span>
+
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_account_id</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
+
+<span class="k">def</span> <span class="nf">billing_status</span><span class="p">(</span><span class="n">account_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">billing_status</span><span class="p">(</span><span class="n">account_id</span><span class="o">=</span><span class="n">account_id</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+
+<span class="n">billing_status</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Example request to retrieve a list of sub-accounts for the main account:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Account</span>
+
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_account_id</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
+
+<span class="k">def</span> <span class="nf">list_subaccounts</span><span class="p">():</span>
+    <span class="n">subaccounts</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">subaccounts</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">subaccount</span> <span class="ow">in</span> <span class="n">subaccounts</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">subaccount</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+<span class="n">list_subaccounts</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="classmethod">
+<dt id="vivialconnect.resources.account.Account.billing_status">
+<em class="property">classmethod </em><code class="descname">billing_status</code><span class="sig-paren">(</span><em>account_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/account.html#Account.billing_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.account.Account.billing_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get current account status for free trial.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>account_id</strong> (<code class="docutils literal"><span class="pre">int</span></code>.) &#8211; An account id.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A free trial status.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="vivialconnect.resources.account.Account.subaccounts">
+<em class="property">classmethod </em><code class="descname">subaccounts</code><span class="sig-paren">(</span><em>opts=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/account.html#Account.subaccounts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.account.Account.subaccounts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of all sub-accounts in the account specified in
+the <code class="docutils literal"><span class="pre">Resource.api_account_id</span></code> parameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>opts</strong> (<code class="docutils literal"><span class="pre">dict</span></code>.) &#8211; Additional query params.</li>
+<li><strong>**kwargs</strong> &#8211; Additional arguments.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="docutils literal"><span class="pre">list</span></code> &#8211; retrieves a list of sub-accounts for the main account.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-vivialconnect.resources.user">
+<span id="users"></span><h2>Users<a class="headerlink" href="#module-vivialconnect.resources.user" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-user"></span><dl class="class">
+<dt id="vivialconnect.resources.user.User">
+<em class="property">class </em><code class="descclassname">vivialconnect.resources.user.</code><code class="descname">User</code><span class="sig-paren">(</span><em>attributes=None</em>, <em>prefix_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/user.html#User"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.user.User" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use the User resource to manage users and user passwords in the API.</p>
+<p>User properties</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="86%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td>Unique identifier of the user object.</td>
+</tr>
+<tr class="row-odd"><td>date_created</td>
+<td>Creation date (UTC) of the user in ISO 8601 format.</td>
+</tr>
+<tr class="row-even"><td>date_modified</td>
+<td>Last modification date (UTC) of the user in ISO 8601 format.</td>
+</tr>
+<tr class="row-odd"><td>account_id</td>
+<td>Unique identifier of the account that this user is part of.</td>
+</tr>
+<tr class="row-even"><td>username</td>
+<td>User&#8217;s username for logging in to the account. <em>Max. length:</em> 128 characters.</td>
+</tr>
+<tr class="row-odd"><td>first_name</td>
+<td>User&#8217;s first name. <em>Max. length:</em> 128 characters.</td>
+</tr>
+<tr class="row-even"><td>last_name</td>
+<td>User&#8217;s last name. <em>Max. length:</em> 128 characters.</td>
+</tr>
+<tr class="row-odd"><td>email</td>
+<td>User&#8217;s email address. <em>Max. length:</em> 128 characters.</td>
+</tr>
+</tbody>
+</table>
+<p>Example request to retrieve a list of users accociated with the account id 12345:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">User</span>
+
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_account_id</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
+
+<span class="k">def</span> <span class="nf">list_users</span><span class="p">():</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">find</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">last_name</span><span class="p">)</span>
+
+<span class="n">list_users</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-vivialconnect.resources.message">
+<span id="message-and-attachment"></span><h2>Message and Attachment<a class="headerlink" href="#module-vivialconnect.resources.message" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-message"></span><dl class="class">
+<dt id="vivialconnect.resources.message.Attachment">
+<em class="property">class </em><code class="descclassname">vivialconnect.resources.message.</code><code class="descname">Attachment</code><span class="sig-paren">(</span><em>attributes=None</em>, <em>prefix_options=None</em>, <em>message_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Attachment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Attachment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use the <code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code> resource to list, count, and view
+information about media attachments for individual text messages in
+your account.</p>
+<p>Attachment properties</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td>Unique identifier of the media attachment object.</td>
+</tr>
+<tr class="row-odd"><td>date_created</td>
+<td>Creation date (UTC) of the media attachment in ISO 8601 format.</td>
+</tr>
+<tr class="row-even"><td>date_modified</td>
+<td>Last modification date (UTC) of the media attachment in ISO 8601 format.</td>
+</tr>
+<tr class="row-odd"><td>account_id</td>
+<td>Unique identifier of your account.</td>
+</tr>
+<tr class="row-even"><td>message_id</td>
+<td>Unique identifier of the text message for the media attachment.</td>
+</tr>
+<tr class="row-odd"><td>content_type</td>
+<td>Mime-type of the media attachment.</td>
+</tr>
+<tr class="row-even"><td>size</td>
+<td>Size of the media attachment in bytes.</td>
+</tr>
+<tr class="row-odd"><td>file_name</td>
+<td>File name of the media attachment.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="vivialconnect.resources.message.Message">
+<em class="property">class </em><code class="descclassname">vivialconnect.resources.message.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>attributes=None</em>, <em>prefix_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use the Message resource to manage API activity related to text
+message entities.</p>
+<p>Message properties</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td>Unique identifier of the text message object.</td>
+</tr>
+<tr class="row-odd"><td>date_created</td>
+<td>Creation date (UTC) of the text message in ISO 8601 format.</td>
+</tr>
+<tr class="row-even"><td>date_modified</td>
+<td>Last modification date (UTC) of the text message in ISO 8601 format.</td>
+</tr>
+<tr class="row-odd"><td>account_id</td>
+<td>Unique identifier of the account or subaccount associated with the text message.</td>
+</tr>
+<tr class="row-even"><td>master_account_id</td>
+<td>For subaccounts, the <code class="docutils literal"><span class="pre">account_id</span></code> of the subaccount&#8217;s parent (primary) account.</td>
+</tr>
+<tr class="row-odd"><td>message_type</td>
+<td>String identifying the type of inbound or outbound text message. <em>Possible values:</em> <code class="docutils literal"><span class="pre">local_sms</span></code>, <code class="docutils literal"><span class="pre">tollfree_sms</span></code>, or <code class="docutils literal"><span class="pre">local_mms</span></code>.</td>
+</tr>
+<tr class="row-even"><td>direction</td>
+<td>Inbound/outbound direction of the text message, and if outbound, the nature of the text message initiation.</td>
+</tr>
+<tr class="row-odd"><td>to_number</td>
+<td>Phone number that received the text message. Uses E.164 format (+country code +phone number). For US, the format will be <code class="docutils literal"><span class="pre">+1xxxyyyzzzz</span></code>.</td>
+</tr>
+<tr class="row-even"><td>from_number</td>
+<td>For inbound messages, the external phone number that sent the text message. For outbound messages, the associated phone number in your account that sent the text message.</td>
+</tr>
+<tr class="row-odd"><td>sent</td>
+<td>For inbound messages, the UTC timestamp the text message was received. For outbound messages, the UTC timestamp the text message was sent.</td>
+</tr>
+<tr class="row-even"><td>body</td>
+<td>Text body of the text message. <em>Max. length:</em> 1,600 characters.</td>
+</tr>
+<tr class="row-odd"><td>num_media</td>
+<td>Number of media attachments for the text message.</td>
+</tr>
+<tr class="row-even"><td>num_segments</td>
+<td>Number of segments that make up the message. <em>Note:</em> Does not affect pricing.</td>
+</tr>
+<tr class="row-odd"><td>status</td>
+<td>Status of the message (for example, <code class="docutils literal"><span class="pre">sent</span></code>).</td>
+</tr>
+<tr class="row-even"><td>error_code</td>
+<td>Error code, if any, for the message. <em>Default value:</em> null (message was delivered successfully).</td>
+</tr>
+<tr class="row-odd"><td>error_message</td>
+<td>Error code message for <code class="docutils literal"><span class="pre">error_code</span></code> as it is displayed to users.</td>
+</tr>
+<tr class="row-even"><td>price</td>
+<td>Amount billed for the message, in the currency associated with the account.</td>
+</tr>
+<tr class="row-odd"><td>price_currency</td>
+<td>Currency in which price is measured in ISO 4127 format. For US, the currency will be <code class="docutils literal"><span class="pre">USD</span></code>.</td>
+</tr>
+<tr class="row-even"><td>message_status_callback</td>
+<td>URL to receive message status callback requests for messages sent via the API using this associated phone number. <em>Max. length:</em> 256 characters.</td>
+</tr>
+<tr class="row-odd"><td>sms_configuration_id</td>
+<td>Unique identifier of the message status callback configuration to be used to handle message status callbacks.</td>
+</tr>
+</tbody>
+</table>
+<p>Example request to retreive a list of messages from your account:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Message</span>
+
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_account_id</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
+
+<span class="k">def</span> <span class="nf">list_messages</span><span class="p">():</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="n">find</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">to_number</span><span class="p">,</span>
+              <span class="n">message</span><span class="o">.</span><span class="n">from_number</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+
+<span class="n">list_messages</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="vivialconnect.resources.message.Message.attachment">
+<code class="descname">attachment</code><span class="sig-paren">(</span><em>id</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Message.attachment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Message.attachment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this method to view information about a single media attachment
+for a message in your account.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> (<code class="docutils literal"><span class="pre">int</span></code>.) &#8211; Message id.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">Resource</span></code> &#8211; a Resource object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vivialconnect.resources.message.Message.attachments">
+<code class="descname">attachments</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Message.attachments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Message.attachments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this method to view the list of attachments for a message in
+your account.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>**kwargs</strong> &#8211; Any keyword arguments used for forming a query.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">list</span></code> &#8211; a list of Resource objects.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vivialconnect.resources.message.Message.attachments_count">
+<code class="descname">attachments_count</code><span class="sig-paren">(</span><em>opts=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Message.attachments_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Message.attachments_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this method to view the total number of media attachments for
+a message in your account.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vivialconnect.resources.message.Message.send">
+<code class="descname">send</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Message.send"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Message.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a new message.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-vivialconnect.resources.number">
+<span id="number"></span><h2>Number<a class="headerlink" href="#module-vivialconnect.resources.number" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-number"></span><dl class="class">
+<dt id="vivialconnect.resources.number.Number">
+<em class="property">class </em><code class="descclassname">vivialconnect.resources.number.</code><code class="descname">Number</code><span class="sig-paren">(</span><em>attributes=None</em>, <em>prefix_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/number.html#Number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.number.Number" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <code class="xref py py-class docutils literal"><span class="pre">Number</span></code> resource provides functionality to work with account
+associated and available phone numbers.</p>
+<p>Purchasing a Phone Number</p>
+<p>Before you can send or receive text messages using Vivial Connect, you must
+purchase at least one phone number and associate it with your account. The
+API lets you choose from a list of US-only, non-toll-free available numbers.
+When you query this list to find an available number that meets your needs,
+you can tailor your search to target specific criteria, including:</p>
+<ul class="simple">
+<li>the city, US state, area code, or ZIP code where the number is located</li>
+<li>a number pattern you specify containing wildcards for individual digits</li>
+<li>an alphanumeric pattern you specify (for choosing numbers that spell a word)</li>
+</ul>
+<p>Available numbers properties</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>name</td>
+<td>Associated phone number as it is displayed to users. <em>Default format:</em> Friendly national format: (xxx) yyy-zzzz.</td>
+</tr>
+<tr class="row-odd"><td>phone_number</td>
+<td>Available phone number in E.164 format (+country code +phone number). For US numbers, the format will be <code class="docutils literal"><span class="pre">+1xxxyyyzzzz</span></code>.</td>
+</tr>
+<tr class="row-even"><td>phone_number_type</td>
+<td>Type of available phone number. <em>Possible values:</em> local (non-toll-free) or tollfree.</td>
+</tr>
+<tr class="row-odd"><td>city</td>
+<td>City where the available phone number is located.</td>
+</tr>
+<tr class="row-even"><td>region</td>
+<td>Two-letter US state abbreviation where the available phone number is located.</td>
+</tr>
+<tr class="row-odd"><td>lata</td>
+<td>Local address and transport area (LATA) where the available phone number is located.</td>
+</tr>
+<tr class="row-even"><td>rate_center</td>
+<td>LATA rate center where the available phone number is located. Usually the same as city.</td>
+</tr>
+</tbody>
+</table>
+<p>Associated numbers properties</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>id</td>
+<td>Unique identifier of the phone number object.</td>
+</tr>
+<tr class="row-odd"><td>date_created</td>
+<td>Creation date (UTC) of the phone number in ISO 8601 format.</td>
+</tr>
+<tr class="row-even"><td>date_modified</td>
+<td>Last modification date (UTC) of the phone number in ISO 8601 format.</td>
+</tr>
+<tr class="row-odd"><td>account_id</td>
+<td>Unique identifier of the account or subaccount associated with the phone number.</td>
+</tr>
+<tr class="row-even"><td>master_account_id</td>
+<td>For subaccounts, the account_id of the subaccount&#8217;s parent (primary) account.</td>
+</tr>
+<tr class="row-odd"><td>name</td>
+<td>Associated phone number as it is displayed to users. <em>Default format:</em> Friendly national format: (xxx) yyy-zzzz.</td>
+</tr>
+<tr class="row-even"><td>phone_number</td>
+<td>Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be <code class="docutils literal"><span class="pre">+1xxxyyyzzzz</span></code>.</td>
+</tr>
+<tr class="row-odd"><td>phone_number_type</td>
+<td>Type of associated phone number. <em>Possible values:</em> local (non-toll-free) or tollfree.</td>
+</tr>
+<tr class="row-even"><td>message_status_callback</td>
+<td>URL to receive message status callback requests for messages sent via the API using this associated phone number. <em>Max. length:</em> 256 characters.</td>
+</tr>
+<tr class="row-odd"><td>sms_configuration_id</td>
+<td>Unique identifier of the message status callback configuration to be used to handle SMS messages sent to the associated number.</td>
+</tr>
+<tr class="row-even"><td>sms_url</td>
+<td>URL for receiving SMS messages to the associated phone number. <em>Max. length:</em> 256 characters.</td>
+</tr>
+<tr class="row-odd"><td>sms_method</td>
+<td>HTTP method used for the <code class="docutils literal"><span class="pre">sms_url</span></code> requests. <em>Max. length:</em> 8 characters. <em>Possible values:</em> <code class="docutils literal"><span class="pre">GET</span></code> or <code class="docutils literal"><span class="pre">POST</span></code>. <em>Default value:</em> POST.</td>
+</tr>
+<tr class="row-even"><td>sms_fallback_url</td>
+<td>URL for receiving SMS messages if <code class="docutils literal"><span class="pre">sms_url</span></code> fails. Only valid if you provide a value for the <code class="docutils literal"><span class="pre">sms_url</span></code> parameter. <em>Max. length:</em> 256 characters.</td>
+</tr>
+<tr class="row-odd"><td>sms_fallback_method</td>
+<td>HTTP method used for <code class="docutils literal"><span class="pre">sms_url_fallback</span></code> requests. <em>Max. length:</em> 8 characters. <em>Possible values:</em> <code class="docutils literal"><span class="pre">GET</span></code> or <code class="docutils literal"><span class="pre">POST</span></code>. <em>Default value:</em> POST.</td>
+</tr>
+<tr class="row-even"><td>capabilities</td>
+<td>Set of boolean flags indicating the capabilities supported by the associated phone number.</td>
+</tr>
+<tr class="row-odd"><td>city</td>
+<td>City where the available phone number is located.</td>
+</tr>
+<tr class="row-even"><td>region</td>
+<td>Two-letter US state abbreviation where the available phone number is located.</td>
+</tr>
+<tr class="row-odd"><td>lata</td>
+<td>Local address and transport area (LATA) where the available phone number is located.</td>
+</tr>
+<tr class="row-even"><td>rate_center</td>
+<td>LATA rate center where the available phone number is located. Usually the same as city.</td>
+</tr>
+</tbody>
+</table>
+<p>Example request to retrieve a list of associated numbers:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Number</span>
+
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_account_id</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
+
+<span class="k">def</span> <span class="nf">list_associated_numbers</span><span class="p">():</span>
+    <span class="n">numbers</span> <span class="o">=</span> <span class="n">Number</span><span class="o">.</span><span class="n">find</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">number</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">number</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+              <span class="n">number</span><span class="o">.</span><span class="n">phone_number_type</span><span class="p">,</span>
+              <span class="n">number</span><span class="o">.</span><span class="n">phone_number</span><span class="p">)</span>
+
+<span class="n">list_associated_numbers</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Example request to retrieve a list of available numbers:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Number</span>
+
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_account_id</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
+
+<span class="k">def</span> <span class="nf">list_available_numbers</span><span class="p">(</span><span class="n">country_code</span><span class="o">=</span><span class="s1">&#39;US&#39;</span><span class="p">,</span>
+                           <span class="n">number_type</span><span class="o">=</span><span class="s1">&#39;local&#39;</span><span class="p">,</span>
+                           <span class="n">area_code</span><span class="o">=</span><span class="s1">&#39;913&#39;</span><span class="p">,</span>
+                           <span class="n">in_postal_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">in_region</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">limit</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">numbers</span> <span class="o">=</span> <span class="n">Number</span><span class="o">.</span><span class="n">available</span><span class="p">(</span>
+        <span class="n">country_code</span><span class="o">=</span><span class="n">country_code</span><span class="p">,</span>
+        <span class="n">number_type</span><span class="o">=</span><span class="n">number_type</span><span class="p">,</span>
+        <span class="n">area_code</span><span class="o">=</span><span class="n">area_code</span><span class="p">,</span>
+        <span class="n">in_postal_code</span><span class="o">=</span><span class="n">in_postal_code</span><span class="p">,</span>
+        <span class="n">in_region</span><span class="o">=</span><span class="n">in_region</span><span class="p">,</span>
+        <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">number</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+              <span class="n">number</span><span class="o">.</span><span class="n">phone_number_type</span><span class="p">,</span>
+              <span class="n">number</span><span class="o">.</span><span class="n">phone_number</span><span class="p">)</span>
+
+<span class="n">list_available_numbers</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Example request to buy a new phone number:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Number</span>
+
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">Resource</span><span class="o">.</span><span class="n">api_account_id</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
+
+<span class="k">def</span> <span class="nf">buy_number</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">phone_number</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">area_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">phone_number_type</span><span class="o">=</span><span class="s1">&#39;local&#39;</span><span class="p">):</span>
+    <span class="n">number</span> <span class="o">=</span> <span class="n">Number</span><span class="p">()</span>
+    <span class="n">number</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">number</span><span class="o">.</span><span class="n">phone_number</span> <span class="o">=</span> <span class="n">phone_number</span>
+    <span class="n">number</span><span class="o">.</span><span class="n">area_code</span> <span class="o">=</span> <span class="n">area_code</span>
+    <span class="n">number</span><span class="o">.</span><span class="n">phone_number_type</span> <span class="o">=</span> <span class="n">phone_number_type</span>
+    <span class="n">number</span><span class="o">.</span><span class="n">buy</span><span class="p">()</span>
+
+<span class="n">buy_number</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;(913) 259-7591&#39;</span><span class="p">,</span>
+           <span class="n">phone_number</span><span class="o">=</span><span class="s1">&#39;+19132597591&#39;</span><span class="p">,</span>
+           <span class="n">area_code</span><span class="o">=</span><span class="s1">&#39;913&#39;</span><span class="p">,</span>
+           <span class="n">phone_number_type</span><span class="o">=</span><span class="s1">&#39;local&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="classmethod">
+<dt id="vivialconnect.resources.number.Number.available">
+<em class="property">classmethod </em><code class="descname">available</code><span class="sig-paren">(</span><em>opts=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/number.html#Number.available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.number.Number.available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lists available phone numbers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>opts</strong> (<code class="docutils literal"><span class="pre">dict</span></code>.) &#8211; Additional query params.</li>
+<li><strong>**kwargs</strong> &#8211; You must specify exactly one of the following three keys:
+in_region, area_code, in_postal_code.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal"><span class="pre">Number</span></code> &#8211; a list of available US local (non-toll-free) phone numbers.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vivialconnect.resources.number.Number.buy">
+<code class="descname">buy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/number.html#Number.buy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.number.Number.buy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Purchases a new phone number.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vivialconnect.resources.number.Number.buy_local">
+<code class="descname">buy_local</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/number.html#Number.buy_local"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.number.Number.buy_local" title="Permalink to this definition">¶</a></dt>
+<dd><p>Purchases a new local phone number.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-vivialconnect.resources.resource">
+<span id="resource"></span><h2>Resource<a class="headerlink" href="#module-vivialconnect.resources.resource" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-resource"></span><dl class="class">
+<dt id="vivialconnect.resources.resource.Resource">
+<em class="property">class </em><code class="descclassname">vivialconnect.resources.resource.</code><code class="descname">Resource</code><span class="sig-paren">(</span><em>attributes=None</em>, <em>prefix_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/resource.html#Resource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.resource.Resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents a base <code class="xref py py-class docutils literal"><span class="pre">Resource</span></code> object.</p>
+<dl class="classmethod">
+<dt id="vivialconnect.resources.resource.Resource.create">
+<em class="property">classmethod </em><code class="descname">create</code><span class="sig-paren">(</span><em>attributes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/resource.html#Resource.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.resource.Resource.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and saves a resource with the given attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attributes</strong> (<code class="docutils literal"><span class="pre">dict</span></code>.) &#8211; A dictionary of attributes which represent this object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">Resource</span></code> &#8211; a newly created <code class="xref py py-class docutils literal"><span class="pre">Resource</span></code> object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vivialconnect.resources.resource.Resource.destroy">
+<code class="descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/resource.html#Resource.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.resource.Resource.destroy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes <code class="xref py py-class docutils literal"><span class="pre">Resource</span></code> object from the server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">RequestorError</span></code>: On any communications errors.
+<code class="xref py py-class docutils literal"><span class="pre">ResourceError</span></code>: On any other errors.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="vivialconnect.resources.resource.Resource.find">
+<em class="property">classmethod </em><code class="descname">find</code><span class="sig-paren">(</span><em>id_=None</em>, <em>path=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/resource.html#Resource.find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.resource.Resource.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find resources.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>id</strong> (<code class="docutils literal"><span class="pre">int</span></code>.) &#8211; A specific resource to retrieve.</li>
+<li><strong>path</strong> (<code class="docutils literal"><span class="pre">str</span></code>.) &#8211; The path that resources will be fetched from.</li>
+<li><strong>**kwargs</strong> &#8211; Any keyword arguments used for forming a query.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal"><span class="pre">Resource</span></code> &#8211; a Resource object.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal"><span class="pre">RequestorError</span></code>: On any communications errors.
+<code class="xref py py-class docutils literal"><span class="pre">ResourceError</span></code>: On any other errors.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="vivialconnect.resources.resource.Resource.find_first">
+<em class="property">classmethod </em><code class="descname">find_first</code><span class="sig-paren">(</span><em>path=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/resource.html#Resource.find_first"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.resource.Resource.find_first" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find first available resource from the list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<code class="docutils literal"><span class="pre">str</span></code>.) &#8211; The path that resources will be fetched from.</li>
+<li><strong>**kwargs</strong> &#8211; Any keyword arguments used for forming a query.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The first found resource from the list of returned resources, otherwise <code class="docutils literal"><span class="pre">None</span></code>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal"><span class="pre">RequestorError</span></code>: On any communications errors.
+<code class="xref py py-class docutils literal"><span class="pre">ResourceError</span></code>: On any other errors.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="vivialconnect.resources.resource.Resource.id">
+<code class="descname">id</code><a class="headerlink" href="#vivialconnect.resources.resource.Resource.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Value stored in the primary key</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vivialconnect.resources.resource.Resource.is_new">
+<code class="descname">is_new</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/resource.html#Resource.is_new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.resource.Resource.is_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if resource is new and have not been saved.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if resource is new, <code class="docutils literal"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vivialconnect.resources.resource.Resource.reload">
+<code class="descname">reload</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/resource.html#Resource.reload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.resource.Resource.reload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reloads <code class="xref py py-class docutils literal"><span class="pre">Resource</span></code> object from the server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">RequestorError</span></code>: On any communications errors.
+<code class="xref py py-class docutils literal"><span class="pre">ResourceError</span></code>: On any other errors.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vivialconnect.resources.resource.Resource.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/resource.html#Resource.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.resource.Resource.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves <code class="xref py py-class docutils literal"><span class="pre">Resource</span></code> object to the server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> on success, or throws an error.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">RequestorError</span></code>: On any communications errors.
+<code class="xref py py-class docutils literal"><span class="pre">ResourceError</span></code>: On any other errors.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="vivialconnect.resources.resource.ResourceMeta">
+<em class="property">class </em><code class="descclassname">vivialconnect.resources.resource.</code><code class="descname">ResourceMeta</code><a class="reference internal" href="_modules/vivialconnect/resources/resource.html#ResourceMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.resource.ResourceMeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>A metaclass for <code class="xref py py-class docutils literal"><span class="pre">Resource</span></code> objects.</p>
+<p>This class provides a way for configuration of API properties (user, password, account_id, etc).</p>
+<dl class="attribute">
+<dt id="vivialconnect.resources.resource.ResourceMeta.api_account_id">
+<code class="descname">api_account_id</code><a class="headerlink" href="#vivialconnect.resources.resource.ResourceMeta.api_account_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>An API account id</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="vivialconnect.resources.resource.ResourceMeta.api_base_url">
+<code class="descname">api_base_url</code><a class="headerlink" href="#vivialconnect.resources.resource.ResourceMeta.api_base_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>An API base_url used for HMAC authentication</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="vivialconnect.resources.resource.ResourceMeta.api_key">
+<code class="descname">api_key</code><a class="headerlink" href="#vivialconnect.resources.resource.ResourceMeta.api_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>An API key used for HMAC authentication</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="vivialconnect.resources.resource.ResourceMeta.api_secret">
+<code class="descname">api_secret</code><a class="headerlink" href="#vivialconnect.resources.resource.ResourceMeta.api_secret" title="Permalink to this definition">¶</a></dt>
+<dd><p>An API secret used for HMAC authentication</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="vivialconnect.resources.resource.ResourceMeta.api_verify_request">
+<code class="descname">api_verify_request</code><a class="headerlink" href="#vivialconnect.resources.resource.ResourceMeta.api_verify_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify SSL certs</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="vivialconnect.resources.resource.ResourceMeta.plural">
+<code class="descname">plural</code><a class="headerlink" href="#vivialconnect.resources.resource.ResourceMeta.plural" title="Permalink to this definition">¶</a></dt>
+<dd><p>The plural name of this object type</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="vivialconnect.resources.resource.ResourceMeta.primary_key">
+<code class="descname">primary_key</code><a class="headerlink" href="#vivialconnect.resources.resource.ResourceMeta.primary_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of attribute that uniquely identies the resource</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="vivialconnect.resources.resource.ResourceMeta.request_timeout">
+<code class="descname">request_timeout</code><a class="headerlink" href="#vivialconnect.resources.resource.ResourceMeta.request_timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request Timeout</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="vivialconnect.resources.resource.ResourceMeta.singular">
+<code class="descname">singular</code><a class="headerlink" href="#vivialconnect.resources.resource.ResourceMeta.singular" title="Permalink to this definition">¶</a></dt>
+<dd><p>The singular name of this object type</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="utility">
+<h2>Utility<a class="headerlink" href="#utility" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="vivialconnect.common.util.Util">
+<em class="property">class </em><code class="descclassname">vivialconnect.common.util.</code><code class="descname">Util</code><a class="reference internal" href="_modules/vivialconnect/common/util.html#Util"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.util.Util" title="Permalink to this definition">¶</a></dt>
+<dd><p>Various utility functions shipped with Vivial Connect Python API.</p>
+<dl class="staticmethod">
+<dt id="vivialconnect.common.util.Util.camelize">
+<em class="property">static </em><code class="descname">camelize</code><span class="sig-paren">(</span><em>word</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/util.html#Util.camelize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.util.Util.camelize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a word from lower_with_underscores to CamelCase.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>word</strong> (<cite>str</cite>.) &#8211; The string to convert.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>str</cite> &#8211; the modified string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="vivialconnect.common.util.Util.json_to_dict">
+<em class="property">static </em><code class="descname">json_to_dict</code><span class="sig-paren">(</span><em>jsonstr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/util.html#Util.json_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.util.Util.json_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the json into a dictionary of attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>jsonstr</strong> (<cite>str</cite>.) &#8211; A JSON formatted string.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>str</cite> &#8211; the deserialized object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="vivialconnect.common.util.Util.pluralize">
+<em class="property">static </em><code class="descname">pluralize</code><span class="sig-paren">(</span><em>singular</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/util.html#Util.pluralize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.util.Util.pluralize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert singular word to its plural form.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>singular</strong> (<cite>str</cite>.) &#8211; A word in its singular form.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>str</cite> &#8211; the word in its plural form.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="vivialconnect.common.util.Util.remove_root">
+<em class="property">static </em><code class="descname">remove_root</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/util.html#Util.remove_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.util.Util.remove_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes root key from dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<cite>dict</cite>.) &#8211; A dict to remove root key from.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>dict</cite> &#8211; a new dictionary without root key.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="vivialconnect.common.util.Util.singularize">
+<em class="property">static </em><code class="descname">singularize</code><span class="sig-paren">(</span><em>plural</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/util.html#Util.singularize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.util.Util.singularize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert plural word to its singular form.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plural</strong> (<cite>str</cite>.) &#8211; A word in its plural form.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>str</cite> &#8211; the word in its singular form.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="vivialconnect.common.util.Util.to_json">
+<em class="property">static </em><code class="descname">to_json</code><span class="sig-paren">(</span><em>obj</em>, <em>root='object'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/util.html#Util.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.util.Util.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a dictionary or list to an JSON string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> &#8211; The object to serialize.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>str</cite> &#8211; a JSON string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="vivialconnect.common.util.Util.to_query">
+<em class="property">static </em><code class="descname">to_query</code><span class="sig-paren">(</span><em>query_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/util.html#Util.to_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.util.Util.to_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a dictionary to url query parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>query_params</strong> (<cite>dict</cite>.) &#8211; A dictionary of arguments.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>str</cite> &#8211; a string of query parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="vivialconnect.common.util.Util.underscore">
+<em class="property">static </em><code class="descname">underscore</code><span class="sig-paren">(</span><em>word</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/util.html#Util.underscore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.util.Util.underscore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a word from CamelCase to lower_with_underscores.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>word</strong> (<cite>str</cite>.) &#8211; The string to convert.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>str</cite> &#8211; the modified string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-vivialconnect.common.error">
+<span id="errors"></span><h2>Errors<a class="headerlink" href="#module-vivialconnect.common.error" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-error"></span><dl class="exception">
+<dt id="vivialconnect.common.error.BadRequest">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">BadRequest</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#BadRequest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.BadRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>400 Bad Request</p>
+<p>Raised if the client receives something and cannot handle it.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.ClientError">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">ClientError</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#ClientError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.ClientError" title="Permalink to this definition">¶</a></dt>
+<dd><p>4xx Base HTTP Error (401..499)</p>
+<p>Baseclass for all 4xx exceptions.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.ConnectionError">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">ConnectionError</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#ConnectionError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.ConnectionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Network Connection Error</p>
+<p>This error is raised if Vivial Connect API client detects
+a connection error.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.ForbiddenAccess">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">ForbiddenAccess</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#ForbiddenAccess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.ForbiddenAccess" title="Permalink to this definition">¶</a></dt>
+<dd><p>403 Forbidden</p>
+<p>Raised if the user doesn&#8217;t have the permission for the
+requested resource.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.MethodNotAllowed">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">MethodNotAllowed</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#MethodNotAllowed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.MethodNotAllowed" title="Permalink to this definition">¶</a></dt>
+<dd><p>405 Method Not Allowed</p>
+<p>Raised if the server does not handle method used to access resource.
+For example POST if the resource is view only.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.Redirection">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">Redirection</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em>, <em>url=None</em>, <em>headers=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#Redirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.Redirection" title="Permalink to this definition">¶</a></dt>
+<dd><p>3xx Redirection Error</p>
+<p>Raised for all HTTP redirects.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.RequestorError">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">RequestorError</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#RequestorError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.RequestorError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base Requestor Error</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.ResourceConflict">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">ResourceConflict</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#ResourceConflict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.ResourceConflict" title="Permalink to this definition">¶</a></dt>
+<dd><p>404 Resource Invalid</p>
+<p>Raised if a resource is invalid.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.ResourceError">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">ResourceError</code><span class="sig-paren">(</span><em>message=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#ResourceError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.ResourceError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic Resource Error</p>
+<p>Raised if there is an error while processing response JSON data.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.ResourceInvalid">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">ResourceInvalid</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#ResourceInvalid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.ResourceInvalid" title="Permalink to this definition">¶</a></dt>
+<dd><p>404 Resource Invalid</p>
+<p>Raised if a resource is invalid.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.ResourceNotFound">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">ResourceNotFound</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#ResourceNotFound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.ResourceNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>404 Resource Not Found</p>
+<p>Raised if a resource does not exist.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.ServerError">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">ServerError</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#ServerError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.ServerError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Any 5xx HTTP Error 5xx (500..599)</p>
+<p>Raised if an internal server error occurred.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="vivialconnect.common.error.UnauthorizedAccess">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">UnauthorizedAccess</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#UnauthorizedAccess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.UnauthorizedAccess" title="Permalink to this definition">¶</a></dt>
+<dd><p>401 Unauthorized</p>
+<p>Raised if the user is not authorized to access remote resource.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API Documentation</a><ul>
+<li><a class="reference internal" href="#module-vivialconnect.resources.account">Accounts</a></li>
+<li><a class="reference internal" href="#module-vivialconnect.resources.user">Users</a></li>
+<li><a class="reference internal" href="#module-vivialconnect.resources.message">Message and Attachment</a></li>
+<li><a class="reference internal" href="#module-vivialconnect.resources.number">Number</a></li>
+<li><a class="reference internal" href="#module-vivialconnect.resources.resource">Resource</a></li>
+<li><a class="reference internal" href="#utility">Utility</a></li>
+<li><a class="reference internal" href="#module-vivialconnect.common.error">Errors</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Vivial Connect&#8217;s Python API documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/api.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Boris Musa.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/api.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

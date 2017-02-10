@@ -1,0 +1,562 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>vivialconnect.resources.resource &#8212; Vivial Connect 0.1.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Vivial Connect 0.1.2 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for vivialconnect.resources.resource</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: resource</span>
+<span class="sd">   :synopsis: Resource module.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Inspired by https://github.com/Shopify/pyactiveresource</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">six</span>
+
+<span class="kn">from</span> <span class="nn">vivialconnect.common.requestor</span> <span class="k">import</span> <span class="n">Requestor</span>
+<span class="kn">from</span> <span class="nn">vivialconnect.common.error</span> <span class="k">import</span> <span class="n">ResourceError</span>
+<span class="kn">from</span> <span class="nn">vivialconnect.common.util</span> <span class="k">import</span> <span class="n">Util</span>
+
+
+<div class="viewcode-block" id="ResourceMeta"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.ResourceMeta">[docs]</a><span class="k">class</span> <span class="nc">ResourceMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A metaclass for :class:`Resource` objects.</span>
+
+<span class="sd">    This class provides a way for configuration of API properties (user, password, account_id, etc).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">new_attrs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;_singular&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_attrs</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">new_attrs</span><span class="p">[</span><span class="s1">&#39;_singular&#39;</span><span class="p">]:</span>
+            <span class="n">new_attrs</span><span class="p">[</span><span class="s1">&#39;_singular&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">underscore</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;_plural&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_attrs</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">new_attrs</span><span class="p">[</span><span class="s1">&#39;_plural&#39;</span><span class="p">]:</span>
+            <span class="n">new_attrs</span><span class="p">[</span><span class="s1">&#39;_plural&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">pluralize</span><span class="p">(</span><span class="n">new_attrs</span><span class="p">[</span><span class="s1">&#39;_singular&#39;</span><span class="p">])</span>
+        <span class="n">klass</span> <span class="o">=</span> <span class="nb">type</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">new_attrs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">klass</span>
+
+    <span class="k">def</span> <span class="nf">get_plural</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_plural</span>
+
+    <span class="k">def</span> <span class="nf">set_plural</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_plural</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">plural</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_plural</span><span class="p">,</span> <span class="n">set_plural</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                      <span class="s1">&#39;The plural name of this object type&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_singular</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_singular</span>
+
+    <span class="k">def</span> <span class="nf">set_singular</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_singular</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">singular</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_singular</span><span class="p">,</span> <span class="n">set_singular</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="s1">&#39;The singular name of this object type&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_primary_key</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_primary_key</span>
+
+    <span class="k">def</span> <span class="nf">set_primary_key</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_primary_key</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">primary_key</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_primary_key</span><span class="p">,</span> <span class="n">set_primary_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="s1">&#39;Name of attribute that uniquely identies the resource&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">request</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="n">super_class</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__mro__</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">super_class</span> <span class="o">==</span> <span class="nb">object</span> <span class="ow">or</span> <span class="s1">&#39;_request&#39;</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cls</span><span class="o">.</span><span class="n">_request</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="n">Requestor</span><span class="p">(</span>
+                    <span class="n">api_key</span><span class="o">=</span><span class="n">cls</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span>
+                    <span class="n">api_secret</span><span class="o">=</span><span class="n">cls</span><span class="o">.</span><span class="n">api_secret</span><span class="p">,</span>
+                    <span class="n">api_base_url</span><span class="o">=</span><span class="n">cls</span><span class="o">.</span><span class="n">api_base_url</span><span class="p">,</span>
+                    <span class="n">api_account_id</span><span class="o">=</span><span class="n">cls</span><span class="o">.</span><span class="n">api_account_id</span><span class="p">,</span>
+                    <span class="n">verify_request</span><span class="o">=</span><span class="n">cls</span><span class="o">.</span><span class="n">_verify_request</span><span class="p">,</span>
+                    <span class="n">request_timeout</span><span class="o">=</span><span class="n">cls</span><span class="o">.</span><span class="n">_request_timeout</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_request</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">super_class</span><span class="o">.</span><span class="n">request</span>
+
+    <span class="k">def</span> <span class="nf">get_api_key</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_api_key</span>
+
+    <span class="k">def</span> <span class="nf">set_api_key</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_api_key</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">api_key</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_api_key</span><span class="p">,</span> <span class="n">set_api_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="s1">&#39;An API key used for HMAC authentication&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_api_secret</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_api_secret</span>
+
+    <span class="k">def</span> <span class="nf">set_api_secret</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_api_secret</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">api_secret</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_api_secret</span><span class="p">,</span> <span class="n">set_api_secret</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="s1">&#39;An API secret used for HMAC authentication&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_api_account_id</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_api_account_id</span>
+
+    <span class="k">def</span> <span class="nf">set_api_account_id</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_api_account_id</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">api_account_id</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_api_account_id</span><span class="p">,</span> <span class="n">set_api_account_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="s1">&#39;An API account id&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_api_base_url</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_api_base_url</span>
+
+    <span class="k">def</span> <span class="nf">set_api_base_url</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_api_base_url</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">api_base_url</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_api_base_url</span><span class="p">,</span> <span class="n">set_api_base_url</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="s1">&#39;An API base_url used for HMAC authentication&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_verify_request</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_verify_request</span>
+
+    <span class="k">def</span> <span class="nf">set_verify_request</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_verify_request</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">api_verify_request</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_verify_request</span><span class="p">,</span> <span class="n">set_verify_request</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                                  <span class="s1">&#39;Verify SSL certs&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_request_timeout</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_request_timeout</span>
+
+    <span class="k">def</span> <span class="nf">set_request_timeout</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_request_timeout</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">request_timeout</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_request_timeout</span><span class="p">,</span> <span class="n">set_request_timeout</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                               <span class="s1">&#39;Request Timeout&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Resource"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.Resource">[docs]</a><span class="k">class</span> <span class="nc">Resource</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ResourceMeta</span><span class="p">,</span> <span class="nb">object</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;This class represents a base :class:`Resource` object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_request</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_api_key</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_api_secret</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_api_account_id</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_api_base_url</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_verify_request</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">_primary_key</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span>
+    <span class="n">_request_timeout</span> <span class="o">=</span> <span class="mi">30</span>
+
+    <span class="n">API_ACCOUNT_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;/accounts/</span><span class="si">%(account_id)s</span><span class="s1">&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">attributes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">prefix_options</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span> <span class="o">=</span> <span class="n">prefix_options</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">klass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Public class methods which act as factory functions</span>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Resource.find"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.Resource.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find resources.</span>
+
+<span class="sd">        :param id_: A specific resource to retrieve.</span>
+<span class="sd">        :type id_: ``int``.</span>
+<span class="sd">        :param path: The path that resources will be fetched from.</span>
+<span class="sd">        :type path: ``str``.</span>
+<span class="sd">        :param \**kwargs: Any keyword arguments used for forming a query.</span>
+<span class="sd">        :returns: :class:`Resource` -- a Resource object.</span>
+<span class="sd">        :raises: :class:`RequestorError`: On any communications errors.</span>
+<span class="sd">                 :class:`ResourceError`: On any other errors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">id_</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_find_single</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_find_every</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Resource.find_first"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.Resource.find_first">[docs]</a>    <span class="k">def</span> <span class="nf">find_first</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find first available resource from the list.</span>
+
+<span class="sd">        :param path: The path that resources will be fetched from.</span>
+<span class="sd">        :type path: ``str``.</span>
+<span class="sd">        :param \**kwargs: Any keyword arguments used for forming a query.</span>
+<span class="sd">        :returns: The first found resource from the list of returned resources, otherwise ``None``.</span>
+<span class="sd">        :raises: :class:`RequestorError`: On any communications errors.</span>
+<span class="sd">                 :class:`ResourceError`: On any other errors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">resources</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_find_every</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resources</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">resources</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Resource.create"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.Resource.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates and saves a resource with the given attributes.</span>
+
+<span class="sd">        :param attributes: A dictionary of attributes which represent this object.</span>
+<span class="sd">        :type attributes: ``dict``.</span>
+<span class="sd">        :returns: :class:`Resource` -- a newly created :class:`Resource` object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">resource</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="n">resource</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">resource</span></div>
+
+<div class="viewcode-block" id="Resource.save"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.Resource.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves :class:`Resource` object to the server.</span>
+
+<span class="sd">        :returns: ``True`` on success, or throws an error.</span>
+<span class="sd">        :raises: :class:`RequestorError`: On any communications errors.</span>
+<span class="sd">            :class:`ResourceError`: On any other errors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap_attributes</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_singular</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">),</span> <span class="n">attributes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection_path</span><span class="p">(</span>
+                <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">),</span> <span class="n">params</span><span class="o">=</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Resource.reload"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.Resource.reload">[docs]</a>    <span class="k">def</span> <span class="nf">reload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reloads :class:`Resource` object from the server.</span>
+
+<span class="sd">        :raises: :class:`RequestorError`: On any communications errors.</span>
+<span class="sd">            :class:`ResourceError`: On any other errors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Resource.destroy"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.Resource.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deletes :class:`Resource` object from the server.</span>
+
+<span class="sd">        :raises: :class:`RequestorError`: On any communications errors.</span>
+<span class="sd">            :class:`ResourceError`: On any other errors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Resource.is_new"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.Resource.is_new">[docs]</a>    <span class="k">def</span> <span class="nf">is_new</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if resource is new and have not been saved.</span>
+
+<span class="sd">        :returns: ``True`` if resource is new, ``False`` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span>
+            <span class="n">id_</span><span class="o">=</span><span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="n">custom_path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="n">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span>
+            <span class="n">id_</span><span class="o">=</span><span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="n">custom_path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="n">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_find_single</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="n">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_build_object</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_find_every</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_collection_path</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="n">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_build_list</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_build_object</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">attributes</span><span class="p">))</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_build_list</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+        <span class="n">resources</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">elements</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+            <span class="n">resources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls</span><span class="p">(</span><span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">element</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">resources</span>
+
+    <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">attributes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">klass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_class_for</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">attr</span> <span class="o">=</span> <span class="n">klass</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">klass</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">attr</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">klass</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">klass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_class_for_collection</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                        <span class="n">attr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">klass</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">attr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">attr</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="c1"># Store the actual value in the attributes dictionary</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_find_class_for_collection</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">collection_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_find_class_for</span><span class="p">(</span><span class="n">Util</span><span class="o">.</span><span class="n">singularize</span><span class="p">(</span><span class="n">collection_name</span><span class="p">))</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_find_class_for</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">element_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">class_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">element_name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">class_name</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ResourceError</span><span class="p">(</span><span class="s1">&#39;element_name or class_name must be specified&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">element_name</span><span class="p">:</span>
+            <span class="n">element_name</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">underscore</span><span class="p">(</span><span class="n">class_name</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">class_name</span><span class="p">:</span>
+            <span class="n">class_name</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">camelize</span><span class="p">(</span><span class="n">element_name</span><span class="p">)</span>
+
+        <span class="n">module_path</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__module__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">depth</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">module_path</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">__import__</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module_path</span><span class="p">[:</span><span class="n">depth</span><span class="p">]))</span>
+                <span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module_path</span><span class="p">[:</span><span class="n">depth</span><span class="p">])]</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">klass</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">klass</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="nb">__import__</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">module</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">element_name</span><span class="p">]))</span>
+                    <span class="n">submodule</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="p">[</span><span class="n">module</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">element_name</span><span class="p">])]</span>
+                <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">klass</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">submodule</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">klass</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+        <span class="c1"># Woow, we made it this far, and no class was found</span>
+        <span class="k">if</span> <span class="n">create_missing</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">class_name</span><span class="p">),</span> <span class="p">(</span><span class="n">cls</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;__module__&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">__module__</span><span class="p">})</span>
+
+    <span class="k">def</span> <span class="nf">_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">new_value</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Resource</span><span class="p">):</span>
+                        <span class="n">new_value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">_to_dict</span><span class="p">())</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">new_value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="n">attributes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_value</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Resource</span><span class="p">):</span>
+                <span class="n">attributes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">_to_dict</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">attributes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">attributes</span>
+
+    <span class="k">def</span> <span class="nf">_wrap_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">root</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">root</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict</span><span class="p">()}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">primary_key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">primary_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_id</span><span class="p">,</span> <span class="n">set_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Value stored in the primary key&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_attr_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;attributes&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;attributes&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;_initialized&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="c1"># Update a normal attribute</span>
+                <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Add/update an attribute</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_singular</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
+        <span class="c1"># pylint: disable=undefined-variable</span>
+        <span class="k">def</span> <span class="nf">__cmp__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">):</span>
+                <span class="k">return</span> <span class="nb">cmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">cmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span> \
+                   <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">id</span> \
+                   <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_prefix_options</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">)))</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_prefix</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="k">if</span> <span class="n">options</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;/</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">options</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">prefix</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_element_path</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">%(prefix)s</span><span class="s1">/</span><span class="si">%(plural)s</span><span class="s1">/</span><span class="si">%(id)s%(ext)s</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">%</span> \
+            <span class="p">{</span><span class="s1">&#39;account_id&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
+             <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
+             <span class="s1">&#39;plural&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
+             <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">id_</span><span class="p">,</span>
+             <span class="s1">&#39;ext&#39;</span><span class="p">:</span> <span class="n">ext</span><span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_collection_path</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">%(prefix)s</span><span class="s1">/</span><span class="si">%(plural)s%(ext)s</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">%</span> \
+            <span class="p">{</span><span class="s1">&#39;account_id&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
+             <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
+             <span class="s1">&#39;plural&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
+             <span class="s1">&#39;ext&#39;</span><span class="p">:</span> <span class="n">ext</span><span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_custom_path</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">id_</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">%(prefix)s</span><span class="s1">/</span><span class="si">%(plural)s</span><span class="s1">/</span><span class="si">%(id)s%(custom)s%(ext)s</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">%</span> \
+                <span class="p">{</span><span class="s1">&#39;account_id&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
+                 <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
+                 <span class="s1">&#39;plural&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
+                 <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">id_</span><span class="p">,</span>
+                 <span class="s1">&#39;custom&#39;</span><span class="p">:</span> <span class="n">custom_path</span><span class="p">,</span>
+                 <span class="s1">&#39;ext&#39;</span><span class="p">:</span> <span class="n">ext</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">%(prefix)s</span><span class="s1">/</span><span class="si">%(plural)s%(custom)s%(ext)s</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">%</span> \
+                <span class="p">{</span><span class="s1">&#39;account_id&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
+                 <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
+                 <span class="s1">&#39;plural&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
+                 <span class="s1">&#39;custom&#39;</span><span class="p">:</span> <span class="n">custom_path</span><span class="p">,</span>
+                 <span class="s1">&#39;ext&#39;</span><span class="p">:</span> <span class="n">ext</span><span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_query_string</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">query_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">query_options</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;?&#39;</span> <span class="o">+</span> <span class="n">Util</span><span class="o">.</span><span class="n">to_query</span><span class="p">(</span><span class="n">query_options</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Boris Musa.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

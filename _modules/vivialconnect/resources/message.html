@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>vivialconnect.resources.message &#8212; Vivial Connect 0.1.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Vivial Connect 0.1.2 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for vivialconnect.resources.message</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: message</span>
+<span class="sd">   :synopsis: Message module.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">vivialconnect.common.util</span> <span class="k">import</span> <span class="n">Util</span>
+<span class="kn">from</span> <span class="nn">vivialconnect.resources.resource</span> <span class="k">import</span> <span class="n">Resource</span>
+<span class="kn">from</span> <span class="nn">vivialconnect.resources.countable</span> <span class="k">import</span> <span class="n">Countable</span>
+<span class="kn">from</span> <span class="nn">vivialconnect.common.error</span> <span class="k">import</span> <span class="n">ResourceError</span>
+
+
+<div class="viewcode-block" id="Message"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.message.Message">[docs]</a><span class="k">class</span> <span class="nc">Message</span><span class="p">(</span><span class="n">Resource</span><span class="p">,</span> <span class="n">Countable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Use the Message resource to manage API activity related to text</span>
+<span class="sd">    message entities.</span>
+
+<span class="sd">    Message properties</span>
+
+<span class="sd">    ========================== ===========</span>
+<span class="sd">    Field                      Description                                                                                                                                     </span>
+<span class="sd">    ========================== ===========</span>
+<span class="sd">    id                         Unique identifier of the text message object.</span>
+<span class="sd">    date_created               Creation date (UTC) of the text message in ISO 8601 format.</span>
+<span class="sd">    date_modified              Last modification date (UTC) of the text message in ISO 8601 format.</span>
+<span class="sd">    account_id                 Unique identifier of the account or subaccount associated with the text message.</span>
+<span class="sd">    master_account_id          For subaccounts, the ``account_id`` of the subaccount&#39;s parent (primary) account.</span>
+<span class="sd">    message_type               String identifying the type of inbound or outbound text message. *Possible values:* ``local_sms``, ``tollfree_sms``, or ``local_mms``.</span>
+<span class="sd">    direction                  Inbound/outbound direction of the text message, and if outbound, the nature of the text message initiation.</span>
+<span class="sd">    to_number                  Phone number that received the text message. Uses E.164 format (+country code +phone number). For US, the format will be ``+1xxxyyyzzzz``.</span>
+<span class="sd">    from_number                For inbound messages, the external phone number that sent the text message. For outbound messages, the associated phone number in your account that sent the text message.</span>
+<span class="sd">    sent                       For inbound messages, the UTC timestamp the text message was received. For outbound messages, the UTC timestamp the text message was sent.</span>
+<span class="sd">    body                       Text body of the text message. *Max. length:* 1,600 characters.</span>
+<span class="sd">    num_media                  Number of media attachments for the text message.</span>
+<span class="sd">    num_segments               Number of segments that make up the message. *Note:* Does not affect pricing.</span>
+<span class="sd">    status                     Status of the message (for example, ``sent``).</span>
+<span class="sd">    error_code                 Error code, if any, for the message. *Default value:* null (message was delivered successfully).</span>
+<span class="sd">    error_message              Error code message for ``error_code`` as it is displayed to users.</span>
+<span class="sd">    price                      Amount billed for the message, in the currency associated with the account.</span>
+<span class="sd">    price_currency             Currency in which price is measured in ISO 4127 format. For US, the currency will be ``USD``.</span>
+<span class="sd">    message_status_callback    URL to receive message status callback requests for messages sent via the API using this associated phone number. *Max. length:* 256 characters.</span>
+<span class="sd">    sms_configuration_id       Unique identifier of the message status callback configuration to be used to handle message status callbacks.</span>
+<span class="sd">    ========================== ===========</span>
+
+<span class="sd">    Example request to retreive a list of messages from your account::</span>
+
+<span class="sd">        from vivialconnect import Resource, Message</span>
+
+<span class="sd">        Resource.api_key = &quot;&quot;</span>
+<span class="sd">        Resource.api_secret = &quot;&quot;</span>
+<span class="sd">        Resource.api_account_id = &quot;12345&quot;</span>
+
+<span class="sd">        def list_messages():</span>
+<span class="sd">            count = Message.count()</span>
+<span class="sd">            messages = Message.find()</span>
+<span class="sd">            for message in messages:</span>
+<span class="sd">                print(message.id, message.to_number,</span>
+<span class="sd">                      message.from_number, message.body)</span>
+
+<span class="sd">        list_messages()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Message.send"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.message.Message.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sends a new message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Message.attachment"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.message.Message.attachment">[docs]</a>    <span class="k">def</span> <span class="nf">attachment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Use this method to view information about a single media attachment</span>
+<span class="sd">        for a message in your account.</span>
+
+<span class="sd">        :param id: Message id.</span>
+<span class="sd">        :type id: ``int``.</span>
+<span class="sd">        :returns: :class:`Resource` -- a Resource object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span><span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                      <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">id</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">attachment</span> <span class="o">=</span> <span class="n">Attachment</span><span class="o">.</span><span class="n">_build_object</span><span class="p">(</span><span class="n">Attachment</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+        <span class="n">attachment</span><span class="o">.</span><span class="n">_entity_path</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="k">return</span> <span class="n">attachment</span></div>
+
+<div class="viewcode-block" id="Message.attachments"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.message.Message.attachments">[docs]</a>    <span class="k">def</span> <span class="nf">attachments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Use this method to view the list of attachments for a message in</span>
+<span class="sd">        your account.</span>
+
+<span class="sd">        :param \**kwargs: Any keyword arguments used for forming a query.</span>
+<span class="sd">        :returns: ``list`` -- a list of Resource objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span><span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">attachments</span> <span class="o">=</span> <span class="n">Attachment</span><span class="o">.</span><span class="n">_build_list</span><span class="p">(</span><span class="n">Attachment</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">attachment</span> <span class="ow">in</span> <span class="n">attachments</span><span class="p">:</span>
+            <span class="n">attachment</span><span class="o">.</span><span class="n">_entity_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span><span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                                              <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">attachment</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                                              <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">attachments</span></div>
+
+<div class="viewcode-block" id="Message.attachments_count"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.message.Message.attachments_count">[docs]</a>    <span class="k">def</span> <span class="nf">attachments_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Use this method to view the total number of media attachments for</span>
+<span class="sd">        a message in your account.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">opts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">opts</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span><span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments/count&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">Attachment</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="Attachment"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.message.Attachment">[docs]</a><span class="k">class</span> <span class="nc">Attachment</span><span class="p">(</span><span class="n">Resource</span><span class="p">,</span> <span class="n">Countable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Use the :class:`Attachment` resource to list, count, and view</span>
+<span class="sd">    information about media attachments for individual text messages in</span>
+<span class="sd">    your account.</span>
+
+<span class="sd">    Attachment properties</span>
+
+<span class="sd">    =============  ===========</span>
+<span class="sd">    Field          Description</span>
+<span class="sd">    =============  ===========</span>
+<span class="sd">    id             Unique identifier of the media attachment object.</span>
+<span class="sd">    date_created   Creation date (UTC) of the media attachment in ISO 8601 format.</span>
+<span class="sd">    date_modified  Last modification date (UTC) of the media attachment in ISO 8601 format.</span>
+<span class="sd">    account_id     Unique identifier of your account.</span>
+<span class="sd">    message_id     Unique identifier of the text message for the media attachment.</span>
+<span class="sd">    content_type   Mime-type of the media attachment.</span>
+<span class="sd">    size           Size of the media attachment in bytes.</span>
+<span class="sd">    file_name      File name of the media attachment.</span>
+<span class="sd">    =============  ===========</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">message_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_entity_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_message_id</span> <span class="o">=</span> <span class="n">message_id</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Attachment</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="n">prefix_options</span><span class="o">=</span><span class="n">prefix_options</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap_attributes</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_singular</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entity_path</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ResourceError</span><span class="p">(</span><span class="s1">&#39;Attachment must be loaded from associated Message&#39;</span><span class="p">)</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_entity_path</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message_id</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ResourceError</span><span class="p">(</span><span class="s1">&#39;message_id must be specified when creating Attachment&#39;</span><span class="p">)</span>
+
+            <span class="n">collection_url</span> <span class="o">=</span> <span class="s1">&#39;/accounts/</span><span class="si">%d</span><span class="s1">/messages/</span><span class="si">%d</span><span class="s1">/attachments.json</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Attachment</span><span class="o">.</span><span class="n">api_account_id</span><span class="p">),</span>
+                                                                              <span class="bp">self</span><span class="o">.</span><span class="n">_message_id</span><span class="p">,</span>
+                                                                              <span class="n">Attachment</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">collection_url</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Boris Musa.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
