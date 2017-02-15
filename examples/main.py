@@ -70,6 +70,9 @@ def main():
     messages_parser.add_argument('--body', '-b', required=False,
                                  type=str, action='store',
                                  help='Message body')
+    messages_parser.add_argument('--media-url', '-u', required=False,
+                                 type=str, action='store',
+                                 help='Media URL for MMS')
     messages_parser.add_argument('--from-number', '-f', required=False,
                                  type=str, action='store',
                                  help='From phone number (+12123456789)')
@@ -124,9 +127,11 @@ def main():
 
     if args.command == 'message':
         if args.send:
+            # https://imgs.xkcd.com/comics/lisp_cycles.png
             message = send_message(to_number=args.to_number,
                                    from_number=args.from_number,
-                                   body=args.body)
+                                   body=args.body,
+                                   media_urls=[args.media_url] if args.media_url else None)
             print(message.id, message.from_number, message.to_number)
         if args.get:
             message = get_message(args.id)
@@ -136,6 +141,7 @@ def main():
             for message in list_messages():
                 print(message.id, message.to_number,
                       message.from_number, message.body)
+
     elif args.command == 'number':
         if args.list_available:
             for number in list_available_numbers():
