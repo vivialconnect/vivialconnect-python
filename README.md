@@ -2,8 +2,9 @@
 
 VivialConnect is a simple SMS/MSS API. It's designed specifically for developers seeking a simple, affordable and scalable messaging solution.
 
-Get your API key here: https://www.vivialconnect.net/register <br/>
-Be sure to read the API documentation: https://www.vivialconnect.net/docs
+Get your API key here: https://www.vivialconnect.net/register <br>
+Be sure to read the API documentation: https://www.vivialconnect.net/docs <br>
+Library documentation lives here: https://vivialconnect.github.io/vivialconnect-python/
 
 
 Requirements
@@ -102,4 +103,4 @@ list_available_numbers()
 Documentation
 -------------
 
-For up-to-date documentation visit: https://www.vivialconnect.net/docs/
+For up-to-date documentation visit: https://vivialconnect.github.io/vivialconnect-python/
