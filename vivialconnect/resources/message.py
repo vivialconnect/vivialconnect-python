@@ -109,7 +109,7 @@ class Message(Resource, Countable):
         return Util.remove_root(Attachment.request.get(url))
 
 
-class Attachment(Resource, Countable):
+class Attachment(Resource):
     """Use the :class:`Attachment` resource to list, count, and view
     information about media attachments for individual text messages in
     your account.
@@ -129,27 +129,4 @@ class Attachment(Resource, Countable):
     file_name      File name of the media attachment.
     =============  ===========
     """
-
-    def __init__(self, attributes=None, prefix_options=None, message_id=None):
-        self._entity_path = None
-        self._message_id = message_id
-        super(Attachment, self).__init__(attributes=attributes, prefix_options=prefix_options)
-
-    def save(self, **kwargs):
-        attributes = self._wrap_attributes(root=self._singular)
-        if self.id:
-            if not self._entity_path:
-                raise ResourceError('Attachment must be loaded from associated Message')
-
-            response = self.klass.request.put(self._entity_path, attributes)
-        else:
-            if not self._message_id:
-                raise ResourceError('message_id must be specified when creating Attachment')
-
-            collection_url = '/accounts/%d/messages/%d/attachments.json%s' % (int(Attachment.api_account_id),
-                                                                              self._message_id,
-                                                                              Attachment._query_string(kwargs))
-
-            response = self.klass.request.post(collection_url, attributes)
-        self._update(Util.remove_root(response))
-        return True
+    pass

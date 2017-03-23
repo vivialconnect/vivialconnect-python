@@ -13,9 +13,9 @@ class Configuration(Resource, Countable):
 
     Configuration properties
   
-  	======================== ===========
-	Field                    Description
-	======================== ===========
+    ======================== ===========
+    Field                    Description
+    ======================== ===========
     id                       Unique identifier of the configuration object.
     date_created             Creation date of the configuration in ISO 8601 UTC format.
     date_modified            Last modification date of the configuration in ISO 8601 UTC format.

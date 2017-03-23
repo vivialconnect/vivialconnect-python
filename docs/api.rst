@@ -25,6 +25,12 @@ Number
 .. automodule:: vivialconnect.resources.number
    :members:
 
+Logs
+^^^^
+
+.. automodule:: vivialconnect.resources.log
+   :members:
+
 Resource
 ^^^^^^^^
 
