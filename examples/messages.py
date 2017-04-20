@@ -7,7 +7,8 @@ def send_message(to_number=None, from_number=None,
     message.from_number = from_number
     message.to_number = to_number
     message.body = body
-    message.media_urls = media_urls
+    if media_urls is not None:
+        message.media_urls = media_urls
     message.send()
     return message
 
