@@ -36,7 +36,6 @@ class Message(Resource, Countable):
     error_message              Error code message for ``error_code`` as it is displayed to users.
     price                      Amount billed for the message, in the currency associated with the account.
     price_currency             Currency in which price is measured in ISO 4127 format. For US, the currency will be ``USD``.
-    message_status_callback    URL to receive message status callback requests for messages sent via the API using this associated phone number. *Max. length:* 256 characters.
     sms_configuration_id       Unique identifier of the message status callback configuration to be used to handle message status callbacks.
     ========================== ===========
 
