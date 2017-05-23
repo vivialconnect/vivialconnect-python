@@ -17,7 +17,8 @@
         VERSION:     '0.1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
@@ -25,8 +26,6 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="top" title="Vivial Connect 0.1.2 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
   
@@ -81,7 +80,6 @@
 <span class="sd">    error_message              Error code message for ``error_code`` as it is displayed to users.</span>
 <span class="sd">    price                      Amount billed for the message, in the currency associated with the account.</span>
 <span class="sd">    price_currency             Currency in which price is measured in ISO 4127 format. For US, the currency will be ``USD``.</span>
-<span class="sd">    message_status_callback    URL to receive message status callback requests for messages sent via the API using this associated phone number. *Max. length:* 256 characters.</span>
 <span class="sd">    sms_configuration_id       Unique identifier of the message status callback configuration to be used to handle message status callbacks.</span>
 <span class="sd">    ========================== ===========</span>
 
@@ -154,7 +152,7 @@
         <span class="k">return</span> <span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">Attachment</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">))</span></div></div>
 
 
-<div class="viewcode-block" id="Attachment"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.message.Attachment">[docs]</a><span class="k">class</span> <span class="nc">Attachment</span><span class="p">(</span><span class="n">Resource</span><span class="p">,</span> <span class="n">Countable</span><span class="p">):</span>
+<div class="viewcode-block" id="Attachment"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.message.Attachment">[docs]</a><span class="k">class</span> <span class="nc">Attachment</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Use the :class:`Attachment` resource to list, count, and view</span>
 <span class="sd">    information about media attachments for individual text messages in</span>
 <span class="sd">    your account.</span>
@@ -174,30 +172,7 @@
 <span class="sd">    file_name      File name of the media attachment.</span>
 <span class="sd">    =============  ===========</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">message_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_entity_path</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_message_id</span> <span class="o">=</span> <span class="n">message_id</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Attachment</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="n">prefix_options</span><span class="o">=</span><span class="n">prefix_options</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap_attributes</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_singular</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entity_path</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">ResourceError</span><span class="p">(</span><span class="s1">&#39;Attachment must be loaded from associated Message&#39;</span><span class="p">)</span>
-
-            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_entity_path</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message_id</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">ResourceError</span><span class="p">(</span><span class="s1">&#39;message_id must be specified when creating Attachment&#39;</span><span class="p">)</span>
-
-            <span class="n">collection_url</span> <span class="o">=</span> <span class="s1">&#39;/accounts/</span><span class="si">%d</span><span class="s1">/messages/</span><span class="si">%d</span><span class="s1">/attachments.json</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Attachment</span><span class="o">.</span><span class="n">api_account_id</span><span class="p">),</span>
-                                                                              <span class="bp">self</span><span class="o">.</span><span class="n">_message_id</span><span class="p">,</span>
-                                                                              <span class="n">Attachment</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span>
-
-            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">collection_url</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
-        <span class="k">return</span> <span class="kc">True</span></div>
+    <span class="k">pass</span></div>
 </pre></div>
 
           </div>
@@ -231,7 +206,7 @@
       &copy;2017, Vivial Connect.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
     </div>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>vivialconnect.resources.user &#8212; Vivial Connect 0.1.2 documentation</title>
+    <title>vivialconnect.resources.log &#8212; Vivial Connect 0.1.2 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -41,51 +41,40 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for vivialconnect.resources.user</h1><div class="highlight"><pre>
+  <h1>Source code for vivialconnect.resources.log</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">.. module:: user</span>
-<span class="sd">   :synopsis: User module.</span>
+<span class="sd">.. module:: configuration</span>
+<span class="sd">   :synopsis: Log module.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">vivialconnect.resources.resource</span> <span class="k">import</span> <span class="n">Resource</span>
-<span class="kn">from</span> <span class="nn">vivialconnect.resources.countable</span> <span class="k">import</span> <span class="n">Countable</span>
 
 
-<div class="viewcode-block" id="User"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.user.User">[docs]</a><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Resource</span><span class="p">,</span> <span class="n">Countable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Use the User resource to manage users and user passwords in the API.</span>
+<div class="viewcode-block" id="Log"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.log.Log">[docs]</a><span class="k">class</span> <span class="nc">Log</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Returns the list of logs in your account.</span>
 
-<span class="sd">    User properties</span>
+<span class="sd">    Required Query Parameters</span>
 
-<span class="sd">    ============= ======================</span>
-<span class="sd">    Field         Description</span>
-<span class="sd">    ============= ======================</span>
-<span class="sd">    id            Unique identifier of the user object.</span>
-<span class="sd">    date_created  Creation date (UTC) of the user in ISO 8601 format.</span>
-<span class="sd">    date_modified Last modification date (UTC) of the user in ISO 8601 format.</span>
-<span class="sd">    account_id    Unique identifier of the account that this user is part of.</span>
-<span class="sd">    username      User&#39;s username for logging in to the account. *Max. length:* 128 characters.</span>
-<span class="sd">    first_name    User&#39;s first name. *Max. length:* 128 characters.</span>
-<span class="sd">    last_name     User&#39;s last name. *Max. length:* 128 characters.</span>
-<span class="sd">    email         User&#39;s email address. *Max. length:* 128 characters.</span>
-<span class="sd">    ============= ======================</span>
+<span class="sd">    ======================== ===========</span>
+<span class="sd">    Field                    Description</span>
+<span class="sd">    ======================== ===========</span>
+<span class="sd">    start_time               Start date and time. Format used is ISO 8601 as YYYYMMDDThhmmssZ , ISO 8601 format without - and :</span>
+<span class="sd">    end_time                 End date and time. Format used is ISO 8601 as YYYYMMDDThhmmssZ , ISO 8601 format without - and :</span>
+<span class="sd">    ======================== ===========</span>
 
-<span class="sd">    Example request to retrieve a list of users accociated with the account id 12345::</span>
+<span class="sd">    Optional Query Parameters</span>
 
-<span class="sd">        from vivialconnect import Resource, User</span>
-
-<span class="sd">        Resource.api_key = &quot;&quot;</span>
-<span class="sd">        Resource.api_secret = &quot;&quot;</span>
-<span class="sd">        Resource.api_account_id = &quot;12345&quot;</span>
-
-<span class="sd">        def list_users():</span>
-<span class="sd">            users = User.find()</span>
-<span class="sd">            for user in users:</span>
-<span class="sd">                print(user.id, user.first_name, user.last_name)</span>
-
-<span class="sd">        list_users()</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span></div>
+<span class="sd">    ======================== ===========</span>
+<span class="sd">    Field                    Description</span>
+<span class="sd">    ======================== ===========</span>
+<span class="sd">    log_type                 The log type, as a string. log-types are typically of the form ITEM_TYPE.ACTION, where ITEM_TYPE is the type of item that was affected and ACTION is what happened to it. For example, message.queued.                                                   |</span>
+<span class="sd">    item_id                  Unique id of item that was affected.</span>
+<span class="sd">    operator_id              Unique id of operator that caused this log.</span>
+<span class="sd">    limit                    Used for pagination, number of log records to return.</span>
+<span class="sd">    start_key                Used for pagination, value of last_key from previous response.</span>
+<span class="sd">    ======================== ===========</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">pass</span></div>
 </pre></div>
 
           </div>

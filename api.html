@@ -17,7 +17,8 @@
         VERSION:     '0.1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -25,7 +26,6 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="Vivial Connect 0.1.2 documentation" href="index.html" />
     <link rel="prev" title="Welcome to Vivial Connect’s Python API documentation!" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -215,7 +215,7 @@ the <code class="docutils literal"><span class="pre">Resource.api_account_id</sp
 <span id="message-and-attachment"></span><h2>Message and Attachment<a class="headerlink" href="#module-vivialconnect.resources.message" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-message"></span><dl class="class">
 <dt id="vivialconnect.resources.message.Attachment">
-<em class="property">class </em><code class="descclassname">vivialconnect.resources.message.</code><code class="descname">Attachment</code><span class="sig-paren">(</span><em>attributes=None</em>, <em>prefix_options=None</em>, <em>message_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Attachment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Attachment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">vivialconnect.resources.message.</code><code class="descname">Attachment</code><span class="sig-paren">(</span><em>attributes=None</em>, <em>prefix_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Attachment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Attachment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use the <code class="xref py py-class docutils literal"><span class="pre">Attachment</span></code> resource to list, count, and view
 information about media attachments for individual text messages in
 your account.</p>
@@ -330,10 +330,7 @@ message entities.</p>
 <tr class="row-odd"><td>price_currency</td>
 <td>Currency in which price is measured in ISO 4127 format. For US, the currency will be <code class="docutils literal"><span class="pre">USD</span></code>.</td>
 </tr>
-<tr class="row-even"><td>message_status_callback</td>
-<td>URL to receive message status callback requests for messages sent via the API using this associated phone number. <em>Max. length:</em> 256 characters.</td>
-</tr>
-<tr class="row-odd"><td>sms_configuration_id</td>
+<tr class="row-even"><td>sms_configuration_id</td>
 <td>Unique identifier of the message status callback configuration to be used to handle message status callbacks.</td>
 </tr>
 </tbody>
@@ -632,6 +629,64 @@ in_region, area_code, in_postal_code.</li>
 <dd><p>Purchases a new local phone number.</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-vivialconnect.resources.log">
+<span id="logs"></span><h2>Logs<a class="headerlink" href="#module-vivialconnect.resources.log" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-configuration"></span><dl class="class">
+<dt id="vivialconnect.resources.log.Log">
+<em class="property">class </em><code class="descclassname">vivialconnect.resources.log.</code><code class="descname">Log</code><span class="sig-paren">(</span><em>attributes=None</em>, <em>prefix_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/log.html#Log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.log.Log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of logs in your account.</p>
+<p>Required Query Parameters</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>start_time</td>
+<td>Start date and time. Format used is ISO 8601 as YYYYMMDDThhmmssZ , ISO 8601 format without - and :</td>
+</tr>
+<tr class="row-odd"><td>end_time</td>
+<td>End date and time. Format used is ISO 8601 as YYYYMMDDThhmmssZ , ISO 8601 format without - and :</td>
+</tr>
+</tbody>
+</table>
+<p>Optional Query Parameters</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>log_type</td>
+<td>The log type, as a string. log-types are typically of the form ITEM_TYPE.ACTION, where ITEM_TYPE is the type of item that was affected and ACTION is what happened to it. For example, message.queued.                                                   |</td>
+</tr>
+<tr class="row-odd"><td>item_id</td>
+<td>Unique id of item that was affected.</td>
+</tr>
+<tr class="row-even"><td>operator_id</td>
+<td>Unique id of operator that caused this log.</td>
+</tr>
+<tr class="row-odd"><td>limit</td>
+<td>Used for pagination, number of log records to return.</td>
+</tr>
+<tr class="row-even"><td>start_key</td>
+<td>Used for pagination, value of last_key from previous response.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -1087,6 +1142,7 @@ For example POST if the resource is view only.</p>
 <li><a class="reference internal" href="#module-vivialconnect.resources.user">Users</a></li>
 <li><a class="reference internal" href="#module-vivialconnect.resources.message">Message and Attachment</a></li>
 <li><a class="reference internal" href="#module-vivialconnect.resources.number">Number</a></li>
+<li><a class="reference internal" href="#module-vivialconnect.resources.log">Logs</a></li>
 <li><a class="reference internal" href="#module-vivialconnect.resources.resource">Resource</a></li>
 <li><a class="reference internal" href="#utility">Utility</a></li>
 <li><a class="reference internal" href="#module-vivialconnect.common.error">Errors</a></li>
@@ -1104,7 +1160,7 @@ For example POST if the resource is view only.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/api.txt"
+      <li><a href="_sources/api.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -1126,11 +1182,11 @@ For example POST if the resource is view only.</p>
       &copy;2017, Vivial Connect.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
-      <a href="_sources/api.txt"
+      <a href="_sources/api.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
