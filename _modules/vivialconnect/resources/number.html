@@ -84,29 +84,29 @@
 
 <span class="sd">    Associated numbers properties</span>
 
-<span class="sd">    ======================= ===========</span>
-<span class="sd">    Field                   Description</span>
-<span class="sd">    ======================= ===========</span>
-<span class="sd">    id                      Unique identifier of the phone number object.</span>
-<span class="sd">    date_created            Creation date (UTC) of the phone number in ISO 8601 format.</span>
-<span class="sd">    date_modified           Last modification date (UTC) of the phone number in ISO 8601 format.</span>
-<span class="sd">    account_id              Unique identifier of the account or subaccount associated with the phone number.</span>
-<span class="sd">    master_account_id       For subaccounts, the account_id of the subaccount&#39;s parent (primary) account.</span>
-<span class="sd">    name                    Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.</span>
-<span class="sd">    phone_number            Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.</span>
-<span class="sd">    phone_number_type       Type of associated phone number. *Possible values:* local (non-toll-free) or tollfree.</span>
-<span class="sd">    message_status_callback URL to receive message status callback requests for messages sent via the API using this associated phone number. *Max. length:* 256 characters.</span>
-<span class="sd">    sms_configuration_id    Unique identifier of the message status callback configuration to be used to handle SMS messages sent to the associated number.</span>
-<span class="sd">    sms_url                 URL for receiving SMS messages to the associated phone number. *Max. length:* 256 characters.</span>
-<span class="sd">    sms_method              HTTP method used for the ``sms_url`` requests. *Max. length:* 8 characters. *Possible values:* ``GET`` or ``POST``. *Default value:* POST.</span>
-<span class="sd">    sms_fallback_url        URL for receiving SMS messages if ``sms_url`` fails. Only valid if you provide a value for the ``sms_url`` parameter. *Max. length:* 256 characters.</span>
-<span class="sd">    sms_fallback_method     HTTP method used for ``sms_url_fallback`` requests. *Max. length:* 8 characters. *Possible values:* ``GET`` or ``POST``. *Default value:* POST.</span>
-<span class="sd">    capabilities            Set of boolean flags indicating the capabilities supported by the associated phone number.     </span>
-<span class="sd">    city                    City where the available phone number is located.</span>
-<span class="sd">    region                  Two-letter US state abbreviation where the available phone number is located.</span>
-<span class="sd">    lata                    Local address and transport area (LATA) where the available phone number is located.</span>
-<span class="sd">    rate_center             LATA rate center where the available phone number is located. Usually the same as city.</span>
-<span class="sd">    ======================= ===========</span>
+<span class="sd">    =============================  ===========</span>
+<span class="sd">    Field                          Description</span>
+<span class="sd">    =============================  ===========</span>
+<span class="sd">    id                             Unique identifier of the phone number object.</span>
+<span class="sd">    date_created                   Creation date (UTC) of the phone number in ISO 8601 format.</span>
+<span class="sd">    date_modified                  Last modification date (UTC) of the phone number in ISO 8601 format.</span>
+<span class="sd">    account_id                     Unique identifier of the account or subaccount associated with the phone number.</span>
+<span class="sd">    master_account_id              For subaccounts, the account_id of the subaccount&#39;s parent (primary) account.</span>
+<span class="sd">    name                           Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.</span>
+<span class="sd">    phone_number                   Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.</span>
+<span class="sd">    phone_number_type              Type of associated phone number. *Possible values:* local (non-toll-free) or tollfree.</span>
+<span class="sd">    status_text_url                URL to receive status requests for messages sent via the API using this associated phone number. *Max. length:* 256 characters.</span>
+<span class="sd">    sms_configuration_id           Unique identifier of the message status callback configuration to be used to handle SMS messages sent to the associated number.</span>
+<span class="sd">    incoming_text_url              URL for receiving SMS messages to the associated phone number. *Max. length:* 256 characters.</span>
+<span class="sd">    incoming_text_method           HTTP method used for the ``incoming_text_url`` requests. *Max. length:* 8 characters. *Possible values:* ``GET`` or ``POST``. *Default value:* POST.</span>
+<span class="sd">    incoming_text_fallback_url     URL for receiving SMS messages if ``incoming_text_url`` fails. Only valid if you provide a value for the ``incoming_text_url`` parameter. *Max. length:* 256 characters.</span>
+<span class="sd">    incoming_text_fallback_method  HTTP method used for ``incoming_text_fallback_url`` requests. *Max. length:* 8 characters. *Possible values:* ``GET`` or ``POST``. *Default value:* POST.</span>
+<span class="sd">    capabilities                   Set of boolean flags indicating the capabilities supported by the associated phone number.     </span>
+<span class="sd">    city                           City where the available phone number is located.</span>
+<span class="sd">    region                         Two-letter US state abbreviation where the available phone number is located.</span>
+<span class="sd">    lata                           Local address and transport area (LATA) where the available phone number is located.</span>
+<span class="sd">    rate_center                    LATA rate center where the available phone number is located. Usually the same as city.</span>
+<span class="sd">    =============================  ===========</span>
 
 <span class="sd">    Example request to retrieve a list of associated numbers::</span>
 

@@ -458,8 +458,8 @@ you can tailor your search to target specific criteria, including:</p>
 <p>Associated numbers properties</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="13%" />
-<col width="87%" />
+<col width="15%" />
+<col width="85%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Field</th>
@@ -491,23 +491,23 @@ you can tailor your search to target specific criteria, including:</p>
 <tr class="row-odd"><td>phone_number_type</td>
 <td>Type of associated phone number. <em>Possible values:</em> local (non-toll-free) or tollfree.</td>
 </tr>
-<tr class="row-even"><td>message_status_callback</td>
-<td>URL to receive message status callback requests for messages sent via the API using this associated phone number. <em>Max. length:</em> 256 characters.</td>
+<tr class="row-even"><td>status_text_url</td>
+<td>URL to receive status requests for messages sent via the API using this associated phone number. <em>Max. length:</em> 256 characters.</td>
 </tr>
 <tr class="row-odd"><td>sms_configuration_id</td>
 <td>Unique identifier of the message status callback configuration to be used to handle SMS messages sent to the associated number.</td>
 </tr>
-<tr class="row-even"><td>sms_url</td>
+<tr class="row-even"><td>incoming_text_url</td>
 <td>URL for receiving SMS messages to the associated phone number. <em>Max. length:</em> 256 characters.</td>
 </tr>
-<tr class="row-odd"><td>sms_method</td>
-<td>HTTP method used for the <code class="docutils literal"><span class="pre">sms_url</span></code> requests. <em>Max. length:</em> 8 characters. <em>Possible values:</em> <code class="docutils literal"><span class="pre">GET</span></code> or <code class="docutils literal"><span class="pre">POST</span></code>. <em>Default value:</em> POST.</td>
+<tr class="row-odd"><td>incoming_text_method</td>
+<td>HTTP method used for the <code class="docutils literal"><span class="pre">incoming_text_url</span></code> requests. <em>Max. length:</em> 8 characters. <em>Possible values:</em> <code class="docutils literal"><span class="pre">GET</span></code> or <code class="docutils literal"><span class="pre">POST</span></code>. <em>Default value:</em> POST.</td>
 </tr>
-<tr class="row-even"><td>sms_fallback_url</td>
-<td>URL for receiving SMS messages if <code class="docutils literal"><span class="pre">sms_url</span></code> fails. Only valid if you provide a value for the <code class="docutils literal"><span class="pre">sms_url</span></code> parameter. <em>Max. length:</em> 256 characters.</td>
+<tr class="row-even"><td>incoming_text_fallback_url</td>
+<td>URL for receiving SMS messages if <code class="docutils literal"><span class="pre">incoming_text_url</span></code> fails. Only valid if you provide a value for the <code class="docutils literal"><span class="pre">incoming_text_url</span></code> parameter. <em>Max. length:</em> 256 characters.</td>
 </tr>
-<tr class="row-odd"><td>sms_fallback_method</td>
-<td>HTTP method used for <code class="docutils literal"><span class="pre">sms_url_fallback</span></code> requests. <em>Max. length:</em> 8 characters. <em>Possible values:</em> <code class="docutils literal"><span class="pre">GET</span></code> or <code class="docutils literal"><span class="pre">POST</span></code>. <em>Default value:</em> POST.</td>
+<tr class="row-odd"><td>incoming_text_fallback_method</td>
+<td>HTTP method used for <code class="docutils literal"><span class="pre">incoming_text_fallback_url</span></code> requests. <em>Max. length:</em> 8 characters. <em>Possible values:</em> <code class="docutils literal"><span class="pre">GET</span></code> or <code class="docutils literal"><span class="pre">POST</span></code>. <em>Default value:</em> POST.</td>
 </tr>
 <tr class="row-even"><td>capabilities</td>
 <td>Set of boolean flags indicating the capabilities supported by the associated phone number.</td>
