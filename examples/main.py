@@ -9,8 +9,6 @@ from vivialconnect import Resource
 from messages import send_message, get_message, list_messages
 from accounts import billing_status, list_subaccounts, update_account, \
     get_account, create_subaccount
-from configurations import list_configurations, create_configuration, \
-    get_configuration, delete_configuration
 from numbers import list_associated_numbers, list_available_numbers, \
     buy_number, update_number_name
 from users import list_users, get_user, update_user
@@ -79,29 +77,6 @@ def main():
     messages_parser.add_argument('--to-number', '-t', required=False,
                                  type=str, action='store',
                                  help='To phone number (+12128765432)')
-
-    # Config command
-    config_parser = subparsers.add_parser('config', help='Runs configuration examples')
-    config_parser.add_argument('--list', '-l', default=False, action='store_true',
-                               help='Lists configuration resources')
-    config_parser.add_argument('--get', '-g', default=False, action='store_true',
-                               help='get configuration resource')
-    config_parser.add_argument('--create', '-c', default=False, action='store_true',
-                               help='Creates configuration resource')
-    config_parser.add_argument('--delete', '-d', default=False, action='store_true',
-                               help='Delete configuration resource')
-    config_parser.add_argument('--id', '-i', required=False,
-                               type=str, action='store',
-                               help='Resource id')
-    config_parser.add_argument('--phone-number', '-p', required=False,
-                               type=str, action='store',
-                               help='Phone number (+12124567890)')
-    config_parser.add_argument('--sms-url', '-u', required=False,
-                               type=str, action='store',
-                               help='SMS callback url')
-    config_parser.add_argument('--name', '-n', required=False,
-                               type=str, action='store',
-                               help='Configuration name')
 
     # Number command
     number_parser = subparsers.add_parser('number', help='Runs number examples')
@@ -186,24 +161,6 @@ def main():
         if args.update:
             account = update_account(args.id, company_name=args.company_name)
             print(account.id, account.company_name)
-    elif args.command == 'config':
-        if args.list:
-            for config in list_configurations():
-                print(config.id, config.name, config.sms_url,
-                      config.message_status_callback)
-        if args.get:
-            config = get_configuration(args.id)
-            print(config.id, config.name, config.sms_url,
-                  config.message_status_callback)
-        if args.delete:
-            delete_configuration(args.id)
-            print('Deleted configuration id', args.id)
-        if args.create:
-            config = create_configuration(name=args.name,
-                                          phone_number=args.phone_number,
-                                          phone_number_type='local',
-                                          sms_url=args.sms_url)
-            print(config.id, config.name, config.sms_url)
 
 if __name__ == "__main__":
     main()
