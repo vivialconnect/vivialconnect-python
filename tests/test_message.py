@@ -54,7 +54,7 @@ class MessageTest(BaseTestCase):
         with HTTMock(self.response_content,
                      body=self.load_fixture('message/attachment'),
                      headers={'Content-type': 'application/json'}):
-            attachment = vivialconnect.Attachment(message_id=6242737)
+            attachment = vivialconnect.Attachment(6242737)
             attachment.size = 1024
             attachment.content_type = 'image/gif'
             attachment.file_name = 'what.gif'
