@@ -7,11 +7,13 @@ import argparse
 from vivialconnect import Resource
 
 from messages import send_message, get_message, list_messages
-from accounts import billing_status, list_subaccounts, update_account, \
-    get_account, create_subaccount
-from numbers import list_associated_numbers, list_available_numbers, \
+
+from accounts import billing_status, update_account, get_account
+
+from numbers import list_associated_numbers, list_available_numbers,
     buy_number, update_number_name
-from users import list_users, get_user, update_user
+
+  from users import list_users, get_user, update_user
 
 home = os.path.dirname(os.path.abspath(__file__))
 
@@ -27,14 +29,10 @@ def main():
 
     # Accounts command
     account_parser = subparsers.add_parser('account', help='Runs account examples')
-    account_parser.add_argument('--list', '-l', default=False, action='store_true',
-                                help='Lists sub-accounts associated with the main account')
     account_parser.add_argument('--get', '-g', default=False, action='store_true',
                                 help='Get account resource')
-    account_parser.add_argument('--create', '-c', default=False, action='store_true',
-                                help='Create sub-account resource')
     account_parser.add_argument('--update', '-u', default=False, action='store_true',
-                                help='Upate account or sub-account resource')
+                                help='Upate account resource')
     account_parser.add_argument('--billing-status', '-s', default=False, action='store_true',
                                 help='Get account billing status')
     account_parser.add_argument('--id', '-i', required=False,
@@ -149,14 +147,8 @@ def main():
         if args.billing_status:
             status = billing_status()
             print(status)
-        if args.list:
-            for account in list_subaccounts():
-                print(account.id, account.company_name)
         if args.get:
             account = get_account(args.id)
-            print(account.id, account.company_name)
-        if args.create:
-            account = create_subaccount(company_name=args.company_name)
             print(account.id, account.company_name)
         if args.update:
             account = update_account(args.id, company_name=args.company_name)

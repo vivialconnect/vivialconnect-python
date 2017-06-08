@@ -46,8 +46,7 @@ class Number(Resource, Countable):
     id                             Unique identifier of the phone number object.
     date_created                   Creation date (UTC) of the phone number in ISO 8601 format.
     date_modified                  Last modification date (UTC) of the phone number in ISO 8601 format.
-    account_id                     Unique identifier of the account or subaccount associated with the phone number.
-    master_account_id              For subaccounts, the account_id of the subaccount's parent (primary) account.
+    account_id                     Unique identifier of the account with the phone number.
     name                           Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.
     phone_number                   Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.
     phone_number_type              Type of associated phone number. *Possible values:* local (non-toll-free) or tollfree.

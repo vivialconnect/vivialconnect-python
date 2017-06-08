@@ -11,7 +11,7 @@ from vivialconnect.common.util import Util
 
 
 class Account(Resource, Countable):
-    """The Account resource is used for managing accounts and sub-accounts in the API.
+    """The Account resource is used for managing accounts in the API.
 
     Account properties
 
@@ -22,7 +22,7 @@ class Account(Resource, Countable):
     date_created   Creation date (UTC) of the account in ISO 8601 format.
     date_modified  Last modification date (UTC) of the account in ISO 8601 format.
     account_id     Unique identifier of the parent account. (Null if the account is primary.)
-    company_name   Primary account or subaccount name as it is displayed to users (for example, the name of your company, or for a subaccount, the name of a subclient your company represents).
+    company_name   Primary account name as it is displayed to users (for example, the name of your company).
     =============  ===========
 
     Example request to retrieve a billing status for account id 12345::
@@ -38,21 +38,6 @@ class Account(Resource, Countable):
             print(status)
 
         billing_status(12345)
-
-    Example request to retrieve a list of sub-accounts for the main account::
-
-        from vivialconnect import Resource, Account
-
-        Resource.api_key = ""
-        Resource.api_secret = ""
-        Resource.api_account_id = "12345"
-
-        def list_subaccounts():
-            subaccounts = Account.subaccounts()
-            for subaccount in subaccounts:
-                print(subaccount.id)
-
-        list_subaccounts()
     """
     
     API_ACCOUNT_PREFIX = ""
@@ -73,26 +58,3 @@ class Account(Resource, Countable):
             account_id = Resource.api_account_id
         return cls.request.get('/accounts/%s/status.json' % (account_id))
 
-    @classmethod
-    def subaccounts(cls, opts=None, **kwargs):
-        """Returns the list of all sub-accounts in the account specified in
-        the ``Resource.api_account_id`` parameter.
-
-        :param opts: Additional query params.
-        :type opts: ``dict``.
-        :param \**kwargs: Additional arguments.
-
-        :returns: ``list`` -- retrieves a list of sub-accounts for the main account.
-        """
-        resources = []
-        if opts is None:
-            opts = kwargs
-        attributes = cls.request.get(
-            '/accounts/%s/subaccounts.json' % Resource.api_account_id, opts)
-        account = Util.remove_root(attributes)
-        elements = account['accounts'] if 'accounts' in account else []
-        if isinstance(elements, dict):
-            elements = [elements]
-        for element in elements:
-            resources.append(cls(Util.remove_root(element)))
-        return resources
