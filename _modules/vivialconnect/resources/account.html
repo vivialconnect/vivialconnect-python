@@ -55,7 +55,7 @@
 
 
 <div class="viewcode-block" id="Account"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.account.Account">[docs]</a><span class="k">class</span> <span class="nc">Account</span><span class="p">(</span><span class="n">Resource</span><span class="p">,</span> <span class="n">Countable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The Account resource is used for managing accounts and sub-accounts in the API.</span>
+    <span class="sd">&quot;&quot;&quot;The Account resource is used for managing accounts in the API.</span>
 
 <span class="sd">    Account properties</span>
 
@@ -66,7 +66,7 @@
 <span class="sd">    date_created   Creation date (UTC) of the account in ISO 8601 format.</span>
 <span class="sd">    date_modified  Last modification date (UTC) of the account in ISO 8601 format.</span>
 <span class="sd">    account_id     Unique identifier of the parent account. (Null if the account is primary.)</span>
-<span class="sd">    company_name   Primary account or subaccount name as it is displayed to users (for example, the name of your company, or for a subaccount, the name of a subclient your company represents).</span>
+<span class="sd">    company_name   Primary account name as it is displayed to users (for example, the name of your company).</span>
 <span class="sd">    =============  ===========</span>
 
 <span class="sd">    Example request to retrieve a billing status for account id 12345::</span>
@@ -82,27 +82,12 @@
 <span class="sd">            print(status)</span>
 
 <span class="sd">        billing_status(12345)</span>
-
-<span class="sd">    Example request to retrieve a list of sub-accounts for the main account::</span>
-
-<span class="sd">        from vivialconnect import Resource, Account</span>
-
-<span class="sd">        Resource.api_key = &quot;&quot;</span>
-<span class="sd">        Resource.api_secret = &quot;&quot;</span>
-<span class="sd">        Resource.api_account_id = &quot;12345&quot;</span>
-
-<span class="sd">        def list_subaccounts():</span>
-<span class="sd">            subaccounts = Account.subaccounts()</span>
-<span class="sd">            for subaccount in subaccounts:</span>
-<span class="sd">                print(subaccount.id)</span>
-
-<span class="sd">        list_subaccounts()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">API_ACCOUNT_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Account.billing_status"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.account.Account.billing_status">[docs]</a>    <span class="k">def</span> <span class="nf">billing_status</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">account_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Account.billing_status"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.account.Account.billing_status">[docs]</a>    <span class="k">def</span> <span class="nf">billing_status</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">account_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get current account status for free trial.</span>
 
 <span class="sd">        :param account_id: An account id.</span>
@@ -115,31 +100,8 @@
                 <span class="n">account_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">account_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">account_id</span> <span class="o">=</span> <span class="n">Resource</span><span class="o">.</span><span class="n">api_account_id</span>
-        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/accounts/</span><span class="si">%s</span><span class="s1">/status.json&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">account_id</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/accounts/</span><span class="si">%s</span><span class="s1">/status.json&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">account_id</span><span class="p">))</span></div></div>
 
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Account.subaccounts"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.account.Account.subaccounts">[docs]</a>    <span class="k">def</span> <span class="nf">subaccounts</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the list of all sub-accounts in the account specified in</span>
-<span class="sd">        the ``Resource.api_account_id`` parameter.</span>
-
-<span class="sd">        :param opts: Additional query params.</span>
-<span class="sd">        :type opts: ``dict``.</span>
-<span class="sd">        :param \**kwargs: Additional arguments.</span>
-
-<span class="sd">        :returns: ``list`` -- retrieves a list of sub-accounts for the main account.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">resources</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">opts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">opts</span> <span class="o">=</span> <span class="n">kwargs</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="s1">&#39;/accounts/</span><span class="si">%s</span><span class="s1">/subaccounts.json&#39;</span> <span class="o">%</span> <span class="n">Resource</span><span class="o">.</span><span class="n">api_account_id</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span>
-        <span class="n">account</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
-        <span class="n">elements</span> <span class="o">=</span> <span class="n">account</span><span class="p">[</span><span class="s1">&#39;accounts&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;accounts&#39;</span> <span class="ow">in</span> <span class="n">account</span> <span class="k">else</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">elements</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
-            <span class="n">resources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls</span><span class="p">(</span><span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">element</span><span class="p">)))</span>
-        <span class="k">return</span> <span class="n">resources</span></div></div>
 </pre></div>
 
           </div>
@@ -173,8 +135,8 @@
       &copy;2017, Vivial Connect.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>
 

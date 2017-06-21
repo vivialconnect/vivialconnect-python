@@ -90,8 +90,7 @@
 <span class="sd">    id                             Unique identifier of the phone number object.</span>
 <span class="sd">    date_created                   Creation date (UTC) of the phone number in ISO 8601 format.</span>
 <span class="sd">    date_modified                  Last modification date (UTC) of the phone number in ISO 8601 format.</span>
-<span class="sd">    account_id                     Unique identifier of the account or subaccount associated with the phone number.</span>
-<span class="sd">    master_account_id              For subaccounts, the account_id of the subaccount&#39;s parent (primary) account.</span>
+<span class="sd">    account_id                     Unique identifier of the account with the phone number.</span>
 <span class="sd">    name                           Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.</span>
 <span class="sd">    phone_number                   Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.</span>
 <span class="sd">    phone_number_type              Type of associated phone number. *Possible values:* local (non-toll-free) or tollfree.</span>
@@ -180,7 +179,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Number.available"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.number.Number.available">[docs]</a>    <span class="k">def</span> <span class="nf">available</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Number.available"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.number.Number.available">[docs]</a>    <span class="k">def</span> <span class="nf">available</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Lists available phone numbers.</span>
 
 <span class="sd">        :param opts: Additional query params.</span>
@@ -203,9 +202,9 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">opts</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
                     <span class="n">qs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span>
             <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/available/</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">country_code</span><span class="p">,</span> <span class="n">number_type</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_build_list</span><span class="p">(</span><span class="n">Number</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">qs</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_build_list</span><span class="p">(</span><span class="n">Number</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">qs</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Number.buy"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.number.Number.buy">[docs]</a>    <span class="k">def</span> <span class="nf">buy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Purchases a new phone number.</span>
@@ -252,8 +251,8 @@
       &copy;2017, Vivial Connect.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>
 

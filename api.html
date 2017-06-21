@@ -49,12 +49,12 @@
 <span class="target" id="module-account"></span><dl class="class">
 <dt id="vivialconnect.resources.account.Account">
 <em class="property">class </em><code class="descclassname">vivialconnect.resources.account.</code><code class="descname">Account</code><span class="sig-paren">(</span><em>attributes=None</em>, <em>prefix_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/account.html#Account"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.account.Account" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Account resource is used for managing accounts and sub-accounts in the API.</p>
+<dd><p>The Account resource is used for managing accounts in the API.</p>
 <p>Account properties</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="7%" />
-<col width="93%" />
+<col width="13%" />
+<col width="87%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Field</th>
@@ -75,7 +75,7 @@
 <td>Unique identifier of the parent account. (Null if the account is primary.)</td>
 </tr>
 <tr class="row-even"><td>company_name</td>
-<td>Primary account or subaccount name as it is displayed to users (for example, the name of your company, or for a subaccount, the name of a subclient your company represents).</td>
+<td>Primary account name as it is displayed to users (for example, the name of your company).</td>
 </tr>
 </tbody>
 </table>
@@ -93,21 +93,6 @@
 <span class="n">billing_status</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Example request to retrieve a list of sub-accounts for the main account:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Account</span>
-
-<span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="n">Resource</span><span class="o">.</span><span class="n">api_account_id</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
-
-<span class="k">def</span> <span class="nf">list_subaccounts</span><span class="p">():</span>
-    <span class="n">subaccounts</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">subaccounts</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">subaccount</span> <span class="ow">in</span> <span class="n">subaccounts</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">subaccount</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-
-<span class="n">list_subaccounts</span><span class="p">()</span>
-</pre></div>
-</div>
 <dl class="classmethod">
 <dt id="vivialconnect.resources.account.Account.billing_status">
 <em class="property">classmethod </em><code class="descname">billing_status</code><span class="sig-paren">(</span><em>account_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/account.html#Account.billing_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.account.Account.billing_status" title="Permalink to this definition">¶</a></dt>
@@ -119,28 +104,6 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>account_id</strong> (<code class="docutils literal"><span class="pre">int</span></code>.) &#8211; An account id.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A free trial status.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="vivialconnect.resources.account.Account.subaccounts">
-<em class="property">classmethod </em><code class="descname">subaccounts</code><span class="sig-paren">(</span><em>opts=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/account.html#Account.subaccounts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.account.Account.subaccounts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the list of all sub-accounts in the account specified in
-the <code class="docutils literal"><span class="pre">Resource.api_account_id</span></code> parameter.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>opts</strong> (<code class="docutils literal"><span class="pre">dict</span></code>.) &#8211; Additional query params.</li>
-<li><strong>**kwargs</strong> &#8211; Additional arguments.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="docutils literal"><span class="pre">list</span></code> &#8211; retrieves a list of sub-accounts for the main account.</p>
-</td>
 </tr>
 </tbody>
 </table>
@@ -286,51 +249,48 @@ message entities.</p>
 <td>Last modification date (UTC) of the text message in ISO 8601 format.</td>
 </tr>
 <tr class="row-odd"><td>account_id</td>
-<td>Unique identifier of the account or subaccount associated with the text message.</td>
+<td>Unique identifier of the account with the text message.</td>
 </tr>
-<tr class="row-even"><td>master_account_id</td>
-<td>For subaccounts, the <code class="docutils literal"><span class="pre">account_id</span></code> of the subaccount&#8217;s parent (primary) account.</td>
-</tr>
-<tr class="row-odd"><td>message_type</td>
+<tr class="row-even"><td>message_type</td>
 <td>String identifying the type of inbound or outbound text message. <em>Possible values:</em> <code class="docutils literal"><span class="pre">local_sms</span></code>, <code class="docutils literal"><span class="pre">tollfree_sms</span></code>, or <code class="docutils literal"><span class="pre">local_mms</span></code>.</td>
 </tr>
-<tr class="row-even"><td>direction</td>
+<tr class="row-odd"><td>direction</td>
 <td>Inbound/outbound direction of the text message, and if outbound, the nature of the text message initiation.</td>
 </tr>
-<tr class="row-odd"><td>to_number</td>
+<tr class="row-even"><td>to_number</td>
 <td>Phone number that received the text message. Uses E.164 format (+country code +phone number). For US, the format will be <code class="docutils literal"><span class="pre">+1xxxyyyzzzz</span></code>.</td>
 </tr>
-<tr class="row-even"><td>from_number</td>
+<tr class="row-odd"><td>from_number</td>
 <td>For inbound messages, the external phone number that sent the text message. For outbound messages, the associated phone number in your account that sent the text message.</td>
 </tr>
-<tr class="row-odd"><td>sent</td>
+<tr class="row-even"><td>sent</td>
 <td>For inbound messages, the UTC timestamp the text message was received. For outbound messages, the UTC timestamp the text message was sent.</td>
 </tr>
-<tr class="row-even"><td>body</td>
+<tr class="row-odd"><td>body</td>
 <td>Text body of the text message. <em>Max. length:</em> 1,600 characters.</td>
 </tr>
-<tr class="row-odd"><td>num_media</td>
+<tr class="row-even"><td>num_media</td>
 <td>Number of media attachments for the text message.</td>
 </tr>
-<tr class="row-even"><td>num_segments</td>
+<tr class="row-odd"><td>num_segments</td>
 <td>Number of segments that make up the message. <em>Note:</em> Does not affect pricing.</td>
 </tr>
-<tr class="row-odd"><td>status</td>
+<tr class="row-even"><td>status</td>
 <td>Status of the message (for example, <code class="docutils literal"><span class="pre">sent</span></code>).</td>
 </tr>
-<tr class="row-even"><td>error_code</td>
+<tr class="row-odd"><td>error_code</td>
 <td>Error code, if any, for the message. <em>Default value:</em> null (message was delivered successfully).</td>
 </tr>
-<tr class="row-odd"><td>error_message</td>
+<tr class="row-even"><td>error_message</td>
 <td>Error code message for <code class="docutils literal"><span class="pre">error_code</span></code> as it is displayed to users.</td>
 </tr>
-<tr class="row-even"><td>price</td>
+<tr class="row-odd"><td>price</td>
 <td>Amount billed for the message, in the currency associated with the account.</td>
 </tr>
-<tr class="row-odd"><td>price_currency</td>
+<tr class="row-even"><td>price_currency</td>
 <td>Currency in which price is measured in ISO 4127 format. For US, the currency will be <code class="docutils literal"><span class="pre">USD</span></code>.</td>
 </tr>
-<tr class="row-even"><td>sms_configuration_id</td>
+<tr class="row-odd"><td>sms_configuration_id</td>
 <td>Unique identifier of the message status callback configuration to be used to handle message status callbacks.</td>
 </tr>
 </tbody>
@@ -477,51 +437,48 @@ you can tailor your search to target specific criteria, including:</p>
 <td>Last modification date (UTC) of the phone number in ISO 8601 format.</td>
 </tr>
 <tr class="row-odd"><td>account_id</td>
-<td>Unique identifier of the account or subaccount associated with the phone number.</td>
+<td>Unique identifier of the account with the phone number.</td>
 </tr>
-<tr class="row-even"><td>master_account_id</td>
-<td>For subaccounts, the account_id of the subaccount&#8217;s parent (primary) account.</td>
-</tr>
-<tr class="row-odd"><td>name</td>
+<tr class="row-even"><td>name</td>
 <td>Associated phone number as it is displayed to users. <em>Default format:</em> Friendly national format: (xxx) yyy-zzzz.</td>
 </tr>
-<tr class="row-even"><td>phone_number</td>
+<tr class="row-odd"><td>phone_number</td>
 <td>Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be <code class="docutils literal"><span class="pre">+1xxxyyyzzzz</span></code>.</td>
 </tr>
-<tr class="row-odd"><td>phone_number_type</td>
+<tr class="row-even"><td>phone_number_type</td>
 <td>Type of associated phone number. <em>Possible values:</em> local (non-toll-free) or tollfree.</td>
 </tr>
-<tr class="row-even"><td>status_text_url</td>
+<tr class="row-odd"><td>status_text_url</td>
 <td>URL to receive status requests for messages sent via the API using this associated phone number. <em>Max. length:</em> 256 characters.</td>
 </tr>
-<tr class="row-odd"><td>sms_configuration_id</td>
+<tr class="row-even"><td>sms_configuration_id</td>
 <td>Unique identifier of the message status callback configuration to be used to handle SMS messages sent to the associated number.</td>
 </tr>
-<tr class="row-even"><td>incoming_text_url</td>
+<tr class="row-odd"><td>incoming_text_url</td>
 <td>URL for receiving SMS messages to the associated phone number. <em>Max. length:</em> 256 characters.</td>
 </tr>
-<tr class="row-odd"><td>incoming_text_method</td>
+<tr class="row-even"><td>incoming_text_method</td>
 <td>HTTP method used for the <code class="docutils literal"><span class="pre">incoming_text_url</span></code> requests. <em>Max. length:</em> 8 characters. <em>Possible values:</em> <code class="docutils literal"><span class="pre">GET</span></code> or <code class="docutils literal"><span class="pre">POST</span></code>. <em>Default value:</em> POST.</td>
 </tr>
-<tr class="row-even"><td>incoming_text_fallback_url</td>
+<tr class="row-odd"><td>incoming_text_fallback_url</td>
 <td>URL for receiving SMS messages if <code class="docutils literal"><span class="pre">incoming_text_url</span></code> fails. Only valid if you provide a value for the <code class="docutils literal"><span class="pre">incoming_text_url</span></code> parameter. <em>Max. length:</em> 256 characters.</td>
 </tr>
-<tr class="row-odd"><td>incoming_text_fallback_method</td>
+<tr class="row-even"><td>incoming_text_fallback_method</td>
 <td>HTTP method used for <code class="docutils literal"><span class="pre">incoming_text_fallback_url</span></code> requests. <em>Max. length:</em> 8 characters. <em>Possible values:</em> <code class="docutils literal"><span class="pre">GET</span></code> or <code class="docutils literal"><span class="pre">POST</span></code>. <em>Default value:</em> POST.</td>
 </tr>
-<tr class="row-even"><td>capabilities</td>
+<tr class="row-odd"><td>capabilities</td>
 <td>Set of boolean flags indicating the capabilities supported by the associated phone number.</td>
 </tr>
-<tr class="row-odd"><td>city</td>
+<tr class="row-even"><td>city</td>
 <td>City where the available phone number is located.</td>
 </tr>
-<tr class="row-even"><td>region</td>
+<tr class="row-odd"><td>region</td>
 <td>Two-letter US state abbreviation where the available phone number is located.</td>
 </tr>
-<tr class="row-odd"><td>lata</td>
+<tr class="row-even"><td>lata</td>
 <td>Local address and transport area (LATA) where the available phone number is located.</td>
 </tr>
-<tr class="row-even"><td>rate_center</td>
+<tr class="row-odd"><td>rate_center</td>
 <td>LATA rate center where the available phone number is located. Usually the same as city.</td>
 </tr>
 </tbody>
@@ -1182,8 +1139,8 @@ For example POST if the resource is view only.</p>
       &copy;2017, Vivial Connect.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="_sources/api.rst.txt"
