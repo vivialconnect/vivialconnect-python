@@ -68,17 +68,25 @@ class ClientError(ConnectionError):
 
 # 409 Conflict
 class ResourceConflict(ClientError):
-    """404 Resource Invalid
+    """409 Resource Conflict
 
-    Raised if a resource is invalid.
+    Raised if there is resource conflict.
     """
     pass
 
 # 422 Resource Invalid
 class ResourceInvalid(ClientError):
-    """404 Resource Invalid
+    """422 Resource Invalid
 
     Raised if a resource is invalid.
+    """
+    pass
+
+# 429 Rate Limit
+class RateLimit(ClientError):
+    """429 Rate Limit
+
+    Raised if rate limit reached.
     """
     pass
 
