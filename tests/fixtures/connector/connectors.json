@@ -1,0 +1,28 @@
+{
+    "connectors": [
+        {"account_id": 1,
+         "active": true,
+         "callbacks": [],
+         "date_created": "2017-08-09T15:22:18+00:00",
+         "date_modified": "2017-08-09T15:22:18+00:00",
+         "id": 424242,
+         "more_numbers": false,
+         "name": "TestConnector",
+         "phone_numbers": [
+             {"phone_number": "+09876543219", "phone_number_id": 2},
+             {"phone_number": "+12376545619", "phone_number_id": 3}
+         ]},
+        {"account_id": 1,
+         "active": true,
+         "callbacks": [],
+         "date_created": "2017-08-10T17:29:10+00:00",
+         "date_modified": "2017-08-10T17:29:10+00:00",
+         "id": 424243,
+         "more_numbers": false,
+         "name": "TestConnector1",
+         "phone_numbers": [
+             {"phone_number": "+12345678901", "phone_number_id": 1},
+             {"phone_number": "+12346788901", "phone_number_id": 4}
+         ]}
+    ]
+}

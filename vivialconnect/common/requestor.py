@@ -23,7 +23,7 @@ except ImportError:
 
 from vivialconnect.version import VERSION
 from vivialconnect.common.error import RequestorError, Redirection, \
-    BadRequest, UnauthorizedAccess, ForbiddenAccess, ResourceNotFound, \
+    RateLimit, BadRequest, UnauthorizedAccess, ForbiddenAccess, ResourceNotFound, \
     MethodNotAllowed, ResourceConflict, ResourceInvalid, ClientError, ServerError
 from vivialconnect.common.util import Util
 
@@ -358,6 +358,8 @@ class Requestor(object):
             raise ResourceConflict(message, http_status, http_body)
         elif http_status == 422:
             raise ResourceInvalid(message, http_status, http_body)
+        elif http_status == 429:
+            raise RateLimit(message, http_status, http_body)
         elif 401 <= http_status < 500:
             raise ClientError(message, http_status, http_body)
         elif 500 <= http_status < 600:

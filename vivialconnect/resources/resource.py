@@ -6,11 +6,50 @@
 
 import sys
 
-import six
+from collections import MutableSequence, MutableMapping
+from itertools import chain
 
 from vivialconnect.common.requestor import Requestor
 from vivialconnect.common.error import ResourceError
 from vivialconnect.common.util import Util
+import six
+
+
+class BaseField(object):
+    pass
+
+
+class ResourceAttributeStorage(MutableMapping):
+    def __init__(self, parent, attributes=None, backing_type=dict):
+        if not isinstance(parent, Resource):
+            raise ValueError('Parent should be a Resource instance')
+        self.parent_resource = parent
+        self._items = backing_type()
+        self._fields = parent.declared_fields
+        if isinstance(attributes, dict):
+            self.update(attributes)
+
+    def __getitem__(self, key):
+        if key in self._fields:
+            return getattr(self.parent_resource, key)
+        return self._items[key]
+
+    def __iter__(self):
+        return chain(self._items, self._fields)
+
+    def __len__(self):
+        return len(self._items) + len(self._fields)
+
+    def __delitem__(self, key):
+        if key in self._fields:
+            delattr(self.parent_resource, key)
+        del self._items[key]
+
+    def __setitem__(self, key, value):
+        if key in self._fields:
+            setattr(self.parent_resource, key, value)
+        else:
+            self._items[key] = value
 
 
 class ResourceMeta(type):
@@ -25,6 +64,10 @@ class ResourceMeta(type):
         if '_plural' not in new_attrs or not new_attrs['_plural']:
             new_attrs['_plural'] = Util.pluralize(new_attrs['_singular'])
         klass = type.__new__(mcs, name, bases, new_attrs)
+        klass._fields = {}
+        for attr, val in new_attrs.items():
+            if isinstance(val, BaseField):
+                klass._fields[attr] = val
         return klass
 
     def get_plural(cls):
@@ -153,8 +196,7 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
         else:
             self._prefix_options = []
         self.klass = self.__class__
-        self.attributes = {}
-        self._update(attributes)
+        self.attributes = ResourceAttributeStorage(self, attributes)
         self._initialized = True
 
     # Public class methods which act as factory functions
@@ -291,6 +333,7 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
         if not isinstance(attributes, dict):
             return
         for key, value in six.iteritems(attributes):
+            desc = self.declared_fields.get(key)
             if isinstance(value, dict):
                 klass = self._find_class_for(key)
                 attr = klass(value)
@@ -300,10 +343,20 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
                 for child in value:
                     if isinstance(child, dict):
                         if klass is None:
-                            klass = self._find_class_for_collection(key)
-                        attr.append(klass(child))
+                            # Figure out the class based on the descriptor, if any
+                            if desc:
+                                klass = desc.member_type
+                            else:
+                                # Guess the subclass
+                                klass = self._find_class_for_collection(key)
+                        if issubclass(klass, SubordinateResource):
+                            attr.append(klass(child, parent_resource=self))
+                        else:
+                            attr.append(klass(child))
                     else:
                         attr.append(child)
+                if klass and issubclass(klass, SubordinateResource):
+                    setattr(self, key, attr)
             else:
                 attr = value
             # Store the actual value in the attributes dictionary
@@ -350,10 +403,14 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
         if create_missing:
             return type(str(class_name), (cls,), {'__module__': cls.__module__})
 
+    @property
+    def declared_fields(self):
+        return self._fields
+
     def _to_dict(self):
         attributes = {}
         for key, value in six.iteritems(self.attributes):
-            if isinstance(value, list):
+            if isinstance(value, MutableSequence):
                 new_value = []
                 for item in value:
                     if isinstance(item, Resource):
@@ -420,7 +477,7 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
                    and self._prefix_options == other._prefix_options
 
     def __hash__(self):
-        return hash(tuple(six.iteritems(self.attributes)))
+        return id(self)
 
     @classmethod
     def _prefix(cls, path=None, options=None):
@@ -472,3 +529,21 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
             return '?' + Util.to_query(query_options)
         else:
             return ''
+
+
+class SubordinateResource(Resource):
+
+    def __init__(self, attributes=None, prefix_options=None, parent_resource=None):
+        self.parent_resource = parent_resource
+        super(SubordinateResource, self).__init__(attributes, prefix_options)
+
+    @classmethod
+    def find(cls, *args, **kwargs):
+        raise NotImplementedError('Cannot find subordinate resources.')
+
+    def __repr__(self):
+        try:
+            identity = '({})'.format(self.identity)
+        except AttributeError:
+            identity = ''
+        return '{}.{}{}'.format(self.parent_resource, self._singular, identity)

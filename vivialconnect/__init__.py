@@ -18,3 +18,4 @@ from vivialconnect.resources.user import User
 from vivialconnect.resources.account import Account
 from vivialconnect.resources.message import Message, Attachment
 from vivialconnect.resources.number import Number
+from vivialconnect.resources.connector import Connector, ConnectorNumber, ConnectorCallback

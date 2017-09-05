@@ -7,13 +7,10 @@ import argparse
 from vivialconnect import Resource
 
 from messages import send_message, get_message, list_messages
-
 from accounts import billing_status, update_account, get_account
-
-from numbers import list_associated_numbers, list_available_numbers,
-    buy_number, update_number_name
-
-  from users import list_users, get_user, update_user
+from numbers import (list_associated_numbers, list_available_numbers,
+    buy_number, update_number_name)
+from users import list_users, get_user, update_user
 
 home = os.path.dirname(os.path.abspath(__file__))
 
