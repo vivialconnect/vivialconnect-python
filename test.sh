@@ -7,3 +7,4 @@ popd > /dev/null
 python -m unittest tests.test_account
 python -m unittest tests.test_message
 python -m unittest tests.test_number
+python -m unittest tests.test_connector

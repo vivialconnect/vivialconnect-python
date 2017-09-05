@@ -3,7 +3,6 @@
    :synopsis: Countable module.
 """
 
-from vivialconnect.resources.resource import Resource
 from vivialconnect.common.util import Util
 
 

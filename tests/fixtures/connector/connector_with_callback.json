@@ -1,0 +1,18 @@
+{
+    "connector": {
+        "account_id": 1,
+        "active": true,
+        "callbacks": [{"date_created": "2017-08-10T17:29:10+00:00",
+                       "date_modified": "2017-08-10T17:29:10+00:00",
+                       "event_type": "status",
+                       "message_type": "text",
+                       "method": "POST",
+                       "url": "https://somecallback.com/status"}],
+        "date_created": "2017-08-09T15:22:18+00:00",
+        "date_modified": "2017-08-09T15:22:18+00:00",
+        "id": 424242,
+        "more_numbers": false,
+        "name": "TestConnector",
+        "phone_numbers": []
+    }
+}
