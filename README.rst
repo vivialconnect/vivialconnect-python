@@ -1,13 +1,12 @@
-Vivial Connect
+VivialConnect is a simple SMS/MMS API. It's designed specifically for developers seeking a simple, affordable and scalable messaging solution.
+
+Register an API account here: https://www.vivialconnect.net and login to the website to buy your first phone number.
+
+Setup is Easy!
 --------------
 
-VivialConnect is a simple SMS/MSS API. It's designed specifically for developers seeking a simple, affordable and scalable messaging solution.
+Copy this code into a file named ``example.py``
 
-Our API is Fun...
-```````````````
-Register an API account here: https://www.vivialconnect.net/register and login to the website to buy your first phone number.
-
-To test, copy this code to a file named ``example.py``
 
 .. code:: python
 
@@ -25,12 +24,9 @@ To test, copy this code to a file named ``example.py``
         message.send()
 
     send_message(to_number='+11234567890',
-                 from_number='+19132597591',
+                 from_number='+19876543210',
                  body='Howdy, from Vivial Connect!')
 
-
-And Easy to Setup!
-`````````````````
 
 Update the API key, secret and account id. Change 'from_number' to the number you purchased. Then run it:
 
@@ -40,9 +36,9 @@ Update the API key, secret and account id. Change 'from_number' to the number yo
     $ python example.py
 
 Links
-`````
+-----
 
-* `website <https://www.vivialconnect.net/>`_
-* `documentation <https://www.vivialconnect.net/docs/>`_
-* `development version
+* `Website <https://www.vivialconnect.net/>`_
+* `Documentation <https://www.vivialconnect.net/docs/>`_
+* `Development Version
   <https://github.com/vivialconnect/vivialconnect-python>`_
