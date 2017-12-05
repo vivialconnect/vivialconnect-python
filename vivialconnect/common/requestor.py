@@ -257,8 +257,7 @@ class Requestor(object):
             'request_lib': 'requests',
         }
         for attr, func in [['lang_version', platform.python_version],
-                           ['platform', platform.platform],
-                           ['uname', lambda: ' '.join(platform.uname())]]:
+                           ['platform', platform.platform]]:
             try:
                 val = func()
             except Exception as e:
@@ -268,7 +267,7 @@ class Requestor(object):
         parsed_url = urlparse(abs_url)
         headers = {
             'X-VivialConnect-User-Agent': json.dumps(ua),
-            'User-Agent': 'VivialConnect PythonClient/%s' % VERSION,
+            'User-Agent': 'VivialConnect PythonClient %s' % VERSION,
             'Date': '%s' % (now.strftime("%a, %d %b %Y %H:%M:%S GMT")),
             'Host': parsed_url.hostname + ((':' + str(parsed_url.port)) if parsed_url.port else ''),
             'Accept': API_CONTENT_TYPE
