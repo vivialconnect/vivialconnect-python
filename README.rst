@@ -9,7 +9,6 @@ Setup is Easy!
 Copy this code into a file named ``example.py``
 
 
-
 .. code:: python
 
     from vivialconnect import Resource, Message
