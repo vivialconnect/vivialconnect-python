@@ -32,7 +32,7 @@ class ConnectorTest(BaseTestCase):
 
     def test_parse_callback(self):
         fixture = self.load_fixture('connector/connector_with_callback')
-        cb_data = self.get_path(json.loads(fixture), 'connector.callbacks.0')
+        cb_data = self.get_path(json.loads(fixture.decode()), 'connector.callbacks.0')
         with HTTMock(self.response_content,
                      body=fixture,
                      headers={'Content-type': 'application/json'}):
@@ -43,7 +43,7 @@ class ConnectorTest(BaseTestCase):
 
     def test_parse_phone_number(self):
         fixture = self.load_fixture('connector/connector_with_phone_number')
-        phone_data = self.get_path(json.loads(fixture), 'connector.phone_numbers.0')
+        phone_data = self.get_path(json.loads(fixture.decode()), 'connector.phone_numbers.0')
         with HTTMock(self.response_content,
                      body=fixture,
                      headers={'Content-type': 'application/json'}):
@@ -54,7 +54,7 @@ class ConnectorTest(BaseTestCase):
 
     def test_modifications(self):
         fixture = self.load_fixture('connector/connectors')
-        fixture_data = json.loads(fixture)
+        fixture_data = json.loads(fixture.decode())
         p1_numbers = self.get_path(fixture_data, 'connectors.0.phone_numbers')
         p2_numbers = self.get_path(fixture_data, 'connectors.1.phone_numbers')
         with HTTMock(self.response_content,
@@ -81,7 +81,7 @@ class ConnectorTest(BaseTestCase):
 
     def test_resurrection(self):
         fixture = self.load_fixture('connector/connector_with_phone_number')
-        phone_data = self.get_path(json.loads(fixture), 'connector.phone_numbers.0')
+        phone_data = self.get_path(json.loads(fixture.decode()), 'connector.phone_numbers.0')
         with HTTMock(self.response_content,
                      body=fixture,
                      headers={'Content-type': 'application/json'}):
