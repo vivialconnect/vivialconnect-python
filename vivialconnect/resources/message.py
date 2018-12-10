@@ -70,9 +70,9 @@ class Message(Resource, Countable):
         :type id: ``int``.
         :returns: :class:`Resource` -- a Resource object.
         """
-        url = self.klass._custom_path(id_=self.id,
-                                      custom_path="/attachments/%s" % id, options=None) + \
-            self.klass._query_string(kwargs)
+        url = self.klass._custom_path(
+            id_=self.id, custom_path="/attachments/%s" % id, options=None
+        ) + self.klass._query_string(kwargs)
         attachment = Attachment._build_object(Attachment.request.get(url))
         attachment._entity_path = url
         return attachment
@@ -84,14 +84,14 @@ class Message(Resource, Countable):
         :param \**kwargs: Any keyword arguments used for forming a query.
         :returns: ``list`` -- a list of Resource objects.
         """
-        url = self.klass._custom_path(id_=self.id, custom_path="/attachments", options=None) + \
-            self.klass._query_string(kwargs)
+        url = self.klass._custom_path(
+            id_=self.id, custom_path="/attachments", options=None
+        ) + self.klass._query_string(kwargs)
         attachments = Attachment._build_list(Attachment.request.get(url))
         for attachment in attachments:
-            attachment._entity_path = self.klass._custom_path(id_=self.id,
-                                                              custom_path="/attachments/%s" % attachment.id,
-                                                              options=None) + \
-            self.klass._query_string(kwargs)
+            attachment._entity_path = self.klass._custom_path(
+                id_=self.id, custom_path="/attachments/%s" % attachment.id, options=None
+            ) + self.klass._query_string(kwargs)
         return attachments
 
     def attachments_count(self, opts=None, **kwargs):
@@ -101,8 +101,9 @@ class Message(Resource, Countable):
         if opts is None:
             opts = kwargs
 
-        url = self.klass._custom_path(id_=self.id, custom_path="/attachments/count", options=None) + \
-            self.klass._query_string(opts)
+        url = self.klass._custom_path(
+            id_=self.id, custom_path="/attachments/count", options=None
+        ) + self.klass._query_string(opts)
 
         return Util.remove_root(Attachment.request.get(url))
 
@@ -127,4 +128,5 @@ class Attachment(Resource):
     file_name      File name of the media attachment.
     =============  ===========
     """
+
     pass

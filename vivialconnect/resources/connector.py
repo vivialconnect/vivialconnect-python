@@ -20,6 +20,7 @@ class ConnectorNumber(SubordinateResource):
     phone_number_id	       An integer representing the id of the PhoneNumber resource associated.
     ========================== ===========
     """
+
     @property
     def identity(self):
         return self.phone_number
@@ -39,9 +40,12 @@ class ConnectorCallback(SubordinateResource):
     method                     The HTTP method which will be used for this callback.
     ========================== ===========
     """
+
     @property
     def identity(self):
-        return "message_type: {msg_type}, event_type: {evt_type}".format(msg_type=self.message_type, evt_type=self.event_type)
+        return "message_type: {msg_type}, event_type: {evt_type}".format(
+            msg_type=self.message_type, evt_type=self.event_type
+        )
 
 
 class Connector(Resource, Countable):
@@ -78,5 +82,6 @@ class Connector(Resource, Countable):
 
         list_connectors()
     """
-    phone_numbers = ResourceListingField('phone_numbers', ConnectorNumber)
-    callbacks = ResourceListingField('callbacks', ConnectorCallback)
+
+    phone_numbers = ResourceListingField("phone_numbers", ConnectorNumber)
+    callbacks = ResourceListingField("callbacks", ConnectorCallback)

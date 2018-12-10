@@ -100,6 +100,29 @@ def list_available_numbers(country_code='US', number_type='local',
 list_available_numbers()
 ```
 
+```python
+from vivialconnect import Resource, Log
+
+Resource.api_key = "my-api-key"
+Resource.api_secret = "my-api-secret"
+Resource.api_account_id = "123456"
+
+def get_aggregated_logs(start_time, end_time,
+                        aggregator_type=None, optional_query_parameters=None):
+    logs = Log.get_aggregated_logs(start_time, end_time,
+                                   optional_query_parameters=optional_query_parameters)
+
+    for log in logs.get("log_items"):
+        print("{} {} {} {} {}".format(log.get("log_timestamp"),
+                                      log.get("account_id"),
+                                      log.get("aggregate_key"),
+                                      log.get("log_count"),
+                                      log.get("log_type")))
+
+get_aggregated_logs("20181101T145548Z", "20181205T155548Z",
+                    optional_query_parameters={"log_type": "message.delivered"})
+```
+
 Documentation
 -------------
 

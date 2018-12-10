@@ -39,7 +39,7 @@ class Account(Resource, Countable):
 
         billing_status(12345)
     """
-    
+
     API_ACCOUNT_PREFIX = ""
 
     @classmethod
@@ -56,5 +56,4 @@ class Account(Resource, Countable):
                 account_id = str(account_id)
         else:
             account_id = Resource.api_account_id
-        return cls.request.get('/accounts/%s/status.json' % (account_id))
-
+        return cls.request.get("/accounts/%s/status.json" % (account_id))

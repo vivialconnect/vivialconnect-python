@@ -5,7 +5,9 @@ Register an API account here: https://www.vivialconnect.net and login to the web
 Setup is Easy!
 --------------
 
+
 Copy this code into a file named ``example.py``
+
 
 
 .. code:: python

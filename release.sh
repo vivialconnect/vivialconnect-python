@@ -172,7 +172,7 @@ if [[ ${update_version_files} == 1 ]]; then
 
     if [[ ${confirm_release_push} == 1 ]]; then
         git push origin ${master_branch}
-        git tag -a "v${VERSION}" -m "Created release ${VERSION}"
+        git tag -a "${VERSION}" -m "Created release ${VERSION}"
         git push --tags
     else
         echo; printf "${YELLOW}Warning:${NC} Relese aborted. You should undo latest commit with the ${GREEN}git reset --hard HEAD~1${NC} command\n"; echo

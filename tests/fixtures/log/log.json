@@ -1,0 +1,328 @@
+{
+  "log_items": [
+    {
+      "origin": "system",
+      "log_id": "34419280075057429211119868441358691143628465568136888320",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login",
+      "log_timestamp": 20181128140457996000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login",
+      "description": "login attempt"
+    },
+    {
+      "origin": "system",
+      "log_id": "34419280074321504619568357877646709792351222721477804032",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login",
+      "log_timestamp": 20181128140457964000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login",
+      "description": "login attempt"
+    },
+    {
+      "origin": "system",
+      "log_id": "34419280072916557672060928619655197900715778360324915200",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login",
+      "log_timestamp": 20181128140457900000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login",
+      "description": "login attempt"
+    },
+    {
+      "origin": "system",
+      "log_id": "34419280072225234570906479302230100467997534040707563520",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login",
+      "log_timestamp": 20181128140457870000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login",
+      "description": "login attempt"
+    },
+    {
+      "origin": "system",
+      "log_id": "34419280071377806253362315622805377241674077597488709632",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login",
+      "log_timestamp": 20181128140457830000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login",
+      "description": "login attempt"
+    },
+    {
+      "origin": "system",
+      "log_id": "34419280069147731733509253308531402128276054405568790528",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login",
+      "log_timestamp": 20181128140457730000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login",
+      "description": "login attempt"
+    },
+    {
+      "origin": "system",
+      "log_id": "34419280064620680458207536810554313303444725689699794944",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login",
+      "log_timestamp": 20181128140457525000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login",
+      "description": "login attempt"
+    },
+    {
+      "origin": "system",
+      "log_id": "34419280064509176732214883694840528186500714577562697728",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login",
+      "log_timestamp": 20181128140457520000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login",
+      "description": "login attempt"
+    },
+    {
+      "origin": "system",
+      "log_id": "34419280063037327549111862567455651279067443520365199360",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login",
+      "log_timestamp": 20181128140457456000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login",
+      "description": "login attempt"
+    },
+    {
+      "origin": "system",
+      "log_id": "34419279903876909067198805197649538023973526228486651904",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login_success",
+      "log_timestamp": 20181128140450320000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login_success",
+      "description": "successful login attempt"
+    },
+    {
+      "origin": "system",
+      "log_id": "34419279779081938936221438090849462330553445966923694080",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login_success",
+      "log_timestamp": 20181128140444720000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login_success",
+      "description": "successful login attempt"
+    },
+    {
+      "origin": "system",
+      "log_id": "34417451122881823368800470121474937947488987944904097792",
+      "operator_id": "1",
+      "account_id": "4",
+      "account_id_log_type": "4-message.delivered",
+      "log_timestamp": 20181127151804944000,
+      "log_data": {
+        "text": "test",
+        "message": {
+          "body": "test",
+          "num_segments": 1,
+          "direction": "outbound-api",
+          "account_id": 4,
+          "date_modified": "2018-11-27T15:18:04+00:00",
+          "message_type": "local_sms",
+          "price": null,
+          "error_message": null,
+          "to_number": "+15012395377",
+          "price_currency": null,
+          "num_media": 0,
+          "from_number": "+16282457073",
+          "status": "delivered",
+          "connector_id": null,
+          "date_created": "2018-11-27T15:17:52+00:00",
+          "error_code": null,
+          "id": 1,
+          "sent": "2018-11-27T15:17:55+00:00"
+        },
+        "sender": "+16282457073",
+        "receiver": "+15012395377"
+      },
+      "item_type": "msg_out_local_sms",
+      "item_id": "+16282457073",
+      "operator_type": "message",
+      "log_type": "message.delivered",
+      "description": "message status updated"
+    },
+    {
+      "origin": "system",
+      "log_id": "34417451119224501156241447926059928357046068189999398912",
+      "operator_id": "1",
+      "account_id": "4",
+      "account_id_log_type": "4-message.sending",
+      "log_timestamp": 20181127151804780000,
+      "log_data": {
+        "text": "test",
+        "message": {
+          "body": "test",
+          "num_segments": 1,
+          "direction": "outbound-api",
+          "account_id": 4,
+          "date_modified": "2018-11-27T15:18:04+00:00",
+          "message_type": "local_sms",
+          "price": null,
+          "error_message": null,
+          "to_number": "+15012395377",
+          "price_currency": null,
+          "num_media": 0,
+          "from_number": "+16282457073",
+          "status": "sending",
+          "connector_id": null,
+          "date_created": "2018-11-27T15:17:52+00:00",
+          "error_code": null,
+          "id": 1,
+          "sent": "2018-11-27T15:17:55+00:00"
+        },
+        "sender": "+16282457073",
+        "receiver": "+15012395377"
+      },
+      "item_type": "msg_out_local_sms",
+      "item_id": "+16282457073",
+      "operator_type": "message",
+      "log_type": "message.sending",
+      "description": "message status updated"
+    },
+    {
+      "origin": "system",
+      "log_id": "34417450910890939511568366526522500207348596779284037632",
+      "operator_id": "1",
+      "account_id": "4",
+      "account_id_log_type": "4-message.queued",
+      "log_timestamp": 20181127151755436000,
+      "item_id": "+16282457073",
+      "log_data": {
+        "text": "test",
+        "message": {
+          "body": "test",
+          "num_segments": 1,
+          "direction": "outbound-api",
+          "account_id": 4,
+          "date_modified": "2018-11-27T15:17:55+00:00",
+          "message_type": "local_sms",
+          "price": null,
+          "error_message": null,
+          "to_number": "+15012395377",
+          "price_currency": null,
+          "num_media": 0,
+          "from_number": "+16282457073",
+          "status": "queued",
+          "connector_id": null,
+          "date_created": "2018-11-27T15:17:52+00:00",
+          "error_code": null,
+          "id": 1,
+          "sent": "2018-11-27T15:17:55+00:00"
+        },
+        "sender": "+16282457073",
+        "receiver": "+15012395377"
+      },
+      "item_type": "msg_out_local_sms",
+      "account_id_billable_status": "4-billable",
+      "operator_type": "message",
+      "log_type": "message.queued",
+      "description": "message status updated"
+    },
+    {
+      "origin": "system",
+      "log_id": "34417449062047658827387054877275437689226800819803652096",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-number.purchased",
+      "log_timestamp": 20181127151632530000,
+      "log_data": {
+        "phone_number": "+16282457073"
+      },
+      "item_type": "number",
+      "item_id": "+16282457073",
+      "operator_type": "account",
+      "log_type": "number.purchased",
+      "description": "number purchased"
+    },
+    {
+      "origin": "system",
+      "log_id": "34417448882682765195605252940175369801224587822483177472",
+      "operator_id": "4",
+      "account_id": "4",
+      "account_id_log_type": "4-user.login_success",
+      "log_timestamp": 20181127151624490000,
+      "log_data": {
+        "username": "user@company.com"
+      },
+      "item_type": "user",
+      "item_id": "user@company.com",
+      "operator_type": "account",
+      "log_type": "user.login_success",
+      "description": "successful login attempt"
+    }
+  ],
+  "last_key": ""
+}

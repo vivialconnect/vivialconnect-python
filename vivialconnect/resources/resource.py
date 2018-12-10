@@ -22,7 +22,7 @@ class BaseField(object):
 class ResourceAttributeStorage(MutableMapping):
     def __init__(self, parent, attributes=None, backing_type=dict):
         if not isinstance(parent, Resource):
-            raise ValueError('Parent should be a Resource instance')
+            raise ValueError("Parent should be a Resource instance")
         self.parent_resource = parent
         self._items = backing_type()
         self._fields = parent.declared_fields
@@ -59,10 +59,10 @@ class ResourceMeta(type):
     """
 
     def __new__(mcs, name, bases, new_attrs):
-        if '_singular' not in new_attrs or not new_attrs['_singular']:
-            new_attrs['_singular'] = Util.underscore(name)
-        if '_plural' not in new_attrs or not new_attrs['_plural']:
-            new_attrs['_plural'] = Util.pluralize(new_attrs['_singular'])
+        if "_singular" not in new_attrs or not new_attrs["_singular"]:
+            new_attrs["_singular"] = Util.underscore(name)
+        if "_plural" not in new_attrs or not new_attrs["_plural"]:
+            new_attrs["_plural"] = Util.pluralize(new_attrs["_singular"])
         klass = type.__new__(mcs, name, bases, new_attrs)
         klass._fields = {}
         for attr, val in new_attrs.items():
@@ -76,8 +76,9 @@ class ResourceMeta(type):
     def set_plural(cls, value):
         cls._plural = value
 
-    plural = property(get_plural, set_plural, None,
-                      'The plural name of this object type')
+    plural = property(
+        get_plural, set_plural, None, "The plural name of this object type"
+    )
 
     def get_singular(cls):
         return cls._singular
@@ -85,8 +86,9 @@ class ResourceMeta(type):
     def set_singular(cls, value):
         cls._singular = value
 
-    singular = property(get_singular, set_singular, None,
-                        'The singular name of this object type')
+    singular = property(
+        get_singular, set_singular, None, "The singular name of this object type"
+    )
 
     def get_primary_key(cls):
         return cls._primary_key
@@ -94,13 +96,17 @@ class ResourceMeta(type):
     def set_primary_key(cls, value):
         cls._primary_key = value
 
-    primary_key = property(get_primary_key, set_primary_key, None,
-                           'Name of attribute that uniquely identies the resource')
+    primary_key = property(
+        get_primary_key,
+        set_primary_key,
+        None,
+        "Name of attribute that uniquely identies the resource",
+    )
 
     @property
     def request(cls):
         super_class = cls.__mro__[1]
-        if super_class == object or '_request' in cls.__dict__:
+        if super_class == object or "_request" in cls.__dict__:
             if cls._request is None:
                 cls._request = Requestor(
                     api_key=cls.api_key,
@@ -108,7 +114,8 @@ class ResourceMeta(type):
                     api_base_url=cls.api_base_url,
                     api_account_id=cls.api_account_id,
                     verify_request=cls._verify_request,
-                    request_timeout=cls._request_timeout)
+                    request_timeout=cls._request_timeout,
+                )
             return cls._request
         else:
             return super_class.request
@@ -120,8 +127,9 @@ class ResourceMeta(type):
         cls._request = None
         cls._api_key = value
 
-    api_key = property(get_api_key, set_api_key, None,
-                       'An API key used for HMAC authentication')
+    api_key = property(
+        get_api_key, set_api_key, None, "An API key used for HMAC authentication"
+    )
 
     def get_api_secret(cls):
         return cls._api_secret
@@ -130,8 +138,12 @@ class ResourceMeta(type):
         cls._request = None
         cls._api_secret = value
 
-    api_secret = property(get_api_secret, set_api_secret, None,
-                          'An API secret used for HMAC authentication')
+    api_secret = property(
+        get_api_secret,
+        set_api_secret,
+        None,
+        "An API secret used for HMAC authentication",
+    )
 
     def get_api_account_id(cls):
         return cls._api_account_id
@@ -140,8 +152,9 @@ class ResourceMeta(type):
         cls._request = None
         cls._api_account_id = value
 
-    api_account_id = property(get_api_account_id, set_api_account_id, None,
-                              'An API account id')
+    api_account_id = property(
+        get_api_account_id, set_api_account_id, None, "An API account id"
+    )
 
     def get_api_base_url(cls):
         return cls._api_base_url
@@ -150,8 +163,12 @@ class ResourceMeta(type):
         cls._request = None
         cls._api_base_url = value
 
-    api_base_url = property(get_api_base_url, set_api_base_url, None,
-                            'An API base_url used for HMAC authentication')
+    api_base_url = property(
+        get_api_base_url,
+        set_api_base_url,
+        None,
+        "An API base_url used for HMAC authentication",
+    )
 
     def get_verify_request(cls):
         return cls._verify_request
@@ -160,8 +177,9 @@ class ResourceMeta(type):
         cls._request = None
         cls._verify_request = value
 
-    api_verify_request = property(get_verify_request, set_verify_request, None,
-                                  'Verify SSL certs')
+    api_verify_request = property(
+        get_verify_request, set_verify_request, None, "Verify SSL certs"
+    )
 
     def get_request_timeout(cls):
         return cls._request_timeout
@@ -169,8 +187,9 @@ class ResourceMeta(type):
     def set_request_timeout(cls, value):
         cls._request_timeout = value
 
-    request_timeout = property(get_request_timeout, set_request_timeout, None,
-                               'Request Timeout')
+    request_timeout = property(
+        get_request_timeout, set_request_timeout, None, "Request Timeout"
+    )
 
 
 class Resource(six.with_metaclass(ResourceMeta, object)):
@@ -186,7 +205,7 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
     _primary_key = "id"
     _request_timeout = 30
 
-    API_ACCOUNT_PREFIX = '/accounts/%(account_id)s'
+    API_ACCOUNT_PREFIX = "/accounts/%(account_id)s"
 
     def __init__(self, attributes=None, prefix_options=None):
         if attributes is None:
@@ -253,11 +272,15 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
         """
         attributes = self._wrap_attributes(root=self._singular)
         if self.id:
-            response = self.klass.request.put(self._element_path(
-                self.id, path=None, options=self._prefix_options), attributes)
+            response = self.klass.request.put(
+                self._element_path(self.id, path=None, options=self._prefix_options),
+                attributes,
+            )
         else:
-            response = self.klass.request.post(self._collection_path(
-                path=None, options=self._prefix_options), params=attributes)
+            response = self.klass.request.post(
+                self._collection_path(path=None, options=self._prefix_options),
+                params=attributes,
+            )
         self._update(Util.remove_root(response))
         return True
 
@@ -267,8 +290,9 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
         :raises: :class:`RequestorError`: On any communications errors.
             :class:`ResourceError`: On any other errors.
         """
-        attributes = self.klass.request.get(self._element_path(
-            self.id, path=None, options=self._prefix_options))
+        attributes = self.klass.request.get(
+            self._element_path(self.id, path=None, options=self._prefix_options)
+        )
         self._update(attributes)
 
     def destroy(self):
@@ -277,8 +301,9 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
         :raises: :class:`RequestorError`: On any communications errors.
             :class:`ResourceError`: On any other errors.
         """
-        self.klass.request.delete(self._element_path(
-            self.id, path=None, options=self._prefix_options))
+        self.klass.request.delete(
+            self._element_path(self.id, path=None, options=self._prefix_options)
+        )
 
     def is_new(self):
         """Returns True if resource is new and have not been saved.
@@ -288,30 +313,30 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
         return not self.id
 
     @classmethod
-    def get(cls, id_=None, path=None, custom_path='', **kwargs):
+    def get(cls, id_=None, path=None, custom_path="", **kwargs):
         url = cls._custom_path(
-            id_=id_, path=path, custom_path=custom_path, options=None) + \
-            cls._query_string(kwargs)
+            id_=id_, path=path, custom_path=custom_path, options=None
+        ) + cls._query_string(kwargs)
         return cls.request.get(url)
 
     @classmethod
-    def post(cls, id_=None, path=None, custom_path='', params=None, **kwargs):
+    def post(cls, id_=None, path=None, custom_path="", params=None, **kwargs):
         url = cls._custom_path(
-            id_=id_, path=path, custom_path=custom_path, options=None) + \
-            cls._query_string(kwargs)
+            id_=id_, path=path, custom_path=custom_path, options=None
+        ) + cls._query_string(kwargs)
         return cls.request.post(url, params=params)
 
     @classmethod
     def _find_single(cls, id_, path=None, **kwargs):
-        url = cls._element_path(id_, path=path, options=None) + \
-            cls._query_string(kwargs)
+        url = cls._element_path(id_, path=path, options=None) + cls._query_string(
+            kwargs
+        )
         response = cls.request.get(url)
         return cls._build_object(response)
 
     @classmethod
     def _find_every(cls, path=None, **kwargs):
-        url = cls._collection_path(path=path, options=None) + \
-            cls._query_string(kwargs)
+        url = cls._collection_path(path=path, options=None) + cls._query_string(kwargs)
         response = cls.request.get(url)
         return cls._build_list(response)
 
@@ -367,20 +392,19 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
         return cls._find_class_for(Util.singularize(collection_name))
 
     @classmethod
-    def _find_class_for(cls, element_name=None,
-                        class_name=None, create_missing=True):
+    def _find_class_for(cls, element_name=None, class_name=None, create_missing=True):
         if not element_name and not class_name:
-            raise ResourceError('element_name or class_name must be specified')
+            raise ResourceError("element_name or class_name must be specified")
         elif not element_name:
             element_name = Util.underscore(class_name)
         elif not class_name:
             class_name = Util.camelize(element_name)
 
-        module_path = cls.__module__.split('.')
+        module_path = cls.__module__.split(".")
         for depth in range(len(module_path), 0, -1):
             try:
-                __import__('.'.join(module_path[:depth]))
-                module = sys.modules['.'.join(module_path[:depth])]
+                __import__(".".join(module_path[:depth]))
+                module = sys.modules[".".join(module_path[:depth])]
             except ImportError:
                 continue
             try:
@@ -388,9 +412,8 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
                 return klass
             except AttributeError:
                 try:
-                    __import__('.'.join([module.__name__, element_name]))
-                    submodule = sys.modules['.'.join(
-                        [module.__name__, element_name])]
+                    __import__(".".join([module.__name__, element_name]))
+                    submodule = sys.modules[".".join([module.__name__, element_name])]
                 except ImportError:
                     continue
                 try:
@@ -401,7 +424,7 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
 
         # Woow, we made it this far, and no class was found
         if create_missing:
-            return type(str(class_name), (cls,), {'__module__': cls.__module__})
+            return type(str(class_name), (cls,), {"__module__": cls.__module__})
 
     @property
     def declared_fields(self):
@@ -424,7 +447,7 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
                 attributes[key] = value
         return attributes
 
-    def _wrap_attributes(self, root='object'):
+    def _wrap_attributes(self, root="object"):
         if root:
             return {root: self._to_dict()}
         return self._to_dict()
@@ -435,22 +458,22 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
     def set_id(self, value):
         self.attributes[self.klass.primary_key] = value
 
-    id = property(get_id, set_id, None, 'Value stored in the primary key')
+    id = property(get_id, set_id, None, "Value stored in the primary key")
 
     def _attr_valid(self, name):
-        if 'attributes' in self.__dict__:
+        if "attributes" in self.__dict__:
             if name in self.attributes:
                 return True
         return False
 
     def __getattr__(self, name):
-        if 'attributes' in self.__dict__:
+        if "attributes" in self.__dict__:
             if name in self.attributes:
                 return self.attributes[name]
         raise AttributeError(name)
 
     def __setattr__(self, name, value):
-        if '_initialized' in self.__dict__:
+        if "_initialized" in self.__dict__:
             if name in self.__dict__ or getattr(self.__class__, name, None):
                 # Update a normal attribute
                 object.__setattr__(self, name, value)
@@ -461,7 +484,7 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
             object.__setattr__(self, name, value)
 
     def __repr__(self):
-        return '%s(%s)' % (self._singular, self.id)
+        return "%s(%s)" % (self._singular, self.id)
 
     if six.PY2:
         # pylint: disable=undefined-variable
@@ -470,18 +493,22 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
                 return cmp(self.id, other.id)
             else:
                 return cmp(self.id, other)
+
     else:
+
         def __eq__(self, other):
-            return other.__class__ == self.__class__ \
-                   and self.id == other.id \
-                   and self._prefix_options == other._prefix_options
+            return (
+                other.__class__ == self.__class__
+                and self.id == other.id
+                and self._prefix_options == other._prefix_options
+            )
 
     def __hash__(self):
         return id(self)
 
     @classmethod
     def _prefix(cls, path=None, options=None):
-        prefix = ''
+        prefix = ""
         if path:
             prefix = path
         if options and isinstance(options, list) and len(options) > 0:
@@ -489,61 +516,70 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
         return prefix
 
     @classmethod
-    def _element_path(cls, id_, path=None, options=None, ext='.json'):
-        return (cls.API_ACCOUNT_PREFIX + '%(prefix)s/%(plural)s/%(id)s%(ext)s') % \
-            {'account_id': cls._api_account_id,
-             'prefix': cls._prefix(path, options),
-             'plural': cls._plural,
-             'id': id_,
-             'ext': ext}
+    def _element_path(cls, id_, path=None, options=None, ext=".json"):
+        return (cls.API_ACCOUNT_PREFIX + "%(prefix)s/%(plural)s/%(id)s%(ext)s") % {
+            "account_id": cls._api_account_id,
+            "prefix": cls._prefix(path, options),
+            "plural": cls._plural,
+            "id": id_,
+            "ext": ext,
+        }
 
     @classmethod
-    def _collection_path(cls, path=None, options=None, ext='.json'):
-        return (cls.API_ACCOUNT_PREFIX + '%(prefix)s/%(plural)s%(ext)s') % \
-            {'account_id': cls._api_account_id,
-             'prefix': cls._prefix(path, options),
-             'plural': cls._plural,
-             'ext': ext}
+    def _collection_path(cls, path=None, options=None, ext=".json"):
+        return (cls.API_ACCOUNT_PREFIX + "%(prefix)s/%(plural)s%(ext)s") % {
+            "account_id": cls._api_account_id,
+            "prefix": cls._prefix(path, options),
+            "plural": cls._plural,
+            "ext": ext,
+        }
 
     @classmethod
-    def _custom_path(cls, id_=None, path=None, custom_path='', options=None, ext='.json'):
+    def _custom_path(
+        cls, id_=None, path=None, custom_path="", options=None, ext=".json"
+    ):
         if id_:
-            return (cls.API_ACCOUNT_PREFIX + '%(prefix)s/%(plural)s/%(id)s%(custom)s%(ext)s') % \
-                {'account_id': cls._api_account_id,
-                 'prefix': cls._prefix(path, options),
-                 'plural': cls._plural,
-                 'id': id_,
-                 'custom': custom_path,
-                 'ext': ext}
+            return (
+                cls.API_ACCOUNT_PREFIX + "%(prefix)s/%(plural)s/%(id)s%(custom)s%(ext)s"
+            ) % {
+                "account_id": cls._api_account_id,
+                "prefix": cls._prefix(path, options),
+                "plural": cls._plural,
+                "id": id_,
+                "custom": custom_path,
+                "ext": ext,
+            }
         else:
-            return (cls.API_ACCOUNT_PREFIX + '%(prefix)s/%(plural)s%(custom)s%(ext)s') % \
-                {'account_id': cls._api_account_id,
-                 'prefix': cls._prefix(path, options),
-                 'plural': cls._plural,
-                 'custom': custom_path,
-                 'ext': ext}
+            return (
+                cls.API_ACCOUNT_PREFIX + "%(prefix)s/%(plural)s%(custom)s%(ext)s"
+            ) % {
+                "account_id": cls._api_account_id,
+                "prefix": cls._prefix(path, options),
+                "plural": cls._plural,
+                "custom": custom_path,
+                "ext": ext,
+            }
 
     @classmethod
     def _query_string(cls, query_options=None):
         if query_options:
-            return '?' + Util.to_query(query_options)
+            return "?" + Util.to_query(query_options)
         else:
-            return ''
+            return ""
 
 
 class SubordinateResource(Resource):
-
     def __init__(self, attributes=None, prefix_options=None, parent_resource=None):
         self.parent_resource = parent_resource
         super(SubordinateResource, self).__init__(attributes, prefix_options)
 
     @classmethod
     def find(cls, *args, **kwargs):
-        raise NotImplementedError('Cannot find subordinate resources.')
+        raise NotImplementedError("Cannot find subordinate resources.")
 
     def __repr__(self):
         try:
-            identity = '({})'.format(self.identity)
+            identity = "({})".format(self.identity)
         except AttributeError:
-            identity = ''
-        return '{}.{}{}'.format(self.parent_resource, self._singular, identity)
+            identity = ""
+        return "{}.{}{}".format(self.parent_resource, self._singular, identity)

@@ -17,5 +17,4 @@ class Countable(object):
         """
         if opts is None:
             opts = kwargs
-        return int(Util.remove_root(
-            cls.get(custom_path="/count", **opts)))
+        return int(Util.remove_root(cls.get(custom_path="/count", **opts)))

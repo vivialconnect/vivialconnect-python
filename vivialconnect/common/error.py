@@ -4,7 +4,8 @@
               Vivial Connect API.
 """
 
-import json 
+import json
+
 
 class RequestorError(Exception):
     """Base Requestor Error
@@ -21,9 +22,10 @@ class RequestorError(Exception):
 
         self.param = None
         try:
-            self.param = self.json_body['error'].get('param', None)
+            self.param = self.json_body["error"].get("param", None)
         except:
             pass
+
 
 # HTTP error code 5xx (500..599)
 class ServerError(RequestorError):
@@ -31,7 +33,9 @@ class ServerError(RequestorError):
 
     Raised if an internal server error occurred.
     """
+
     pass
+
 
 # Network connection error
 class ConnectionError(RequestorError):
@@ -40,7 +44,9 @@ class ConnectionError(RequestorError):
     This error is raised if Vivial Connect API client detects
     a connection error.
     """
+
     pass
+
 
 # HTTP 3xx redirection
 class Redirection(ConnectionError):
@@ -49,14 +55,13 @@ class Redirection(ConnectionError):
     Raised for all HTTP redirects.
     """
 
-    def __init__(self, message=None,
-                 http_status=None,
-                 http_body=None,
-                 url=None,
-                 headers=None):
+    def __init__(
+        self, message=None, http_status=None, http_body=None, url=None, headers=None
+    ):
         super(Redirection, self).__init__(message, http_status, http_body)
         self.url = url
         self.headers = headers
+
 
 # HTTP error 4xx (401..499)
 class ClientError(ConnectionError):
@@ -64,7 +69,9 @@ class ClientError(ConnectionError):
 
     Baseclass for all 4xx exceptions.
     """
+
     pass
+
 
 # 409 Conflict
 class ResourceConflict(ClientError):
@@ -72,7 +79,9 @@ class ResourceConflict(ClientError):
 
     Raised if there is resource conflict.
     """
+
     pass
+
 
 # 422 Resource Invalid
 class ResourceInvalid(ClientError):
@@ -80,7 +89,9 @@ class ResourceInvalid(ClientError):
 
     Raised if a resource is invalid.
     """
+
     pass
+
 
 # 429 Rate Limit
 class RateLimit(ClientError):
@@ -88,7 +99,9 @@ class RateLimit(ClientError):
 
     Raised if rate limit reached.
     """
+
     pass
+
 
 # 404 Resource Not Found
 class ResourceNotFound(ClientError):
@@ -96,7 +109,9 @@ class ResourceNotFound(ClientError):
 
     Raised if a resource does not exist.
     """
+
     pass
+
 
 # 400 Bad Request
 class BadRequest(ClientError):
@@ -104,7 +119,9 @@ class BadRequest(ClientError):
 
     Raised if the client receives something and cannot handle it.
     """
+
     pass
+
 
 # 401 Unauthorized
 class UnauthorizedAccess(ClientError):
@@ -112,7 +129,9 @@ class UnauthorizedAccess(ClientError):
 
     Raised if the user is not authorized to access remote resource.
     """
+
     pass
+
 
 # 403 Forbidden
 class ForbiddenAccess(ClientError):
@@ -121,7 +140,9 @@ class ForbiddenAccess(ClientError):
     Raised if the user doesn't have the permission for the
     requested resource.
     """
+
     pass
+
 
 # 405 Method Not Allowed
 class MethodNotAllowed(ClientError):
@@ -130,12 +151,15 @@ class MethodNotAllowed(ClientError):
     Raised if the server does not handle method used to access resource.
     For example POST if the resource is view only.
     """
+
     pass
+
 
 class ResourceError(Exception):
     """Generic Resource Error
 
     Raised if there is an error while processing response JSON data.
     """
+
     def __init__(self, message=None):
         super(ResourceError, self).__init__(message)

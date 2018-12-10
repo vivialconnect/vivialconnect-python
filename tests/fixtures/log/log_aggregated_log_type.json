@@ -1,0 +1,21 @@
+{
+    "log_items": [
+        {
+            "account_id": "4",
+            "account_id_log_type": "4-user.login_success",
+            "log_timestamp": 201811281404,
+            "aggregate_key": "minutes",
+            "log_count": 2,
+            "log_type": "user.login_success"
+        },
+        {
+            "account_id": "4",
+            "account_id_log_type": "4-user.login_success",
+            "log_timestamp": 201811271516,
+            "aggregate_key": "minutes",
+            "log_count": 1,
+            "log_type": "user.login_success"
+        }
+    ],
+    "last_key": ""
+}

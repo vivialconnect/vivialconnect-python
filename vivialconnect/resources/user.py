@@ -41,4 +41,5 @@ class User(Resource, Countable):
         list_users()
 
     """
+
     pass
