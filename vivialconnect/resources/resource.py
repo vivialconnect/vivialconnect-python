@@ -242,7 +242,7 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
 
         :param path: The path that resources will be fetched from.
         :type path: ``str``.
-        :param \**kwargs: Any keyword arguments used for forming a query.
+        :param \**kwargs: Any keyword arguments used for forming a query. Valid query keywords include: search, order, limit, page
         :returns: The first found resource from the list of returned resources, otherwise ``None``.
         :raises: :class:`RequestorError`: On any communications errors.
                  :class:`ResourceError`: On any other errors.
