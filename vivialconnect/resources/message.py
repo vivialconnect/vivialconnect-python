@@ -38,7 +38,7 @@ class Message(Resource, Countable):
     sms_configuration_id       Unique identifier of the message status callback configuration to be used to handle message status callbacks.
     ========================== ===========
 
-    Example request to retreive a list of messages from your account::
+    Example request to retreive a list of messages from your account, sorted by most recent::
 
         from vivialconnect import Resource, Message
 
@@ -48,7 +48,7 @@ class Message(Resource, Countable):
 
         def list_messages():
             count = Message.count()
-            messages = Message.find()
+            messages = Message.find(order="id desc")
             for message in messages:
                 print(message.id, message.to_number,
                       message.from_number, message.body)
