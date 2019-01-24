@@ -51,7 +51,7 @@
 
 
 <div class="viewcode-block" id="Log"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.log.Log">[docs]</a><span class="k">class</span> <span class="nc">Log</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;Returns the list of logs in your account.</span>
+    <span class="sd">&quot;&quot;&quot;Returns the list of logs in your account.</span>
 
 <span class="sd">    Required Query Parameters</span>
 
@@ -73,8 +73,49 @@
 <span class="sd">    limit                    Used for pagination, number of log records to return.</span>
 <span class="sd">    start_key                Used for pagination, value of last_key from previous response.</span>
 <span class="sd">    ======================== ===========</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">pass</span></div>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Log.get_aggregated_logs"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.log.Log.get_aggregated_logs">[docs]</a>    <span class="k">def</span> <span class="nf">get_aggregated_logs</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="p">,</span>
+        <span class="n">end_time</span><span class="p">,</span>
+        <span class="n">aggregator_type</span><span class="o">=</span><span class="s2">&quot;minutes&quot;</span><span class="p">,</span>
+        <span class="n">optional_query_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the list of aggregated logs in your account.</span>
+
+<span class="sd">        Required Query Parameters</span>
+
+<span class="sd">        ======================== ===========</span>
+<span class="sd">        Field                    Description</span>
+<span class="sd">        ======================== ===========</span>
+<span class="sd">        start_time               Start date and time. Format used is ISO 8601 as YYYYMMDDThhmmssZ , ISO 8601 format without - and :</span>
+<span class="sd">        end_time                 End date and time. Format used is ISO 8601 as YYYYMMDDThhmmssZ , ISO 8601 format without - and :</span>
+<span class="sd">        aggregator_type          Default value: &quot;minutes&quot;. Valid values are: minutes, hours, days, months, years</span>
+<span class="sd">        ======================== ===========</span>
+
+<span class="sd">        Optional Query Parameters</span>
+
+<span class="sd">        ======================== ===========</span>
+<span class="sd">        Field                    Description</span>
+<span class="sd">        ======================== ===========</span>
+<span class="sd">        log_type                 The log type, as a string. log-types are typically of the form ITEM_TYPE.ACTION, where ITEM_TYPE is the type of item that was affected and ACTION is what happened to it. A valid list of log_ytpes: message.queued, message.undelivered, message.failed, message.received, webhook.error, number.purchased, number.released, user.login, user.login_success</span>
+<span class="sd">        operator_id              Unique id of operator that caused this log.</span>
+<span class="sd">        limit                    Used for pagination, number of log records to return.</span>
+<span class="sd">        start_key                Used for pagination, value of last_key from previous response.</span>
+<span class="sd">        ======================== ===========</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query_string</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">,</span>
+            <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">end_time</span><span class="p">,</span>
+            <span class="s2">&quot;aggregator_type&quot;</span><span class="p">:</span> <span class="n">aggregator_type</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">optional_query_parameters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">optional_query_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">query_string</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Log</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/aggregate&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">query_string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span></div></div>
 </pre></div>
 
           </div>

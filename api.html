@@ -295,7 +295,7 @@ message entities.</p>
 </tr>
 </tbody>
 </table>
-<p>Example request to retreive a list of messages from your account:</p>
+<p>Example request to retreive a list of messages from your account, sorted by most recent:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Message</span>
 
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -304,7 +304,7 @@ message entities.</p>
 
 <span class="k">def</span> <span class="nf">list_messages</span><span class="p">():</span>
     <span class="n">count</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-    <span class="n">messages</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="n">find</span><span class="p">()</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">&quot;id desc&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">to_number</span><span class="p">,</span>
               <span class="n">message</span><span class="o">.</span><span class="n">from_number</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
@@ -644,6 +644,61 @@ in_region, area_code, in_postal_code.</li>
 </tr>
 </tbody>
 </table>
+<dl class="classmethod">
+<dt id="vivialconnect.resources.log.Log.get_aggregated_logs">
+<em class="property">classmethod </em><code class="descname">get_aggregated_logs</code><span class="sig-paren">(</span><em>start_time</em>, <em>end_time</em>, <em>aggregator_type='minutes'</em>, <em>optional_query_parameters=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/log.html#Log.get_aggregated_logs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.log.Log.get_aggregated_logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of aggregated logs in your account.</p>
+<p>Required Query Parameters</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>start_time</td>
+<td>Start date and time. Format used is ISO 8601 as YYYYMMDDThhmmssZ , ISO 8601 format without - and :</td>
+</tr>
+<tr class="row-odd"><td>end_time</td>
+<td>End date and time. Format used is ISO 8601 as YYYYMMDDThhmmssZ , ISO 8601 format without - and :</td>
+</tr>
+<tr class="row-even"><td>aggregator_type</td>
+<td>Default value: &#8220;minutes&#8221;. Valid values are: minutes, hours, days, months, years</td>
+</tr>
+</tbody>
+</table>
+<p>Optional Query Parameters</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="94%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>log_type</td>
+<td>The log type, as a string. log-types are typically of the form ITEM_TYPE.ACTION, where ITEM_TYPE is the type of item that was affected and ACTION is what happened to it. A valid list of log_ytpes: message.queued, message.undelivered, message.failed, message.received, webhook.error, number.purchased, number.released, user.login, user.login_success</td>
+</tr>
+<tr class="row-odd"><td>operator_id</td>
+<td>Unique id of operator that caused this log.</td>
+</tr>
+<tr class="row-even"><td>limit</td>
+<td>Used for pagination, number of log records to return.</td>
+</tr>
+<tr class="row-odd"><td>start_key</td>
+<td>Used for pagination, value of last_key from previous response.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -720,7 +775,7 @@ in_region, area_code, in_postal_code.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>path</strong> (<code class="docutils literal"><span class="pre">str</span></code>.) &#8211; The path that resources will be fetched from.</li>
-<li><strong>**kwargs</strong> &#8211; Any keyword arguments used for forming a query.</li>
+<li><strong>**kwargs</strong> &#8211; Any keyword arguments used for forming a query. Valid query keywords include: search, order, limit, page</li>
 </ul>
 </td>
 </tr>
@@ -1029,6 +1084,13 @@ For example POST if the resource is view only.</p>
 </dd></dl>
 
 <dl class="exception">
+<dt id="vivialconnect.common.error.RateLimit">
+<em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">RateLimit</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#RateLimit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.RateLimit" title="Permalink to this definition">¶</a></dt>
+<dd><p>429 Rate Limit</p>
+<p>Raised if rate limit reached.</p>
+</dd></dl>
+
+<dl class="exception">
 <dt id="vivialconnect.common.error.Redirection">
 <em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">Redirection</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em>, <em>url=None</em>, <em>headers=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#Redirection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.Redirection" title="Permalink to this definition">¶</a></dt>
 <dd><p>3xx Redirection Error</p>
@@ -1044,8 +1106,8 @@ For example POST if the resource is view only.</p>
 <dl class="exception">
 <dt id="vivialconnect.common.error.ResourceConflict">
 <em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">ResourceConflict</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#ResourceConflict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.ResourceConflict" title="Permalink to this definition">¶</a></dt>
-<dd><p>404 Resource Invalid</p>
-<p>Raised if a resource is invalid.</p>
+<dd><p>409 Resource Conflict</p>
+<p>Raised if there is resource conflict.</p>
 </dd></dl>
 
 <dl class="exception">
@@ -1058,7 +1120,7 @@ For example POST if the resource is view only.</p>
 <dl class="exception">
 <dt id="vivialconnect.common.error.ResourceInvalid">
 <em class="property">exception </em><code class="descclassname">vivialconnect.common.error.</code><code class="descname">ResourceInvalid</code><span class="sig-paren">(</span><em>message=None</em>, <em>http_status=None</em>, <em>http_body=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/common/error.html#ResourceInvalid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.common.error.ResourceInvalid" title="Permalink to this definition">¶</a></dt>
-<dd><p>404 Resource Invalid</p>
+<dd><p>422 Resource Invalid</p>
 <p>Raised if a resource is invalid.</p>
 </dd></dl>
 

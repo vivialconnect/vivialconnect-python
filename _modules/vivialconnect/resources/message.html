@@ -82,7 +82,7 @@
 <span class="sd">    sms_configuration_id       Unique identifier of the message status callback configuration to be used to handle message status callbacks.</span>
 <span class="sd">    ========================== ===========</span>
 
-<span class="sd">    Example request to retreive a list of messages from your account::</span>
+<span class="sd">    Example request to retreive a list of messages from your account, sorted by most recent::</span>
 
 <span class="sd">        from vivialconnect import Resource, Message</span>
 
@@ -92,7 +92,7 @@
 
 <span class="sd">        def list_messages():</span>
 <span class="sd">            count = Message.count()</span>
-<span class="sd">            messages = Message.find()</span>
+<span class="sd">            messages = Message.find(order=&quot;id desc&quot;)</span>
 <span class="sd">            for message in messages:</span>
 <span class="sd">                print(message.id, message.to_number,</span>
 <span class="sd">                      message.from_number, message.body)</span>
@@ -114,9 +114,9 @@
 <span class="sd">        :type id: ``int``.</span>
 <span class="sd">        :returns: :class:`Resource` -- a Resource object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span><span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                                      <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">id</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span>
+            <span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">id</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">attachment</span> <span class="o">=</span> <span class="n">Attachment</span><span class="o">.</span><span class="n">_build_object</span><span class="p">(</span><span class="n">Attachment</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
         <span class="n">attachment</span><span class="o">.</span><span class="n">_entity_path</span> <span class="o">=</span> <span class="n">url</span>
         <span class="k">return</span> <span class="n">attachment</span></div>
@@ -128,14 +128,14 @@
 <span class="sd">        :param \**kwargs: Any keyword arguments used for forming a query.</span>
 <span class="sd">        :returns: ``list`` -- a list of Resource objects.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span><span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span>
+            <span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">attachments</span> <span class="o">=</span> <span class="n">Attachment</span><span class="o">.</span><span class="n">_build_list</span><span class="p">(</span><span class="n">Attachment</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">attachment</span> <span class="ow">in</span> <span class="n">attachments</span><span class="p">:</span>
-            <span class="n">attachment</span><span class="o">.</span><span class="n">_entity_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span><span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                                                              <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">attachment</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                                                              <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">attachment</span><span class="o">.</span><span class="n">_entity_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span>
+                <span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">attachment</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span>
+            <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">attachments</span></div>
 
 <div class="viewcode-block" id="Message.attachments_count"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.message.Message.attachments_count">[docs]</a>    <span class="k">def</span> <span class="nf">attachments_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -145,8 +145,9 @@
         <span class="k">if</span> <span class="n">opts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">opts</span> <span class="o">=</span> <span class="n">kwargs</span>
 
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span><span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments/count&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span>
+            <span class="n">id_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/attachments/count&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">Attachment</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">))</span></div></div>
 
@@ -171,6 +172,7 @@
 <span class="sd">    file_name      File name of the media attachment.</span>
 <span class="sd">    =============  ===========</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">pass</span></div>
 </pre></div>
 

@@ -50,11 +50,50 @@
 
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">MutableSequence</span><span class="p">,</span> <span class="n">MutableMapping</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">chain</span>
 
 <span class="kn">from</span> <span class="nn">vivialconnect.common.requestor</span> <span class="k">import</span> <span class="n">Requestor</span>
 <span class="kn">from</span> <span class="nn">vivialconnect.common.error</span> <span class="k">import</span> <span class="n">ResourceError</span>
 <span class="kn">from</span> <span class="nn">vivialconnect.common.util</span> <span class="k">import</span> <span class="n">Util</span>
+<span class="kn">import</span> <span class="nn">six</span>
+
+
+<span class="k">class</span> <span class="nc">BaseField</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">ResourceAttributeStorage</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">backing_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">Resource</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parent should be a Resource instance&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_resource</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="n">backing_type</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">declared_fields</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_resource</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">:</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_resource</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_resource</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
 
 <div class="viewcode-block" id="ResourceMeta"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.ResourceMeta">[docs]</a><span class="k">class</span> <span class="nc">ResourceMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
@@ -64,11 +103,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">new_attrs</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s1">&#39;_singular&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_attrs</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">new_attrs</span><span class="p">[</span><span class="s1">&#39;_singular&#39;</span><span class="p">]:</span>
-            <span class="n">new_attrs</span><span class="p">[</span><span class="s1">&#39;_singular&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">underscore</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;_plural&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_attrs</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">new_attrs</span><span class="p">[</span><span class="s1">&#39;_plural&#39;</span><span class="p">]:</span>
-            <span class="n">new_attrs</span><span class="p">[</span><span class="s1">&#39;_plural&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">pluralize</span><span class="p">(</span><span class="n">new_attrs</span><span class="p">[</span><span class="s1">&#39;_singular&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">&quot;_singular&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_attrs</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">new_attrs</span><span class="p">[</span><span class="s2">&quot;_singular&quot;</span><span class="p">]:</span>
+            <span class="n">new_attrs</span><span class="p">[</span><span class="s2">&quot;_singular&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">underscore</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;_plural&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_attrs</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">new_attrs</span><span class="p">[</span><span class="s2">&quot;_plural&quot;</span><span class="p">]:</span>
+            <span class="n">new_attrs</span><span class="p">[</span><span class="s2">&quot;_plural&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">pluralize</span><span class="p">(</span><span class="n">new_attrs</span><span class="p">[</span><span class="s2">&quot;_singular&quot;</span><span class="p">])</span>
         <span class="n">klass</span> <span class="o">=</span> <span class="nb">type</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">new_attrs</span><span class="p">)</span>
+        <span class="n">klass</span><span class="o">.</span><span class="n">_fields</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">new_attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">BaseField</span><span class="p">):</span>
+                <span class="n">klass</span><span class="o">.</span><span class="n">_fields</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
         <span class="k">return</span> <span class="n">klass</span>
 
     <span class="k">def</span> <span class="nf">get_plural</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -77,8 +120,9 @@
     <span class="k">def</span> <span class="nf">set_plural</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_plural</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="n">plural</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_plural</span><span class="p">,</span> <span class="n">set_plural</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
-                      <span class="s1">&#39;The plural name of this object type&#39;</span><span class="p">)</span>
+    <span class="n">plural</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="n">get_plural</span><span class="p">,</span> <span class="n">set_plural</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;The plural name of this object type&quot;</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_singular</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_singular</span>
@@ -86,8 +130,9 @@
     <span class="k">def</span> <span class="nf">set_singular</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_singular</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="n">singular</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_singular</span><span class="p">,</span> <span class="n">set_singular</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
-                        <span class="s1">&#39;The singular name of this object type&#39;</span><span class="p">)</span>
+    <span class="n">singular</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="n">get_singular</span><span class="p">,</span> <span class="n">set_singular</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;The singular name of this object type&quot;</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_primary_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_primary_key</span>
@@ -95,13 +140,17 @@
     <span class="k">def</span> <span class="nf">set_primary_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_primary_key</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="n">primary_key</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_primary_key</span><span class="p">,</span> <span class="n">set_primary_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
-                           <span class="s1">&#39;Name of attribute that uniquely identies the resource&#39;</span><span class="p">)</span>
+    <span class="n">primary_key</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="n">get_primary_key</span><span class="p">,</span>
+        <span class="n">set_primary_key</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;Name of attribute that uniquely identies the resource&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">request</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="n">super_class</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">super_class</span> <span class="o">==</span> <span class="nb">object</span> <span class="ow">or</span> <span class="s1">&#39;_request&#39;</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">super_class</span> <span class="o">==</span> <span class="nb">object</span> <span class="ow">or</span> <span class="s2">&quot;_request&quot;</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_request</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="n">Requestor</span><span class="p">(</span>
                     <span class="n">api_key</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span>
@@ -109,7 +158,8 @@
                     <span class="n">api_base_url</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">api_base_url</span><span class="p">,</span>
                     <span class="n">api_account_id</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">api_account_id</span><span class="p">,</span>
                     <span class="n">verify_request</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_verify_request</span><span class="p">,</span>
-                    <span class="n">request_timeout</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_request_timeout</span><span class="p">)</span>
+                    <span class="n">request_timeout</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_request_timeout</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_request</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">super_class</span><span class="o">.</span><span class="n">request</span>
@@ -121,8 +171,9 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_api_key</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="n">api_key</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_api_key</span><span class="p">,</span> <span class="n">set_api_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
-                       <span class="s1">&#39;An API key used for HMAC authentication&#39;</span><span class="p">)</span>
+    <span class="n">api_key</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="n">get_api_key</span><span class="p">,</span> <span class="n">set_api_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;An API key used for HMAC authentication&quot;</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_api_secret</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_api_secret</span>
@@ -131,8 +182,12 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_api_secret</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="n">api_secret</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_api_secret</span><span class="p">,</span> <span class="n">set_api_secret</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
-                          <span class="s1">&#39;An API secret used for HMAC authentication&#39;</span><span class="p">)</span>
+    <span class="n">api_secret</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="n">get_api_secret</span><span class="p">,</span>
+        <span class="n">set_api_secret</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;An API secret used for HMAC authentication&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_api_account_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_api_account_id</span>
@@ -141,8 +196,9 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_api_account_id</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="n">api_account_id</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_api_account_id</span><span class="p">,</span> <span class="n">set_api_account_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
-                              <span class="s1">&#39;An API account id&#39;</span><span class="p">)</span>
+    <span class="n">api_account_id</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="n">get_api_account_id</span><span class="p">,</span> <span class="n">set_api_account_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;An API account id&quot;</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_api_base_url</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_api_base_url</span>
@@ -151,8 +207,12 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_api_base_url</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="n">api_base_url</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_api_base_url</span><span class="p">,</span> <span class="n">set_api_base_url</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
-                            <span class="s1">&#39;An API base_url used for HMAC authentication&#39;</span><span class="p">)</span>
+    <span class="n">api_base_url</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="n">get_api_base_url</span><span class="p">,</span>
+        <span class="n">set_api_base_url</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;An API base_url used for HMAC authentication&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_verify_request</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_verify_request</span>
@@ -161,8 +221,9 @@
         <span class="bp">cls</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_verify_request</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="n">api_verify_request</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_verify_request</span><span class="p">,</span> <span class="n">set_verify_request</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
-                                  <span class="s1">&#39;Verify SSL certs&#39;</span><span class="p">)</span>
+    <span class="n">api_verify_request</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="n">get_verify_request</span><span class="p">,</span> <span class="n">set_verify_request</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Verify SSL certs&quot;</span>
+    <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_request_timeout</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_request_timeout</span>
@@ -170,8 +231,9 @@
     <span class="k">def</span> <span class="nf">set_request_timeout</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_request_timeout</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="n">request_timeout</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_request_timeout</span><span class="p">,</span> <span class="n">set_request_timeout</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
-                               <span class="s1">&#39;Request Timeout&#39;</span><span class="p">)</span></div>
+    <span class="n">request_timeout</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="n">get_request_timeout</span><span class="p">,</span> <span class="n">set_request_timeout</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Request Timeout&quot;</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Resource"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.Resource">[docs]</a><span class="k">class</span> <span class="nc">Resource</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ResourceMeta</span><span class="p">,</span> <span class="nb">object</span><span class="p">)):</span>
@@ -187,7 +249,7 @@
     <span class="n">_primary_key</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span>
     <span class="n">_request_timeout</span> <span class="o">=</span> <span class="mi">30</span>
 
-    <span class="n">API_ACCOUNT_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;/accounts/</span><span class="si">%(account_id)s</span><span class="s1">&#39;</span>
+    <span class="n">API_ACCOUNT_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;/accounts/</span><span class="si">%(account_id)s</span><span class="s2">&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">attributes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -197,8 +259,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">klass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="n">ResourceAttributeStorage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="c1"># Public class methods which act as factory functions</span>
@@ -225,7 +286,7 @@
 
 <span class="sd">        :param path: The path that resources will be fetched from.</span>
 <span class="sd">        :type path: ``str``.</span>
-<span class="sd">        :param \**kwargs: Any keyword arguments used for forming a query.</span>
+<span class="sd">        :param \**kwargs: Any keyword arguments used for forming a query. Valid query keywords include: search, order, limit, page</span>
 <span class="sd">        :returns: The first found resource from the list of returned resources, otherwise ``None``.</span>
 <span class="sd">        :raises: :class:`RequestorError`: On any communications errors.</span>
 <span class="sd">                 :class:`ResourceError`: On any other errors.</span>
@@ -255,11 +316,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap_attributes</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_singular</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">),</span> <span class="n">attributes</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">),</span>
+                <span class="n">attributes</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection_path</span><span class="p">(</span>
-                <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">),</span> <span class="n">params</span><span class="o">=</span><span class="n">attributes</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_collection_path</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">),</span>
+                <span class="n">params</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">Util</span><span class="o">.</span><span class="n">remove_root</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
@@ -269,8 +334,9 @@
 <span class="sd">        :raises: :class:`RequestorError`: On any communications errors.</span>
 <span class="sd">            :class:`ResourceError`: On any other errors.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">))</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Resource.destroy"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.Resource.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -279,8 +345,9 @@
 <span class="sd">        :raises: :class:`RequestorError`: On any communications errors.</span>
 <span class="sd">            :class:`ResourceError`: On any other errors.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">))</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span><span class="p">)</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Resource.is_new"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.resource.Resource.is_new">[docs]</a>    <span class="k">def</span> <span class="nf">is_new</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns True if resource is new and have not been saved.</span>
@@ -290,30 +357,30 @@
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span>
-            <span class="n">id_</span><span class="o">=</span><span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="n">custom_path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">id_</span><span class="o">=</span><span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="n">custom_path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span>
-            <span class="n">id_</span><span class="o">=</span><span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="n">custom_path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">id_</span><span class="o">=</span><span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="n">custom_path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_find_single</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_element_path</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span>
+            <span class="n">kwargs</span>
+        <span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_build_object</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_find_every</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_collection_path</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_collection_path</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_query_string</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_build_list</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
@@ -335,6 +402,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">attributes</span><span class="p">):</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">declared_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="n">klass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_class_for</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="n">attr</span> <span class="o">=</span> <span class="n">klass</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -344,10 +412,20 @@
                 <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                         <span class="k">if</span> <span class="n">klass</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="n">klass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_class_for_collection</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-                        <span class="n">attr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">klass</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
+                            <span class="c1"># Figure out the class based on the descriptor, if any</span>
+                            <span class="k">if</span> <span class="n">desc</span><span class="p">:</span>
+                                <span class="n">klass</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">member_type</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="c1"># Guess the subclass</span>
+                                <span class="n">klass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_class_for_collection</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">SubordinateResource</span><span class="p">):</span>
+                            <span class="n">attr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">klass</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">parent_resource</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">attr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">klass</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">attr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">klass</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">SubordinateResource</span><span class="p">):</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">attr</span> <span class="o">=</span> <span class="n">value</span>
             <span class="c1"># Store the actual value in the attributes dictionary</span>
@@ -358,20 +436,19 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_class_for</span><span class="p">(</span><span class="n">Util</span><span class="o">.</span><span class="n">singularize</span><span class="p">(</span><span class="n">collection_name</span><span class="p">))</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_find_class_for</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                        <span class="n">class_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_find_class_for</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">element_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">create_missing</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">element_name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">class_name</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ResourceError</span><span class="p">(</span><span class="s1">&#39;element_name or class_name must be specified&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ResourceError</span><span class="p">(</span><span class="s2">&quot;element_name or class_name must be specified&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="n">element_name</span><span class="p">:</span>
             <span class="n">element_name</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">underscore</span><span class="p">(</span><span class="n">class_name</span><span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="n">class_name</span><span class="p">:</span>
             <span class="n">class_name</span> <span class="o">=</span> <span class="n">Util</span><span class="o">.</span><span class="n">camelize</span><span class="p">(</span><span class="n">element_name</span><span class="p">)</span>
 
-        <span class="n">module_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">module_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">depth</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">module_path</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="nb">__import__</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module_path</span><span class="p">[:</span><span class="n">depth</span><span class="p">]))</span>
-                <span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module_path</span><span class="p">[:</span><span class="n">depth</span><span class="p">])]</span>
+                <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module_path</span><span class="p">[:</span><span class="n">depth</span><span class="p">]))</span>
+                <span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">module_path</span><span class="p">[:</span><span class="n">depth</span><span class="p">])]</span>
             <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">try</span><span class="p">:</span>
@@ -379,9 +456,8 @@
                 <span class="k">return</span> <span class="n">klass</span>
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="nb">__import__</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">element_name</span><span class="p">]))</span>
-                    <span class="n">submodule</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="p">[</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">element_name</span><span class="p">])]</span>
+                    <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">element_name</span><span class="p">]))</span>
+                    <span class="n">submodule</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">element_name</span><span class="p">])]</span>
                 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
                     <span class="k">continue</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -392,12 +468,16 @@
 
         <span class="c1"># Woow, we made it this far, and no class was found</span>
         <span class="k">if</span> <span class="n">create_missing</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">class_name</span><span class="p">),</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,),</span> <span class="p">{</span><span class="s1">&#39;__module__&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">})</span>
+            <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">class_name</span><span class="p">),</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,),</span> <span class="p">{</span><span class="s2">&quot;__module__&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">})</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">declared_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span>
 
     <span class="k">def</span> <span class="nf">_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">):</span>
                 <span class="n">new_value</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Resource</span><span class="p">):</span>
@@ -411,7 +491,7 @@
                 <span class="n">attributes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="n">attributes</span>
 
-    <span class="k">def</span> <span class="nf">_wrap_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_wrap_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="s2">&quot;object&quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">root</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span><span class="n">root</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict</span><span class="p">()}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict</span><span class="p">()</span>
@@ -422,22 +502,22 @@
     <span class="k">def</span> <span class="nf">set_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">klass</span><span class="o">.</span><span class="n">primary_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="nb">id</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_id</span><span class="p">,</span> <span class="n">set_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Value stored in the primary key&#39;</span><span class="p">)</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_id</span><span class="p">,</span> <span class="n">set_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Value stored in the primary key&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_attr_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s1">&#39;attributes&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;attributes&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s1">&#39;attributes&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;attributes&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s1">&#39;_initialized&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;_initialized&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
                 <span class="c1"># Update a normal attribute</span>
                 <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
@@ -448,7 +528,7 @@
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_singular</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_singular</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">six</span><span class="o">.</span><span class="n">PY2</span><span class="p">:</span>
         <span class="c1"># pylint: disable=undefined-variable</span>
@@ -457,18 +537,22 @@
                 <span class="k">return</span> <span class="nb">cmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="nb">cmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
     <span class="k">else</span><span class="p">:</span>
+
         <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> \
-                   <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">id</span> \
-                   <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_prefix_options</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">other</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">id</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix_options</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_prefix_options</span>
+            <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_prefix</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
             <span class="n">prefix</span> <span class="o">=</span> <span class="n">path</span>
         <span class="k">if</span> <span class="n">options</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -476,46 +560,73 @@
         <span class="k">return</span> <span class="n">prefix</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_element_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">%(prefix)s</span><span class="s1">/</span><span class="si">%(plural)s</span><span class="s1">/</span><span class="si">%(id)s%(ext)s</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">%</span> \
-            <span class="p">{</span><span class="s1">&#39;account_id&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
-             <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
-             <span class="s1">&#39;plural&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
-             <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">id_</span><span class="p">,</span>
-             <span class="s1">&#39;ext&#39;</span><span class="p">:</span> <span class="n">ext</span><span class="p">}</span>
+    <span class="k">def</span> <span class="nf">_element_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">id_</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%(prefix)s</span><span class="s2">/</span><span class="si">%(plural)s</span><span class="s2">/</span><span class="si">%(id)s%(ext)s</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s2">&quot;account_id&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
+            <span class="s2">&quot;prefix&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
+            <span class="s2">&quot;plural&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">id_</span><span class="p">,</span>
+            <span class="s2">&quot;ext&quot;</span><span class="p">:</span> <span class="n">ext</span><span class="p">,</span>
+        <span class="p">}</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_collection_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">%(prefix)s</span><span class="s1">/</span><span class="si">%(plural)s%(ext)s</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">%</span> \
-            <span class="p">{</span><span class="s1">&#39;account_id&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
-             <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
-             <span class="s1">&#39;plural&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
-             <span class="s1">&#39;ext&#39;</span><span class="p">:</span> <span class="n">ext</span><span class="p">}</span>
+    <span class="k">def</span> <span class="nf">_collection_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%(prefix)s</span><span class="s2">/</span><span class="si">%(plural)s%(ext)s</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s2">&quot;account_id&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
+            <span class="s2">&quot;prefix&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
+            <span class="s2">&quot;plural&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
+            <span class="s2">&quot;ext&quot;</span><span class="p">:</span> <span class="n">ext</span><span class="p">,</span>
+        <span class="p">}</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_custom_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_custom_path</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">id_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span>
+    <span class="p">):</span>
         <span class="k">if</span> <span class="n">id_</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">%(prefix)s</span><span class="s1">/</span><span class="si">%(plural)s</span><span class="s1">/</span><span class="si">%(id)s%(custom)s%(ext)s</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">%</span> \
-                <span class="p">{</span><span class="s1">&#39;account_id&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
-                 <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
-                 <span class="s1">&#39;plural&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
-                 <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">id_</span><span class="p">,</span>
-                 <span class="s1">&#39;custom&#39;</span><span class="p">:</span> <span class="n">custom_path</span><span class="p">,</span>
-                 <span class="s1">&#39;ext&#39;</span><span class="p">:</span> <span class="n">ext</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%(prefix)s</span><span class="s2">/</span><span class="si">%(plural)s</span><span class="s2">/</span><span class="si">%(id)s%(custom)s%(ext)s</span><span class="s2">&quot;</span>
+            <span class="p">)</span> <span class="o">%</span> <span class="p">{</span>
+                <span class="s2">&quot;account_id&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
+                <span class="s2">&quot;prefix&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
+                <span class="s2">&quot;plural&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">id_</span><span class="p">,</span>
+                <span class="s2">&quot;custom&quot;</span><span class="p">:</span> <span class="n">custom_path</span><span class="p">,</span>
+                <span class="s2">&quot;ext&quot;</span><span class="p">:</span> <span class="n">ext</span><span class="p">,</span>
+            <span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">%(prefix)s</span><span class="s1">/</span><span class="si">%(plural)s%(custom)s%(ext)s</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">%</span> \
-                <span class="p">{</span><span class="s1">&#39;account_id&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
-                 <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
-                 <span class="s1">&#39;plural&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
-                 <span class="s1">&#39;custom&#39;</span><span class="p">:</span> <span class="n">custom_path</span><span class="p">,</span>
-                 <span class="s1">&#39;ext&#39;</span><span class="p">:</span> <span class="n">ext</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">API_ACCOUNT_PREFIX</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">%(prefix)s</span><span class="s2">/</span><span class="si">%(plural)s%(custom)s%(ext)s</span><span class="s2">&quot;</span>
+            <span class="p">)</span> <span class="o">%</span> <span class="p">{</span>
+                <span class="s2">&quot;account_id&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_api_account_id</span><span class="p">,</span>
+                <span class="s2">&quot;prefix&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_prefix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span>
+                <span class="s2">&quot;plural&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_plural</span><span class="p">,</span>
+                <span class="s2">&quot;custom&quot;</span><span class="p">:</span> <span class="n">custom_path</span><span class="p">,</span>
+                <span class="s2">&quot;ext&quot;</span><span class="p">:</span> <span class="n">ext</span><span class="p">,</span>
+            <span class="p">}</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_query_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">query_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">query_options</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;?&#39;</span> <span class="o">+</span> <span class="n">Util</span><span class="o">.</span><span class="n">to_query</span><span class="p">(</span><span class="n">query_options</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;?&quot;</span> <span class="o">+</span> <span class="n">Util</span><span class="o">.</span><span class="n">to_query</span><span class="p">(</span><span class="n">query_options</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<span class="k">class</span> <span class="nc">SubordinateResource</span><span class="p">(</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent_resource</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_resource</span> <span class="o">=</span> <span class="n">parent_resource</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SubordinateResource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="n">prefix_options</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Cannot find subordinate resources.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">identity</span> <span class="o">=</span> <span class="s2">&quot;(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identity</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">identity</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_resource</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singular</span><span class="p">,</span> <span class="n">identity</span><span class="p">)</span>
 </pre></div>
 
           </div>
