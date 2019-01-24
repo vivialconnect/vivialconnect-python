@@ -48,7 +48,7 @@ class Message(Resource, Countable):
 
         def list_messages():
             count = Message.count()
-            messages = Message.find((order="id desc")
+            messages = Message.find(order="id desc")
             for message in messages:
                 print(message.id, message.to_number,
                       message.from_number, message.body)
