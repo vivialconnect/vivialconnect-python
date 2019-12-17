@@ -12,13 +12,19 @@ class RequestorError(Exception):
     """
 
     def __init__(self, message=None, http_status=None, http_body=None):
-        super(RequestorError, self).__init__(message)
         self.http_status = http_status
         self.http_body = http_body
         try:
             self.json_body = json.loads(http_body)
         except:
             self.json_body = None
+
+        if "error_code" in self.json_body:
+            super(RequestorError, self).__init__(
+                "{}: {}".format(self.json_body.get("error_code"), message)
+            )
+        else:
+            super(RequestorError, self).__init__(message)
 
         self.param = None
         try:
