@@ -16,7 +16,7 @@ class Number(Resource, Countable):
 
     Before you can send or receive text messages using Vivial Connect, you must
     purchase at least one phone number and associate it with your account. The
-    API lets you choose from a list of US-only, non-toll-free available numbers.
+    API lets you choose from a list of available US local or toll-free numbers.
     When you query this list to find an available number that meets your needs,
     you can tailor your search to target specific criteria, including:
 
@@ -31,7 +31,7 @@ class Number(Resource, Countable):
     ================= ===========
     name              Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.
     phone_number      Available phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.
-    phone_number_type Type of available phone number. *Possible values:* local (non-toll-free) or tollfree.
+    phone_number_type Type of available phone number. *Possible values:* 'local' or 'tollfree'.
     city              City where the available phone number is located.
     region            Two-letter US state abbreviation where the available phone number is located.
     lata              Local address and transport area (LATA) where the available phone number is located.
@@ -49,7 +49,7 @@ class Number(Resource, Countable):
     account_id                     Unique identifier of the account with the phone number.
     name                           Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.
     phone_number                   Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.
-    phone_number_type              Type of associated phone number. *Possible values:* local (non-toll-free) or tollfree.
+    phone_number_type              Type of associated phone number. *Possible values:* 'local' or 'tollfree'.
     status_text_url                URL to receive status requests for messages sent via the API using this associated phone number. *Max. length:* 256 characters.
     sms_configuration_id           Unique identifier of the message status callback configuration to be used to handle SMS messages sent to the associated number.
     incoming_text_url              URL for receiving SMS messages to the associated phone number. *Max. length:* 256 characters.
@@ -143,7 +143,7 @@ class Number(Resource, Countable):
         :param \**kwargs: You must specify exactly one of the following three keys:
             in_region, area_code, in_postal_code.
 
-        :returns: :class:`Number` -- a list of available US local (non-toll-free) phone numbers.
+        :returns: :class:`Number` -- a list of available US local or toll-free phone numbers.
         """
         qs = {}
         country_code = "US"
