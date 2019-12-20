@@ -39,6 +39,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for vivialconnect.resources.number</h1><div class="highlight"><pre>
@@ -60,7 +62,7 @@
 
 <span class="sd">    Before you can send or receive text messages using Vivial Connect, you must</span>
 <span class="sd">    purchase at least one phone number and associate it with your account. The</span>
-<span class="sd">    API lets you choose from a list of US-only, non-toll-free available numbers.</span>
+<span class="sd">    API lets you choose from a list of available US local or toll-free numbers.</span>
 <span class="sd">    When you query this list to find an available number that meets your needs,</span>
 <span class="sd">    you can tailor your search to target specific criteria, including:</span>
 
@@ -75,7 +77,7 @@
 <span class="sd">    ================= ===========</span>
 <span class="sd">    name              Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.</span>
 <span class="sd">    phone_number      Available phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.</span>
-<span class="sd">    phone_number_type Type of available phone number. *Possible values:* local (non-toll-free) or tollfree.</span>
+<span class="sd">    phone_number_type Type of available phone number. *Possible values:* &#39;local&#39; or &#39;tollfree&#39;.</span>
 <span class="sd">    city              City where the available phone number is located.</span>
 <span class="sd">    region            Two-letter US state abbreviation where the available phone number is located.</span>
 <span class="sd">    lata              Local address and transport area (LATA) where the available phone number is located.</span>
@@ -93,7 +95,7 @@
 <span class="sd">    account_id                     Unique identifier of the account with the phone number.</span>
 <span class="sd">    name                           Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.</span>
 <span class="sd">    phone_number                   Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.</span>
-<span class="sd">    phone_number_type              Type of associated phone number. *Possible values:* local (non-toll-free) or tollfree.</span>
+<span class="sd">    phone_number_type              Type of associated phone number. *Possible values:* &#39;local&#39; or &#39;tollfree&#39;.</span>
 <span class="sd">    status_text_url                URL to receive status requests for messages sent via the API using this associated phone number. *Max. length:* 256 characters.</span>
 <span class="sd">    sms_configuration_id           Unique identifier of the message status callback configuration to be used to handle SMS messages sent to the associated number.</span>
 <span class="sd">    incoming_text_url              URL for receiving SMS messages to the associated phone number. *Max. length:* 256 characters.</span>
@@ -187,7 +189,7 @@
 <span class="sd">        :param \**kwargs: You must specify exactly one of the following three keys:</span>
 <span class="sd">            in_region, area_code, in_postal_code.</span>
 
-<span class="sd">        :returns: :class:`Number` -- a list of available US local (non-toll-free) phone numbers.</span>
+<span class="sd">        :returns: :class:`Number` -- a list of available US local or toll-free phone numbers.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">qs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">country_code</span> <span class="o">=</span> <span class="s2">&quot;US&quot;</span>
@@ -223,6 +225,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -254,7 +257,7 @@
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

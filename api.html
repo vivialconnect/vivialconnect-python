@@ -40,6 +40,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="api-documentation">
@@ -372,7 +374,7 @@ associated and available phone numbers.</p>
 <p>Purchasing a Phone Number</p>
 <p>Before you can send or receive text messages using Vivial Connect, you must
 purchase at least one phone number and associate it with your account. The
-API lets you choose from a list of US-only, non-toll-free available numbers.
+API lets you choose from a list of available US local or toll-free numbers.
 When you query this list to find an available number that meets your needs,
 you can tailor your search to target specific criteria, including:</p>
 <ul class="simple">
@@ -399,7 +401,7 @@ you can tailor your search to target specific criteria, including:</p>
 <td>Available phone number in E.164 format (+country code +phone number). For US numbers, the format will be <code class="docutils literal"><span class="pre">+1xxxyyyzzzz</span></code>.</td>
 </tr>
 <tr class="row-even"><td>phone_number_type</td>
-<td>Type of available phone number. <em>Possible values:</em> local (non-toll-free) or tollfree.</td>
+<td>Type of available phone number. <em>Possible values:</em> &#8216;local&#8217; or &#8216;tollfree&#8217;.</td>
 </tr>
 <tr class="row-odd"><td>city</td>
 <td>City where the available phone number is located.</td>
@@ -446,7 +448,7 @@ you can tailor your search to target specific criteria, including:</p>
 <td>Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be <code class="docutils literal"><span class="pre">+1xxxyyyzzzz</span></code>.</td>
 </tr>
 <tr class="row-even"><td>phone_number_type</td>
-<td>Type of associated phone number. <em>Possible values:</em> local (non-toll-free) or tollfree.</td>
+<td>Type of associated phone number. <em>Possible values:</em> &#8216;local&#8217; or &#8216;tollfree&#8217;.</td>
 </tr>
 <tr class="row-odd"><td>status_text_url</td>
 <td>URL to receive status requests for messages sent via the API using this associated phone number. <em>Max. length:</em> 256 characters.</td>
@@ -567,7 +569,7 @@ in_region, area_code, in_postal_code.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal"><span class="pre">Number</span></code> &#8211; a list of available US local (non-toll-free) phone numbers.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal"><span class="pre">Number</span></code> &#8211; a list of available US local or toll-free phone numbers.</p>
 </td>
 </tr>
 </tbody>
@@ -1150,6 +1152,7 @@ For example POST if the resource is view only.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -1202,7 +1205,7 @@ For example POST if the resource is view only.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/api.rst.txt"
