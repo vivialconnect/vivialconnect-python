@@ -2,6 +2,7 @@
 .. module:: message
    :synopsis: Message module.
 """
+from datetime import datetime
 
 from vivialconnect.common.util import Util
 from vivialconnect.resources.resource import Resource
@@ -107,6 +108,50 @@ class Message(Resource, Countable):
 
         return Util.remove_root(Attachment.request.get(url))
 
+    def send_bulk(self):
+        """Sends a message to multiples recipients.
+
+        This method uses `to_numbers` property instead of `to_number` for sending to multiples recipients. The values
+        must be a list of numbers in E.164 format (+(country code)(phone number)).
+
+        If `to_numbers` is not provided a `ValueError` exception will be raised.
+        """
+
+        if not hasattr(self, "to_numbers"):
+            raise ValueError("Property 'to_numbers' is required")
+
+        url = self.klass._custom_path(custom_path="/bulk")
+        raw_data = self._wrap_attributes()
+        payload = Util.remove_root(raw_data)
+        response = Message.request.post(url, params=payload)
+
+        return response["bulk_id"]
+
+    @classmethod
+    def bulk_messages(cls, bulk_id):
+        """Returns a list of Messages that are members of the the bulk send job identified by bulk_id
+        """
+        url = cls._custom_path(custom_path=f"/bulk/{bulk_id}")
+        response = Message.request.get(url)
+        return cls._build_list(response)
+
+    @classmethod
+    def bulks(cls):
+        """Returns a list of all bulk send jobs.
+        """
+        url = cls._custom_path(custom_path="/bulk")
+        response = Message.request.get(url)
+        bulks_data = list(response.values())[0]
+        bulks = []
+
+        for bulk_data in bulks_data:
+            date_value = bulk_data["date_created"]
+            datetime_obj = datetime.strptime(date_value, "%Y-%m-%dT%H:%M:%S")
+            bulk_data["date_created"] = datetime_obj
+            bulks.append(Bulk(**bulk_data))
+
+        return bulks
+
 
 class Attachment(Resource):
     """Use the :class:`Attachment` resource to list, count, and view
@@ -130,3 +175,21 @@ class Attachment(Resource):
     """
 
     pass
+
+
+class Bulk:
+    bulk_id = None
+    total_messages = 0
+    date_created = None
+    processed = 0
+    errors = 0
+
+    def __init__(self, **kwargs):
+        self.bulk_id = kwargs.get("bulk_id")
+        self.total_messages = kwargs.get("total_messages")
+        self.date_created = kwargs.get("date_created")
+        self.processed = kwargs.get("processed")
+        self.errors = kwargs.get("errors")
+
+    def __repr__(self):
+        return f"Bulk({self.bulk_id})"

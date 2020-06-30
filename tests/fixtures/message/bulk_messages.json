@@ -1,0 +1,50 @@
+{
+    "messages": [
+        {
+            "account_id": 4,
+            "body": "Bulk Message Test",
+            "bulk_id": "265b3fbe-4887-5881-9f89-a6cc30eaff97",
+            "connector_id": null,
+            "date_created": "2020-06-26T23:03:24+00:00",
+            "date_modified": "2020-06-26T23:03:32+00:00",
+            "dest_country": "US",
+            "direction": "outbound-api",
+            "encoding": "gsm0338",
+            "error_code": null,
+            "error_message": null,
+            "from_number": "+18604304918",
+            "id": 110,
+            "message_type": "local_sms",
+            "num_media": 0,
+            "num_segments": 1,
+            "price": null,
+            "price_currency": null,
+            "sent": "2020-06-26T23:03:25+00:00",
+            "status": "delivered",
+            "to_number": "+18332090449"
+        },
+        {
+            "account_id": 4,
+            "body": "Bulk Message Test",
+            "bulk_id": "265b3fbe-4887-5881-9f89-a6cc30eaff97",
+            "connector_id": null,
+            "date_created": "2020-06-26T23:03:24+00:00",
+            "date_modified": "2020-06-26T23:03:32+00:00",
+            "dest_country": "US",
+            "direction": "outbound-api",
+            "encoding": "gsm0338",
+            "error_code": null,
+            "error_message": null,
+            "from_number": "+18604304918",
+            "id": 111,
+            "message_type": "local_sms",
+            "num_media": 0,
+            "num_segments": 1,
+            "price": null,
+            "price_currency": null,
+            "sent": "2020-06-26T23:03:25+00:00",
+            "status": "delivered",
+            "to_number": "+15152033915"
+        }
+    ]
+}

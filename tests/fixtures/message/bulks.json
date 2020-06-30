@@ -1,0 +1,57 @@
+{
+    "bulks": [
+        {
+            "bulk_id": "c8c1da71-36cb-5363-8b95-ea72e41de11c",
+            "date_created": "2020-06-29T12:30:07",
+            "errors": 0,
+            "processed": 3,
+            "total_messages": 3
+        },
+        {
+            "bulk_id": "ea12620a-6c12-5ae9-835d-789e3b71b445",
+            "date_created": "2020-06-29T12:25:08",
+            "errors": 0,
+            "processed": 3,
+            "total_messages": 3
+        },
+        {
+            "bulk_id": "ac84229f-86ca-5edb-a37b-df253a94dbcb",
+            "date_created": "2020-06-29T12:16:32",
+            "errors": 0,
+            "processed": 2,
+            "total_messages": 2
+        },
+        {
+            "bulk_id": "d1330d57-6dc7-5717-a6f9-b0ce08637bcd",
+            "date_created": "2020-06-26T23:09:49",
+            "errors": 0,
+            "processed": 3,
+            "total_messages": 3
+        },
+        {
+            "bulk_id": "265b3fbe-4887-5881-9f89-a6cc30eaff97",
+            "date_created": "2020-06-26T23:03:24",
+            "errors": 0,
+            "processed": 3,
+            "total_messages": 3
+        },
+        {
+            "bulk_id": "5a0ca82a-c1d2-5070-bd41-cb378b93ed5e",
+            "date_created": "2020-06-24T23:17:11",
+            "errors": 0,
+            "processed": 3,
+            "total_messages": 3
+        },
+        {
+            "bulk_id": "7819add2-e61f-5a66-b0df-1fee109d3ccd",
+            "date_created": "2020-06-24T21:38:12",
+            "errors": 0,
+            "processed": 3,
+            "total_messages": 3
+        }
+    ],
+    "count": 7,
+    "next": null,
+    "pages": 1,
+    "previous": null
+}
