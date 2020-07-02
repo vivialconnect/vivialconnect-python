@@ -82,7 +82,7 @@
 </tbody>
 </table>
 <p>Example request to retrieve a billing status for account id 12345:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Account</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="kn">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Account</span>
 
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -159,7 +159,7 @@
 </tbody>
 </table>
 <p>Example request to retrieve a list of users accociated with the account id 12345:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">User</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="kn">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">User</span>
 
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -298,7 +298,7 @@ message entities.</p>
 </tbody>
 </table>
 <p>Example request to retreive a list of messages from your account, sorted by most recent:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Message</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="kn">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Message</span>
 
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -355,10 +355,31 @@ your account.</p>
 a message in your account.</p>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="vivialconnect.resources.message.Message.bulk_messages">
+<em class="property">classmethod </em><code class="descname">bulk_messages</code><span class="sig-paren">(</span><em>bulk_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Message.bulk_messages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Message.bulk_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of Messages that are members of the the bulk send job identified by bulk_id</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="vivialconnect.resources.message.Message.bulks">
+<em class="property">classmethod </em><code class="descname">bulks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Message.bulks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Message.bulks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all bulk send jobs.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="vivialconnect.resources.message.Message.send">
 <code class="descname">send</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Message.send"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Message.send" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sends a new message.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vivialconnect.resources.message.Message.send_bulk">
+<code class="descname">send_bulk</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vivialconnect/resources/message.html#Message.send_bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vivialconnect.resources.message.Message.send_bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a message to multiples recipients.</p>
+<p>This method uses <cite>to_numbers</cite> property instead of <cite>to_number</cite> for sending to multiples recipients. The values
+must be a list of numbers in E.164 format (+(country code)(phone number)).</p>
+<p>If <cite>to_numbers</cite> is not provided a <cite>ValueError</cite> exception will be raised.</p>
 </dd></dl>
 
 </dd></dl>
@@ -486,7 +507,7 @@ you can tailor your search to target specific criteria, including:</p>
 </tbody>
 </table>
 <p>Example request to retrieve a list of associated numbers:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Number</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="kn">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Number</span>
 
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -503,7 +524,7 @@ you can tailor your search to target specific criteria, including:</p>
 </pre></div>
 </div>
 <p>Example request to retrieve a list of available numbers:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Number</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="kn">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Number</span>
 
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -531,7 +552,7 @@ you can tailor your search to target specific criteria, including:</p>
 </pre></div>
 </div>
 <p>Example request to buy a new phone number:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="k">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Number</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vivialconnect</span> <span class="kn">import</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">Number</span>
 
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="n">Resource</span><span class="o">.</span><span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
