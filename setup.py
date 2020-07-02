@@ -28,7 +28,6 @@ setup(
     long_description=readme(),
     test_suite="test",
     classifiers=[
-        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
@@ -38,6 +37,9 @@ setup(
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Communications :: Telephony",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
