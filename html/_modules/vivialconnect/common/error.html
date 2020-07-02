@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>vivialconnect.common.error &#8212; Vivial Connect 0.1.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for vivialconnect.common.error</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: error</span>
+<span class="sd">   :synopsis: The following error classes exist in the</span>
+<span class="sd">              Vivial Connect API.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+
+
+<div class="viewcode-block" id="RequestorError"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.RequestorError">[docs]</a><span class="k">class</span> <span class="nc">RequestorError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base Requestor Error</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">http_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">http_body</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">http_status</span> <span class="o">=</span> <span class="n">http_status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">http_body</span> <span class="o">=</span> <span class="n">http_body</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">json_body</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">http_body</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">json_body</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="s2">&quot;error_code&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_body</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">RequestorError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">json_body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;error_code&quot;</span><span class="p">),</span> <span class="n">message</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">RequestorError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_body</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;param&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<span class="c1"># HTTP error code 5xx (500..599)</span>
+<div class="viewcode-block" id="ServerError"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.ServerError">[docs]</a><span class="k">class</span> <span class="nc">ServerError</span><span class="p">(</span><span class="n">RequestorError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Any 5xx HTTP Error 5xx (500..599)</span>
+
+<span class="sd">    Raised if an internal server error occurred.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># Network connection error</span>
+<div class="viewcode-block" id="ConnectionError"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.ConnectionError">[docs]</a><span class="k">class</span> <span class="nc">ConnectionError</span><span class="p">(</span><span class="n">RequestorError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Network Connection Error</span>
+
+<span class="sd">    This error is raised if Vivial Connect API client detects</span>
+<span class="sd">    a connection error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># HTTP 3xx redirection</span>
+<div class="viewcode-block" id="Redirection"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.Redirection">[docs]</a><span class="k">class</span> <span class="nc">Redirection</span><span class="p">(</span><span class="ne">ConnectionError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;3xx Redirection Error</span>
+
+<span class="sd">    Raised for all HTTP redirects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">http_status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">http_body</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Redirection</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">http_status</span><span class="p">,</span> <span class="n">http_body</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span></div>
+
+
+<span class="c1"># HTTP error 4xx (401..499)</span>
+<div class="viewcode-block" id="ClientError"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.ClientError">[docs]</a><span class="k">class</span> <span class="nc">ClientError</span><span class="p">(</span><span class="ne">ConnectionError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;4xx Base HTTP Error (401..499)</span>
+
+<span class="sd">    Baseclass for all 4xx exceptions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># 409 Conflict</span>
+<div class="viewcode-block" id="ResourceConflict"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.ResourceConflict">[docs]</a><span class="k">class</span> <span class="nc">ResourceConflict</span><span class="p">(</span><span class="n">ClientError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;409 Resource Conflict</span>
+
+<span class="sd">    Raised if there is resource conflict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># 422 Resource Invalid</span>
+<div class="viewcode-block" id="ResourceInvalid"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.ResourceInvalid">[docs]</a><span class="k">class</span> <span class="nc">ResourceInvalid</span><span class="p">(</span><span class="n">ClientError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;422 Resource Invalid</span>
+
+<span class="sd">    Raised if a resource is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># 429 Rate Limit</span>
+<div class="viewcode-block" id="RateLimit"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.RateLimit">[docs]</a><span class="k">class</span> <span class="nc">RateLimit</span><span class="p">(</span><span class="n">ClientError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;429 Rate Limit</span>
+
+<span class="sd">    Raised if rate limit reached.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># 404 Resource Not Found</span>
+<div class="viewcode-block" id="ResourceNotFound"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.ResourceNotFound">[docs]</a><span class="k">class</span> <span class="nc">ResourceNotFound</span><span class="p">(</span><span class="n">ClientError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;404 Resource Not Found</span>
+
+<span class="sd">    Raised if a resource does not exist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># 400 Bad Request</span>
+<div class="viewcode-block" id="BadRequest"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.BadRequest">[docs]</a><span class="k">class</span> <span class="nc">BadRequest</span><span class="p">(</span><span class="n">ClientError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;400 Bad Request</span>
+
+<span class="sd">    Raised if the client receives something and cannot handle it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># 401 Unauthorized</span>
+<div class="viewcode-block" id="UnauthorizedAccess"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.UnauthorizedAccess">[docs]</a><span class="k">class</span> <span class="nc">UnauthorizedAccess</span><span class="p">(</span><span class="n">ClientError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;401 Unauthorized</span>
+
+<span class="sd">    Raised if the user is not authorized to access remote resource.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># 403 Forbidden</span>
+<div class="viewcode-block" id="ForbiddenAccess"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.ForbiddenAccess">[docs]</a><span class="k">class</span> <span class="nc">ForbiddenAccess</span><span class="p">(</span><span class="n">ClientError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;403 Forbidden</span>
+
+<span class="sd">    Raised if the user doesn&#39;t have the permission for the</span>
+<span class="sd">    requested resource.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># 405 Method Not Allowed</span>
+<div class="viewcode-block" id="MethodNotAllowed"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.MethodNotAllowed">[docs]</a><span class="k">class</span> <span class="nc">MethodNotAllowed</span><span class="p">(</span><span class="n">ClientError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;405 Method Not Allowed</span>
+
+<span class="sd">    Raised if the server does not handle method used to access resource.</span>
+<span class="sd">    For example POST if the resource is view only.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ResourceError"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.error.ResourceError">[docs]</a><span class="k">class</span> <span class="nc">ResourceError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generic Resource Error</span>
+
+<span class="sd">    Raised if there is an error while processing response JSON data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ResourceError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Vivial Connect.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

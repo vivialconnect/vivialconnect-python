@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>vivialconnect.resources.number &#8212; Vivial Connect 0.1.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for vivialconnect.resources.number</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: number</span>
+<span class="sd">   :synopsis: Number module.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">vivialconnect.resources.resource</span> <span class="kn">import</span> <span class="n">Resource</span>
+<span class="kn">from</span> <span class="nn">vivialconnect.resources.countable</span> <span class="kn">import</span> <span class="n">Countable</span>
+<span class="kn">from</span> <span class="nn">vivialconnect.common.util</span> <span class="kn">import</span> <span class="n">Util</span>
+
+
+<div class="viewcode-block" id="Number"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.number.Number">[docs]</a><span class="k">class</span> <span class="nc">Number</span><span class="p">(</span><span class="n">Resource</span><span class="p">,</span> <span class="n">Countable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The :class:`Number` resource provides functionality to work with account</span>
+<span class="sd">    associated and available phone numbers.</span>
+
+<span class="sd">    Purchasing a Phone Number</span>
+
+<span class="sd">    Before you can send or receive text messages using Vivial Connect, you must</span>
+<span class="sd">    purchase at least one phone number and associate it with your account. The</span>
+<span class="sd">    API lets you choose from a list of available US local or toll-free numbers.</span>
+<span class="sd">    When you query this list to find an available number that meets your needs,</span>
+<span class="sd">    you can tailor your search to target specific criteria, including:</span>
+
+<span class="sd">    * the city, US state, area code, or ZIP code where the number is located</span>
+<span class="sd">    * a number pattern you specify containing wildcards for individual digits</span>
+<span class="sd">    * an alphanumeric pattern you specify (for choosing numbers that spell a word)</span>
+
+<span class="sd">    Available numbers properties</span>
+
+<span class="sd">    ================= ===========</span>
+<span class="sd">    Field             Description</span>
+<span class="sd">    ================= ===========</span>
+<span class="sd">    name              Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.</span>
+<span class="sd">    phone_number      Available phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.</span>
+<span class="sd">    phone_number_type Type of available phone number. *Possible values:* &#39;local&#39; or &#39;tollfree&#39;.</span>
+<span class="sd">    city              City where the available phone number is located.</span>
+<span class="sd">    region            Two-letter US state abbreviation where the available phone number is located.</span>
+<span class="sd">    lata              Local address and transport area (LATA) where the available phone number is located.</span>
+<span class="sd">    rate_center       LATA rate center where the available phone number is located. Usually the same as city.</span>
+<span class="sd">    ================= ===========</span>
+
+<span class="sd">    Associated numbers properties</span>
+
+<span class="sd">    =============================  ===========</span>
+<span class="sd">    Field                          Description</span>
+<span class="sd">    =============================  ===========</span>
+<span class="sd">    id                             Unique identifier of the phone number object.</span>
+<span class="sd">    date_created                   Creation date (UTC) of the phone number in ISO 8601 format.</span>
+<span class="sd">    date_modified                  Last modification date (UTC) of the phone number in ISO 8601 format.</span>
+<span class="sd">    account_id                     Unique identifier of the account with the phone number.</span>
+<span class="sd">    name                           Associated phone number as it is displayed to users. *Default format:* Friendly national format: (xxx) yyy-zzzz.</span>
+<span class="sd">    phone_number                   Associated phone number in E.164 format (+country code +phone number). For US numbers, the format will be ``+1xxxyyyzzzz``.</span>
+<span class="sd">    phone_number_type              Type of associated phone number. *Possible values:* &#39;local&#39; or &#39;tollfree&#39;.</span>
+<span class="sd">    status_text_url                URL to receive status requests for messages sent via the API using this associated phone number. *Max. length:* 256 characters.</span>
+<span class="sd">    sms_configuration_id           Unique identifier of the message status callback configuration to be used to handle SMS messages sent to the associated number.</span>
+<span class="sd">    incoming_text_url              URL for receiving SMS messages to the associated phone number. *Max. length:* 256 characters.</span>
+<span class="sd">    incoming_text_method           HTTP method used for the ``incoming_text_url`` requests. *Max. length:* 8 characters. *Possible values:* ``GET`` or ``POST``. *Default value:* POST.</span>
+<span class="sd">    incoming_text_fallback_url     URL for receiving SMS messages if ``incoming_text_url`` fails. Only valid if you provide a value for the ``incoming_text_url`` parameter. *Max. length:* 256 characters.</span>
+<span class="sd">    incoming_text_fallback_method  HTTP method used for ``incoming_text_fallback_url`` requests. *Max. length:* 8 characters. *Possible values:* ``GET`` or ``POST``. *Default value:* POST.</span>
+<span class="sd">    capabilities                   Set of boolean flags indicating the capabilities supported by the associated phone number.     </span>
+<span class="sd">    city                           City where the available phone number is located.</span>
+<span class="sd">    region                         Two-letter US state abbreviation where the available phone number is located.</span>
+<span class="sd">    lata                           Local address and transport area (LATA) where the available phone number is located.</span>
+<span class="sd">    rate_center                    LATA rate center where the available phone number is located. Usually the same as city.</span>
+<span class="sd">    =============================  ===========</span>
+
+<span class="sd">    Example request to retrieve a list of associated numbers::</span>
+
+<span class="sd">        from vivialconnect import Resource, Number</span>
+
+<span class="sd">        Resource.api_key = &quot;&quot;</span>
+<span class="sd">        Resource.api_secret = &quot;&quot;</span>
+<span class="sd">        Resource.api_account_id = &quot;12345&quot;</span>
+
+<span class="sd">        def list_associated_numbers():</span>
+<span class="sd">            numbers = Number.find()</span>
+<span class="sd">            for number in numbers:</span>
+<span class="sd">                print(number.id, number.name,</span>
+<span class="sd">                      number.phone_number_type,</span>
+<span class="sd">                      number.phone_number)</span>
+
+<span class="sd">        list_associated_numbers()</span>
+
+
+<span class="sd">    Example request to retrieve a list of available numbers::</span>
+
+<span class="sd">        from vivialconnect import Resource, Number</span>
+
+<span class="sd">        Resource.api_key = &quot;&quot;</span>
+<span class="sd">        Resource.api_secret = &quot;&quot;</span>
+<span class="sd">        Resource.api_account_id = &quot;12345&quot;</span>
+
+<span class="sd">        def list_available_numbers(country_code=&#39;US&#39;,</span>
+<span class="sd">                                   number_type=&#39;local&#39;,</span>
+<span class="sd">                                   area_code=&#39;913&#39;,</span>
+<span class="sd">                                   in_postal_code=None,</span>
+<span class="sd">                                   in_region=None,</span>
+<span class="sd">                                   limit=5):</span>
+<span class="sd">            numbers = Number.available(</span>
+<span class="sd">                country_code=country_code,</span>
+<span class="sd">                number_type=number_type,</span>
+<span class="sd">                area_code=area_code,</span>
+<span class="sd">                in_postal_code=in_postal_code,</span>
+<span class="sd">                in_region=in_region,</span>
+<span class="sd">                limit=limit)</span>
+<span class="sd">            for number in numbers:</span>
+<span class="sd">                print(number.name,</span>
+<span class="sd">                      number.phone_number_type,</span>
+<span class="sd">                      number.phone_number)</span>
+
+<span class="sd">        list_available_numbers()</span>
+
+<span class="sd">    Example request to buy a new phone number::</span>
+
+<span class="sd">        from vivialconnect import Resource, Number</span>
+
+<span class="sd">        Resource.api_key = &quot;&quot;</span>
+<span class="sd">        Resource.api_secret = &quot;&quot;</span>
+<span class="sd">        Resource.api_account_id = &quot;12345&quot;</span>
+
+<span class="sd">        def buy_number(name=None,</span>
+<span class="sd">                       phone_number=None,</span>
+<span class="sd">                       area_code=None,</span>
+<span class="sd">                       phone_number_type=&#39;local&#39;):</span>
+<span class="sd">            number = Number()</span>
+<span class="sd">            number.name = name</span>
+<span class="sd">            number.phone_number = phone_number</span>
+<span class="sd">            number.area_code = area_code</span>
+<span class="sd">            number.phone_number_type = phone_number_type</span>
+<span class="sd">            number.buy()</span>
+
+<span class="sd">        buy_number(name=&#39;(913) 259-7591&#39;,</span>
+<span class="sd">                   phone_number=&#39;+19132597591&#39;,</span>
+<span class="sd">                   area_code=&#39;913&#39;,</span>
+<span class="sd">                   phone_number_type=&#39;local&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Number.available"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.number.Number.available">[docs]</a>    <span class="k">def</span> <span class="nf">available</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Lists available phone numbers.</span>
+
+<span class="sd">        :param opts: Additional query params.</span>
+<span class="sd">        :type opts: ``dict``.</span>
+<span class="sd">        :param \**kwargs: You must specify exactly one of the following three keys:</span>
+<span class="sd">            in_region, area_code, in_postal_code.</span>
+
+<span class="sd">        :returns: :class:`Number` -- a list of available US local or toll-free phone numbers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">country_code</span> <span class="o">=</span> <span class="s2">&quot;US&quot;</span>
+        <span class="n">number_type</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span>
+        <span class="k">if</span> <span class="n">opts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">opts</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">opts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;country_code&quot;</span> <span class="ow">and</span> <span class="n">opts</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+                <span class="n">country_code</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;number_type&quot;</span> <span class="ow">and</span> <span class="n">opts</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+                <span class="n">number_type</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">opts</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+                    <span class="n">qs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_custom_path</span><span class="p">(</span>
+            <span class="n">custom_path</span><span class="o">=</span><span class="s2">&quot;/available/</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">country_code</span><span class="p">,</span> <span class="n">number_type</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_build_list</span><span class="p">(</span><span class="n">Number</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">qs</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Number.buy"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.number.Number.buy">[docs]</a>    <span class="k">def</span> <span class="nf">buy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Purchases a new phone number.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Number.buy_local"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.number.Number.buy_local">[docs]</a>    <span class="k">def</span> <span class="nf">buy_local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Purchases a new local phone number.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phone_number_type</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div></div>
+
+
+<span class="n">Number</span><span class="o">.</span><span class="n">_singular</span> <span class="o">=</span> <span class="s2">&quot;phone_number&quot;</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Vivial Connect.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

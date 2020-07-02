@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>vivialconnect.common.util &#8212; Vivial Connect 0.1.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for vivialconnect.common.util</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: util</span>
+<span class="sd">   :synopsis: Various utility functions shipped with Vivial Connect</span>
+<span class="sd">              Python API.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Inspired by https://github.com/Shopify/pyactiveresource</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">from</span> <span class="nn">six.moves.urllib.parse</span> <span class="kn">import</span> <span class="n">urlencode</span>
+
+
+<span class="c1"># Patterns blatantly stolen from Rails&#39; Inflector</span>
+<span class="n">PLURALIZE_PATTERNS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(quiz)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1zes&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(ox)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1en&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([m|l])ouse$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1ice&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(matr|vert|ind)(?:ix|ex)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1ices&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(x|ch|ss|sh)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1es&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([^aeiouy]|qu)y$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1ies&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(hive)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;1s&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?:([^f])fe|([lr])f)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1\2ves&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;sis$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;ses&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([ti])um$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1a&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(buffal|tomat)o$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1oes&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(bu)s$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1ses&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(alias|status)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1es&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(octop|vir)us$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1i&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(ax|test)is$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1es&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;s$&quot;</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$&quot;</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">SINGULARIZE_PATTERNS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(quiz)zes$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(matr)ices$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1ix&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(vert|ind)ices$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1ex&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(ox)en&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(alias|status)es$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(octop|vir)i$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1us&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(cris|ax|test)es$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1is&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(shoe)s$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(o)es$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(bus)es$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([m|l])ice$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1ouse&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(x|ch|ss|sh)es$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(m)ovies$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1ovie&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(s)eries$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1eries&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([^aeiouy]|qu)ies$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1y&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([lr])ves$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1f&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(tive)s$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(hive)s$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([^f])ves$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1fe&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(^analy)ses$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1sis&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1\2sis&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([ti])a$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1um&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(n)ews$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;\1ews&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;s$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">IRREGULAR</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;person&quot;</span><span class="p">,</span> <span class="s2">&quot;people&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;man&quot;</span><span class="p">,</span> <span class="s2">&quot;men&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;child&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;sex&quot;</span><span class="p">,</span> <span class="s2">&quot;sexes&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;move&quot;</span><span class="p">,</span> <span class="s2">&quot;moves&quot;</span><span class="p">),</span>
+    <span class="c1"># (&#39;cow&#39;, &#39;kine&#39;) WTF?</span>
+<span class="p">]</span>
+
+<span class="n">UNCOUNTABLES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;equipment&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;information&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rice&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;money&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;species&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;series&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;fish&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sheep&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;billing&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="Util"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.util.Util">[docs]</a><span class="k">class</span> <span class="nc">Util</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Various utility functions shipped with Vivial Connect Python API.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Util.pluralize"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.util.Util.pluralize">[docs]</a>    <span class="k">def</span> <span class="nf">pluralize</span><span class="p">(</span><span class="n">singular</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert singular word to its plural form.</span>
+
+<span class="sd">        :param singular: A word in its singular form.</span>
+<span class="sd">        :type singular: `str`.</span>
+<span class="sd">        :returns:  `str` -- the word in its plural form.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">singular</span> <span class="ow">in</span> <span class="n">UNCOUNTABLES</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">singular</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">IRREGULAR</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">singular</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">PLURALIZE_PATTERNS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">singular</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">singular</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Util.singularize"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.util.Util.singularize">[docs]</a>    <span class="k">def</span> <span class="nf">singularize</span><span class="p">(</span><span class="n">plural</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert plural word to its singular form.</span>
+
+<span class="sd">        :param plural: A word in its plural form.</span>
+<span class="sd">        :type plural: `str`.</span>
+<span class="sd">        :returns:  `str` -- the word in its singular form.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">plural</span> <span class="ow">in</span> <span class="n">UNCOUNTABLES</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">plural</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">IRREGULAR</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">plural</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">SINGULARIZE_PATTERNS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">plural</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">plural</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">plural</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Util.camelize"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.util.Util.camelize">[docs]</a>    <span class="k">def</span> <span class="nf">camelize</span><span class="p">(</span><span class="n">word</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert a word from lower_with_underscores to CamelCase.</span>
+
+<span class="sd">        :param word: The string to convert.</span>
+<span class="sd">        :type word: `str`.</span>
+<span class="sd">        :returns:  `str` -- the modified string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;[^A-Z^a-z^0-9^:]+&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">word</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Util.underscore"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.util.Util.underscore">[docs]</a>    <span class="k">def</span> <span class="nf">underscore</span><span class="p">(</span><span class="n">word</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert a word from CamelCase to lower_with_underscores.</span>
+
+<span class="sd">        :param word: The string to convert.</span>
+<span class="sd">        :type word: `str`.</span>
+<span class="sd">        :returns:  `str` -- the modified string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\B((?&lt;=[a-z])[A-Z]|[A-Z](?=[a-z]))&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;_\1&quot;</span><span class="p">,</span> <span class="n">word</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Util.to_query"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.util.Util.to_query">[docs]</a>    <span class="k">def</span> <span class="nf">to_query</span><span class="p">(</span><span class="n">query_params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert a dictionary to url query parameters.</span>
+
+<span class="sd">        :param query_params: A dictionary of arguments.</span>
+<span class="sd">        :type query_params: `dict`.</span>
+<span class="sd">        :returns:  `str` -- a string of query parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">annotate_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+            <span class="n">annotated</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">[]&quot;</span> <span class="o">%</span> <span class="n">key</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">dict_options</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="k">for</span> <span class="n">dk</span><span class="p">,</span> <span class="n">dv</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                        <span class="n">dict_options</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">[</span><span class="si">%s</span><span class="s2">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">dk</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dv</span>
+                    <span class="n">annotated</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">annotate_params</span><span class="p">(</span><span class="n">dict_options</span><span class="p">))</span>
+                    <span class="k">continue</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">annotated</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">return</span> <span class="n">annotated</span>
+
+        <span class="n">annotated</span> <span class="o">=</span> <span class="n">annotate_params</span><span class="p">(</span><span class="n">query_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">urlencode</span><span class="p">(</span><span class="n">annotated</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Util.to_json"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.util.Util.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="s2">&quot;object&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert a dictionary or list to an JSON string.</span>
+
+<span class="sd">        :param obj: The object to serialize.</span>
+<span class="sd">        :returns:  `str` -- a JSON string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">root</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span><span class="n">root</span><span class="p">:</span> <span class="n">obj</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">))</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Util.json_to_dict"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.util.Util.json_to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">json_to_dict</span><span class="p">(</span><span class="n">jsonstr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse the json into a dictionary of attributes.</span>
+
+<span class="sd">        :param jsonstr: A JSON formatted string.</span>
+<span class="sd">        :type jsonstr: `str`.</span>
+<span class="sd">        :returns:  `str` -- the deserialized object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">jsonstr</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Util.remove_root"><a class="viewcode-back" href="../../../api.html#vivialconnect.common.util.Util.remove_root">[docs]</a>    <span class="k">def</span> <span class="nf">remove_root</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes root key from dictionary.</span>
+
+<span class="sd">        :param data: A dict to remove root key from.</span>
+<span class="sd">        :type data: `dict`.</span>
+<span class="sd">        :returns:  `dict` -- a new dictionary without root key.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Vivial Connect.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

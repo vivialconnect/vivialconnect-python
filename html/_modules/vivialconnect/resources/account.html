@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>vivialconnect.resources.account &#8212; Vivial Connect 0.1.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for vivialconnect.resources.account</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: account</span>
+<span class="sd">   :synopsis: Account module.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">six</span>
+
+<span class="kn">from</span> <span class="nn">vivialconnect.resources.resource</span> <span class="kn">import</span> <span class="n">Resource</span>
+<span class="kn">from</span> <span class="nn">vivialconnect.resources.countable</span> <span class="kn">import</span> <span class="n">Countable</span>
+<span class="kn">from</span> <span class="nn">vivialconnect.common.util</span> <span class="kn">import</span> <span class="n">Util</span>
+
+
+<div class="viewcode-block" id="Account"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.account.Account">[docs]</a><span class="k">class</span> <span class="nc">Account</span><span class="p">(</span><span class="n">Resource</span><span class="p">,</span> <span class="n">Countable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The Account resource is used for managing accounts in the API.</span>
+
+<span class="sd">    Account properties</span>
+
+<span class="sd">    =============  ===========</span>
+<span class="sd">    Field          Description</span>
+<span class="sd">    =============  ===========</span>
+<span class="sd">    id             Unique identifier of the account object.</span>
+<span class="sd">    date_created   Creation date (UTC) of the account in ISO 8601 format.</span>
+<span class="sd">    date_modified  Last modification date (UTC) of the account in ISO 8601 format.</span>
+<span class="sd">    account_id     Unique identifier of the parent account. (Null if the account is primary.)</span>
+<span class="sd">    company_name   Primary account name as it is displayed to users (for example, the name of your company).</span>
+<span class="sd">    =============  ===========</span>
+
+<span class="sd">    Example request to retrieve a billing status for account id 12345::</span>
+
+<span class="sd">        from vivialconnect import Resource, Account</span>
+
+<span class="sd">        Resource.api_key = &quot;&quot;</span>
+<span class="sd">        Resource.api_secret = &quot;&quot;</span>
+<span class="sd">        Resource.api_account_id = &quot;12345&quot;</span>
+
+<span class="sd">        def billing_status(account_id=None):</span>
+<span class="sd">            status = Account.billing_status(account_id=account_id)</span>
+<span class="sd">            print(status)</span>
+
+<span class="sd">        billing_status(12345)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">API_ACCOUNT_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Account.billing_status"><a class="viewcode-back" href="../../../api.html#vivialconnect.resources.account.Account.billing_status">[docs]</a>    <span class="k">def</span> <span class="nf">billing_status</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">account_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get current account status for free trial.</span>
+
+<span class="sd">        :param account_id: An account id.</span>
+<span class="sd">        :type account_id: ``int``.</span>
+
+<span class="sd">        :returns: A free trial status.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">account_id</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">account_id</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="n">account_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">account_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">account_id</span> <span class="o">=</span> <span class="n">Resource</span><span class="o">.</span><span class="n">api_account_id</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/accounts/</span><span class="si">%s</span><span class="s2">/status.json&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">account_id</span><span class="p">))</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Vivial Connect.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
