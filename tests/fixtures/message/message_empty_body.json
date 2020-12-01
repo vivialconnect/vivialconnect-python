@@ -1,0 +1,15 @@
+{
+    "message": {
+        "id": 123456,
+        "active": false,
+        "date_created": "2016-05-06T22:23:24-04:00",
+        "date_modified": "2016-05-07T22:23:24-04:00",
+        "from_number": "+12223334444",
+        "to_number": "+12223335555",
+        "status": "received",
+        "direction": "inbound",
+        "body": "",
+        "media_urls": ["http://www.sample-pic.com/sample.jpg"],
+        "num_media": 0
+    }
+}

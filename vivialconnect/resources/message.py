@@ -61,6 +61,8 @@ class Message(Resource, Countable):
     def send(self):
         """Sends a new message.
         """
+        if not hasattr(self, "body") and hasattr(self, "media_urls"):
+            setattr(self, "body", "")
         return self.save()
 
     def attachment(self, id, **kwargs):

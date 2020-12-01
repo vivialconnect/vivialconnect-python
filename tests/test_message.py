@@ -202,6 +202,20 @@ class MessageTest(BaseTestCase):
             self.assertGreater(sample_bulk.total_messages, 1)
             self.assertGreater(sample_bulk.processed, 1)
 
+    def test_send_mms_without_body(self):
+        with HTTMock(
+            self.response_content,
+            body=self.load_fixture("message/message_empty_body"),
+            headers={"Content-type": "application/json"},
+        ):
+            message = vivialconnect.Message()
+            message.from_number = "+12223334444"
+            message.to_number = "12223335555"
+            message.media_urls = ["http://www.sample-pic.com/sample.jpg"]
+            message.save()
+
+            self.assertTrue(hasattr(message, "body") and message.body == "")
+
 
 if __name__ == "__main__":
     unittest.main()
