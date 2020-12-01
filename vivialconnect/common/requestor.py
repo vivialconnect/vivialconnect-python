@@ -230,11 +230,11 @@ class Requestor(object):
 
         return h.hexdigest(), api_hmac_used_signed_headers
 
-    def request(self, method, url, params=None, **kwargs):
+    def request(self, method, url, params=None, payload=None, **kwargs):
         if params is None:
             params = {}
         http_body, http_status, response_url, response_headers = self.request_raw(
-            method, url, params, **kwargs
+            method, url, params, payload, **kwargs
         )
         response = self.interpret_response(
             http_body, http_status, response_url, response_headers
@@ -244,31 +244,31 @@ class Requestor(object):
     def get(self, url, params=None, **kwargs):
         return self.request("get", url, params, **kwargs)
 
-    def put(self, url, params=None, **kwargs):
-        return self.request("put", url, params, **kwargs)
+    def put(self, url, params=None, payload=None, **kwargs):
+        return self.request("put", url, params, payload, **kwargs)
 
-    def post(self, url, params=None, **kwargs):
-        return self.request("post", url, params, **kwargs)
+    def post(self, url, params=None, payload=None, **kwargs):
+        return self.request("post", url, params, payload, **kwargs)
 
-    def delete(self, url, params=None, **kwargs):
-        return self.request("delete", url, params, **kwargs)
+    def delete(self, url, params=None, payload=None, **kwargs):
+        return self.request("delete", url, params, payload, **kwargs)
 
     def head(self, url, params=None, **kwargs):
         return self.request("head", url, params, **kwargs)
 
-    def request_raw(self, method, url, params=None, **kwargs):
-        if params is None:
-            params = {}
+    def request_raw(self, method, url, params=None, payload=None, **kwargs):
         now = datetime.datetime.utcnow()
         abs_url = self.api_url(url)
-
         method = method.lower()
-        if method == "get" or method == "delete":
-            if params:
-                abs_url = self.build_url(abs_url, params)
+        if params:
+            abs_url = self.build_url(abs_url, params)
+
+        if method == "get":
             data = None
+        elif method == "delete" and payload:
+            data = self.encode_body(payload)
         elif method == "post" or method == "put":
-            data = self.encode_body(params)
+            data = self.encode_body(payload)
         else:
             raise RequestorError(
                 "Bug discovered: invalid request method: %s. "

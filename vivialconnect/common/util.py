@@ -207,3 +207,18 @@ class Util(object):
         if isinstance(data, dict) and len(data) == 1:
             return list(data.values())[0]
         return data
+
+    @staticmethod
+    def format_filter_tag_params(params):
+        """
+            Format query params for tag filtering
+        """
+        keys = ["contains", "notcontains"]
+        for key in keys:
+            query_param_values = params.get(key)
+            formatted_values = ""
+            if query_param_values:
+                for k, v in query_param_values.items():
+                    formatted_values += f"{k}:{v},"
+                params[key] = formatted_values[:-1]
+        return params

@@ -1,0 +1,41 @@
+{
+    "phone_number": {
+        "account_id": 4,
+        "acquired_from": "provider",
+        "active": true,
+        "address_requirements": null,
+        "capabilities": {
+            "mms": true,
+            "sms": true,
+            "voice": true
+        },
+        "city": "ALTOONA",
+        "date_created": "2020-11-25T21:25:55",
+        "date_modified": "2020-11-25T21:25:55",
+        "id": 1104634,
+        "incoming_text_auth_type": "NONE",
+        "incoming_text_fallback_auth_type": "NONE",
+        "incoming_text_fallback_method": null,
+        "incoming_text_fallback_url": null,
+        "incoming_text_method": null,
+        "incoming_text_url": null,
+        "lata": null,
+        "name": "(515) 446-9790",
+        "phone_number": "+15154469790",
+        "phone_number_type": "local",
+        "rate_center": "DES MOINES",
+        "region": "IA",
+        "status_text_auth_type": "NONE",
+        "status_text_method": null,
+        "status_text_url": null,
+        "tags": {
+            "category": "UPDATED",
+            "storeid": "500",
+            "to_delete": "foo",
+            "to_update": "aeiou",
+            "user": "UPDATED",
+            "was_modified": "yes"
+        },
+        "voice_forwarding_number": null
+    }
+}

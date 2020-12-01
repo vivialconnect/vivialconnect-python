@@ -166,6 +166,8 @@ class Number(Resource, Countable):
     def buy(self):
         """Purchases a new phone number.
         """
+        if self.id:
+            self.id = None
         return self.save()
 
     def buy_local(self):
@@ -173,6 +175,31 @@ class Number(Resource, Countable):
         """
         self.phone_number_type = "local"
         return self.save()
+
+    def remove_tag(self, key):
+        """
+            Delete a tag from server
+        """
+        if key not in self.tags:
+            raise ValueError(f"Tag with key '{key}' does not exist")
+        payload = {"tags": {key: ""}}
+        response = self.klass.request.delete(
+            self._item_sub_resource_path(self.id, self._plural, "tags"), payload=payload
+        )
+        if "phone_number" in response:
+            self.tags = response["phone_number"]["tags"]
+            return True
+        return False
+
+    @classmethod
+    def tagged_numbers(cls, **options):
+        """
+            Retrieve all tagged numbers from account
+        """
+        url = cls._custom_path(custom_path="/tags")
+        # Format values of `contains` and `notcontains` query params to match the format expected by the API
+        options = Util.format_filter_tag_params(options)
+        return cls._build_list_from_pagination(Number.request.get(url, options))
 
 
 Number._singular = "phone_number"

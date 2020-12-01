@@ -274,12 +274,12 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
         if self.id:
             response = self.klass.request.put(
                 self._element_path(self.id, path=None, options=self._prefix_options),
-                attributes,
+                payload=attributes,
             )
         else:
             response = self.klass.request.post(
                 self._collection_path(path=None, options=self._prefix_options),
-                params=attributes,
+                payload=attributes,
             )
         self._update(Util.remove_root(response))
         return True
@@ -566,6 +566,26 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
             return "?" + Util.to_query(query_options)
         else:
             return ""
+
+    @classmethod
+    def _build_list_from_pagination(cls, attributes):
+        resources = []
+        if isinstance(attributes, dict) and "items" in attributes:
+            elements = attributes.get("items")
+            for element in elements:
+                resources.append(cls(element))
+        return resources
+
+    @classmethod
+    def _item_sub_resource_path(cls, id_, resource, subresource):
+        return (
+            cls.API_ACCOUNT_PREFIX + "/%(resource)s/%(id)s/%(subresource)s.json"
+        ) % {
+            "account_id": cls._api_account_id,
+            "resource": resource,
+            "id": id_,
+            "subresource": subresource,
+        }
 
 
 class SubordinateResource(Resource):
