@@ -10,11 +10,11 @@ class LogTest(BaseTestCase):
             headers={"Conent-type": "application/json"},
         ):
             params = {"start_time": "20181101T145548Z", "end_time": "20181205T155548Z"}
-            logs = vivialconnect.Log.get(**params)
-        self.assertIn("log_items", logs)
-        self.assertIn("last_key", logs)
+            last_key, logs = vivialconnect.Log.find(**params)
+        self.assertTrue(last_key != "")
         # Check the amount of items
-        self.assertEqual(len(logs["log_items"]), 16)
+        self.assertTrue(isinstance(logs, list))
+        self.assertEqual(len(logs), 16)
 
     def test_get_aggregated_logs(self):
         with HTTMock(

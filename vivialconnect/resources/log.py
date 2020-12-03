@@ -72,3 +72,18 @@ class Log(Resource):
                 query_string[key] = value
         response = Log.get(custom_path="/aggregate", **query_string)
         return response
+
+    @classmethod
+    def find(cls, id_=None, path=None, **kwargs):
+        """
+             Get logs related to an user account.
+
+             This method returns a tuple with the following values:
+                - last_key: Used for pagination. Can be sent with next request as start_key to get next set of results.
+                - logs: list of log entries.
+        """
+        url = cls._collection_path(path=path, options=None) + cls._query_string(kwargs)
+        response = cls.request.get(url)
+        last_key = response.get("last_key")
+        logs = cls._build_list(response["log_items"])
+        return last_key, logs
