@@ -58,6 +58,18 @@ class NumberTest(BaseTestCase):
             assert r is True
             assert "to_delete" not in tagged_number.tags
 
+    def test_number_lookup(self):
+        with HTTMock(
+            self.response_content,
+            body=self.load_fixture("number/number_lookup"),
+            headers={"Content-type": "application/json"},
+        ):
+            lookup = Number.lookup("+15152073167")
+
+            assert lookup.phone_number.strip() == "15152073167"
+            assert lookup.carrier["country"] == "US"
+            assert lookup.device["model"] == "APL iPhone6"
+
 
 if __name__ == "__main__":
     unittest.main()

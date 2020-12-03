@@ -8,6 +8,18 @@ from vivialconnect.resources.countable import Countable
 from vivialconnect.common.util import Util
 
 
+class NumberInfo(Resource):
+    """
+        Resource used for parsing and handling number lookup response. All the heavy-lifting is on the Resource class.
+        Expected properties after parsing:
+         - carrier: dictionary with info about the carrier
+         - device: dictionary with information about the handheld device if it's available.
+         - phone_number: phone number itself.
+    """
+
+    pass
+
+
 class Number(Resource, Countable):
     """The :class:`Number` resource provides functionality to work with account
     associated and available phone numbers.
@@ -200,6 +212,16 @@ class Number(Resource, Countable):
         # Format values of `contains` and `notcontains` query params to match the format expected by the API
         options = Util.format_filter_tag_params(options)
         return cls._build_list_from_pagination(Number.request.get(url, options))
+
+    @classmethod
+    def lookup(cls, phone_number):
+        """
+            Allow to get information about the device type and carrier that is associated with a specific phone number.
+        """
+        params = {"phone_number": phone_number}
+        url = cls._custom_path(custom_path="/lookup")
+        response = cls.request.get(url, params)
+        return NumberInfo(attributes=response["number_info"])
 
 
 Number._singular = "phone_number"
