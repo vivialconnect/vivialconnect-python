@@ -1,0 +1,36 @@
+{
+    "user": {
+        "account_id": 4,
+        "active": true,
+        "date_created": "2020-10-27T15:58:53",
+        "date_modified": "2020-11-24T19:15:48",
+        "email": "mgil.vivial@gmail.com",
+        "first_name": "Moises",
+        "id": 5,
+        "last_name": "Chital",
+        "mfa_method": null,
+        "roles": [
+            {
+                "active": true,
+                "date_created": "2020-10-27T15:49:00",
+                "date_modified": "2020-10-27T15:49:00",
+                "description": "Account administrator role",
+                "id": 3,
+                "name": "AccountAdministrator",
+                "role_type": "client"
+            },
+            {
+                "active": true,
+                "date_created": "2020-10-27T15:49:00",
+                "date_modified": "2020-10-27T15:49:00",
+                "description": "User role",
+                "id": 4,
+                "name": "User",
+                "role_type": "client"
+            }
+        ],
+        "timezone": "UTC",
+        "username": "test@vivial.net",
+        "verified": true
+    }
+}

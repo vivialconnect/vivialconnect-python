@@ -2,9 +2,45 @@
 .. module:: user
    :synopsis: User module.
 """
-
-from vivialconnect.resources.resource import Resource
+from vivialconnect.common.util import Util
+from vivialconnect.resources.resource import Resource, SubordinateResource
 from vivialconnect.resources.countable import Countable
+
+
+class Credential(SubordinateResource):
+    def destroy(self):
+        self.klass.request.delete(
+            self._item_sub_resource_path(
+                resource="users",
+                id_=self.parent_resource.id,
+                subresource=f"profile/credentials/{self.id}",
+            )
+        )
+
+    def save(self):
+
+        attributes = {"user": self._wrap_attributes(root=self._singular)}
+
+        if self.id:
+            response = self.klass.request.put(
+                self._item_sub_resource_path(
+                    resource="users",
+                    id_=self.parent_resource.id,
+                    subresource=f"profile/credentials/{self.id}",
+                ),
+                payload=attributes,
+            )
+        else:
+            response = self.klass.request.post(
+                self._item_sub_resource_path(
+                    resource="users",
+                    id_=self.parent_resource.id,
+                    subresource=f"profile/credentials",
+                ),
+                payload=attributes,
+            )
+        credential_attributes = Util.remove_root(response)["credential"]
+        self._update(credential_attributes)
 
 
 class User(Resource, Countable):
@@ -42,4 +78,56 @@ class User(Resource, Countable):
 
     """
 
-    pass
+    @classmethod
+    def _get_object_field(cls, data, field_name):
+        if "user" in data:
+            pass
+        return data
+
+    def get_credentials(self, id_=None):
+        """
+            Returns all credentials related to an user
+        """
+        if id_:
+            url = self._custom_path(
+                id_=self.id, custom_path=f"/profile/credentials/{id_}"
+            )
+            response_obj = Resource._build_object(
+                Util.remove_root(Resource.request.get(url))
+            )
+            try:
+                attributes = response_obj.credential
+                response = Credential(attributes, parent_resource=self)
+            except AttributeError:
+                response = None
+            return response
+        else:
+            url = self._custom_path(id_=self.id, custom_path="/profile/credentials")
+            response_obj = Resource._build_object(
+                Util.remove_root(Resource.request.get(url))
+            )
+            response = response_obj.credentials
+
+            resources = []
+            for attributes in response:
+                resources.append(Credential(attributes, parent_resource=self))
+            return resources
+
+    def create_credential(self, name=None):
+        """
+            Creates a new credential with a name, if it is provided.
+        """
+        credential = Credential(parent_resource=self)
+        if name:
+            credential.name = name
+        credential.save()
+        return credential
+
+    def count_credentials(self):
+        """
+            Returns the numeric count of all credentials assigned to an user
+        """
+
+        url = self._custom_path(id_=self.id, custom_path="/profile/credentials/count")
+        response = Resource.request.get(url)
+        return int(Util.remove_root(response))

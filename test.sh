@@ -9,3 +9,4 @@ python -m unittest tests.test_message
 python -m unittest tests.test_number
 python -m unittest tests.test_connector
 python -m unittest tests.test_log
+python -m unittest tests.test_user

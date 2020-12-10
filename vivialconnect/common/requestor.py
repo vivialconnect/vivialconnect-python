@@ -265,8 +265,8 @@ class Requestor(object):
 
         if method == "get":
             data = None
-        elif method == "delete" and payload:
-            data = self.encode_body(payload)
+        elif method == "delete":
+            data = self.encode_body(payload) if payload else None
         elif method == "post" or method == "put":
             data = self.encode_body(payload)
         else:
