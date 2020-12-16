@@ -1,0 +1,34 @@
+{
+    "phone_number": {
+        "account_id": 4,
+        "acquired_from": "provider",
+        "active": true,
+        "address_requirements": null,
+        "capabilities": {
+            "mms": true,
+            "sms": true,
+            "voice": true
+        },
+        "city": null,
+        "date_created": "2020-12-16T15:14:08",
+        "date_modified": "2020-12-16T15:14:08",
+        "id": 1104650,
+        "incoming_text_auth_type": null,
+        "incoming_text_fallback_auth_type": null,
+        "incoming_text_fallback_method": null,
+        "incoming_text_fallback_url": null,
+        "incoming_text_method": null,
+        "incoming_text_url": null,
+        "lata": null,
+        "name": "(833) 221-0936",
+        "phone_number": "+18332210936",
+        "phone_number_type": "tollfree",
+        "rate_center": null,
+        "region": null,
+        "status_text_auth_type": null,
+        "status_text_method": null,
+        "status_text_url": null,
+        "tags": {},
+        "voice_forwarding_number": null
+    }
+}

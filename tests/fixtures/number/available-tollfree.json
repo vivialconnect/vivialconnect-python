@@ -1,0 +1,28 @@
+{
+    "phone_numbers": [
+        {
+            "city": null,
+            "id": null,
+            "lata": null,
+            "name": "(833) 220-9658",
+            "national_number": "(833) 220-9658",
+            "phone_number": "+18332209658",
+            "phone_number_type": "tollfree",
+            "price": 10000,
+            "rate_center": null,
+            "region": null
+        },
+        {
+            "city": null,
+            "id": null,
+            "lata": null,
+            "name": "(833) 220-9667",
+            "national_number": "(833) 220-9667",
+            "phone_number": "+18332209667",
+            "phone_number_type": "tollfree",
+            "price": 10000,
+            "rate_center": null,
+            "region": null
+        }
+    ]
+}

@@ -70,6 +70,30 @@ class NumberTest(BaseTestCase):
             assert lookup.carrier["country"] == "US"
             assert lookup.device["model"] == "APL iPhone6"
 
+    def test_search_available_tollfree(self):
+        with HTTMock(
+            self.response_content,
+            body=self.load_fixture("number/available-tollfree"),
+            headers={"Content-type": "application/json"},
+        ):
+            available_numbers = Number.available(number_type="tollfree")
+
+            for number in available_numbers:
+                assert number.phone_number[2:].startswith("833")
+
+    def test_purchase_tollfree_number(self):
+        with HTTMock(
+            self.response_content,
+            body=self.load_fixture("number/tollfree-purchase"),
+            headers={"Content-type": "application/json"},
+        ):
+            number = Number()
+            number.phone_number = "+18332210936"
+            number.phone_number_type = "tollfree"
+            number.buy()
+
+            assert number.id is not None
+
 
 if __name__ == "__main__":
     unittest.main()
