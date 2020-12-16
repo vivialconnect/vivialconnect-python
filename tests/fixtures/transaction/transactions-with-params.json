@@ -1,0 +1,318 @@
+{
+  "count": 10,
+  "transactions": [
+    {
+      "account_id": 4,
+      "balances": {
+        "cash_balance": 29420,
+        "number_credits": 0,
+        "subscription_balance": 0,
+        "usage_credits": 0
+      },
+      "cash_amount": 5000,
+      "credit_amount": 0,
+      "data": [
+        {
+          "created_time": "Tue, 01 Dec 2020 14:40:09 GMT",
+          "description": "Phone number +16162026876 acquired",
+          "metadata": {
+            "allowed_balances": {
+              "cash_balance": 34420,
+              "number_credits": 0,
+              "subscription_balance": 0,
+              "usage_credits": 0
+            }
+          },
+          "number_type": "local",
+          "phone_number": "+16162026876"
+        }
+      ],
+      "id": 3957839,
+      "post_time": "2020-12-01T14:40:14.874757",
+      "transaction_type": "number_purchase",
+      "unit_count": 1
+    },
+    {
+      "account_id": 4,
+      "balances": {
+        "cash_balance": 34420,
+        "number_credits": 0,
+        "subscription_balance": 0,
+        "usage_credits": 0
+      },
+      "cash_amount": 5000,
+      "credit_amount": 0,
+      "data": [
+        {
+          "created_time": "Tue, 01 Dec 2020 14:38:37 GMT",
+          "description": "Phone number +16162022779 acquired",
+          "metadata": {
+            "allowed_balances": {
+              "cash_balance": 39420,
+              "number_credits": 0,
+              "subscription_balance": 0,
+              "usage_credits": 0
+            }
+          },
+          "number_type": "local",
+          "phone_number": "+16162022779"
+        }
+      ],
+      "id": 3957838,
+      "post_time": "2020-12-01T14:38:46.078885",
+      "transaction_type": "number_purchase",
+      "unit_count": 1
+    },
+    {
+      "account_id": 4,
+      "balances": {
+        "cash_balance": 39420,
+        "number_credits": 0,
+        "subscription_balance": 0,
+        "usage_credits": 0
+      },
+      "cash_amount": 5000,
+      "credit_amount": 0,
+      "data": [
+        {
+          "created_time": "Thu, 26 Nov 2020 00:09:18 GMT",
+          "description": "Phone number +15155312544 acquired",
+          "metadata": {
+            "allowed_balances": {
+              "cash_balance": 44420,
+              "number_credits": 0,
+              "subscription_balance": 0,
+              "usage_credits": 0
+            },
+            "phone_number_tags": {}
+          },
+          "number_type": "local",
+          "phone_number": "+15155312544"
+        }
+      ],
+      "id": 3957836,
+      "post_time": "2020-11-26T00:09:27.367178",
+      "transaction_type": "number_purchase",
+      "unit_count": 1
+    },
+    {
+      "account_id": 4,
+      "balances": {
+        "cash_balance": 44420,
+        "number_credits": 0,
+        "subscription_balance": 0,
+        "usage_credits": 0
+      },
+      "cash_amount": 5000,
+      "credit_amount": 0,
+      "data": [
+        {
+          "created_time": "Thu, 26 Nov 2020 00:08:54 GMT",
+          "description": "Phone number +15155312543 acquired",
+          "metadata": {
+            "allowed_balances": {
+              "cash_balance": 49420,
+              "number_credits": 0,
+              "subscription_balance": 0,
+              "usage_credits": 0
+            },
+            "phone_number_tags": {}
+          },
+          "number_type": "local",
+          "phone_number": "+15155312543"
+        }
+      ],
+      "id": 3957835,
+      "post_time": "2020-11-26T00:09:09.865315",
+      "transaction_type": "number_purchase",
+      "unit_count": 1
+    },
+    {
+      "account_id": 4,
+      "balances": {
+        "cash_balance": 49420,
+        "number_credits": 0,
+        "subscription_balance": 0,
+        "usage_credits": 0
+      },
+      "cash_amount": 5000,
+      "credit_amount": 0,
+      "data": [
+        {
+          "created_time": "Thu, 26 Nov 2020 00:06:49 GMT",
+          "description": "Phone number +15155312542 acquired",
+          "metadata": {
+            "allowed_balances": {
+              "cash_balance": 54420,
+              "number_credits": 0,
+              "subscription_balance": 0,
+              "usage_credits": 0
+            },
+            "phone_number_tags": {}
+          },
+          "number_type": "local",
+          "phone_number": "+15155312542"
+        }
+      ],
+      "id": 3957834,
+      "post_time": "2020-11-26T00:06:50.667901",
+      "transaction_type": "number_purchase",
+      "unit_count": 1
+    },
+    {
+      "account_id": 4,
+      "balances": {
+        "cash_balance": 54420,
+        "number_credits": 0,
+        "subscription_balance": 0,
+        "usage_credits": 0
+      },
+      "cash_amount": 5000,
+      "credit_amount": 0,
+      "data": [
+        {
+          "created_time": "Thu, 26 Nov 2020 00:05:56 GMT",
+          "description": "Phone number +15155312541 acquired",
+          "metadata": {
+            "allowed_balances": {
+              "cash_balance": 59420,
+              "number_credits": 0,
+              "subscription_balance": 0,
+              "usage_credits": 0
+            }
+          },
+          "number_type": "local",
+          "phone_number": "+15155312541"
+        }
+      ],
+      "id": 3957833,
+      "post_time": "2020-11-26T00:05:58.458697",
+      "transaction_type": "number_purchase",
+      "unit_count": 1
+    },
+    {
+      "account_id": 4,
+      "balances": {
+        "cash_balance": 59420,
+        "number_credits": 0,
+        "subscription_balance": 0,
+        "usage_credits": 0
+      },
+      "cash_amount": 5000,
+      "credit_amount": 0,
+      "data": [
+        {
+          "created_time": "Thu, 26 Nov 2020 00:05:31 GMT",
+          "description": "Phone number +15155312539 acquired",
+          "metadata": {
+            "allowed_balances": {
+              "cash_balance": 69420,
+              "number_credits": 0,
+              "subscription_balance": 0,
+              "usage_credits": 0
+            }
+          },
+          "number_type": "local",
+          "phone_number": "+15155312539"
+        }
+      ],
+      "id": 3957832,
+      "post_time": "2020-11-26T00:05:45.148124",
+      "transaction_type": "number_purchase",
+      "unit_count": 1
+    },
+    {
+      "account_id": 4,
+      "balances": {
+        "cash_balance": 64420,
+        "number_credits": 0,
+        "subscription_balance": 0,
+        "usage_credits": 0
+      },
+      "cash_amount": 5000,
+      "credit_amount": 0,
+      "data": [
+        {
+          "created_time": "Thu, 26 Nov 2020 00:05:40 GMT",
+          "description": "Phone number +15155312540 acquired",
+          "metadata": {
+            "allowed_balances": {
+              "cash_balance": 69420,
+              "number_credits": 0,
+              "subscription_balance": 0,
+              "usage_credits": 0
+            }
+          },
+          "number_type": "local",
+          "phone_number": "+15155312540"
+        }
+      ],
+      "id": 3957831,
+      "post_time": "2020-11-26T00:05:45.100185",
+      "transaction_type": "number_purchase",
+      "unit_count": 1
+    },
+    {
+      "account_id": 4,
+      "balances": {
+        "cash_balance": 69420,
+        "number_credits": 0,
+        "subscription_balance": 0,
+        "usage_credits": 0
+      },
+      "cash_amount": 5000,
+      "credit_amount": 0,
+      "data": [
+        {
+          "created_time": "Wed, 25 Nov 2020 23:49:36 GMT",
+          "description": "Phone number +15155312538 acquired",
+          "metadata": {
+            "allowed_balances": {
+              "cash_balance": 74420,
+              "number_credits": 0,
+              "subscription_balance": 0,
+              "usage_credits": 0
+            }
+          },
+          "number_type": "local",
+          "phone_number": "+15155312538"
+        }
+      ],
+      "id": 3957830,
+      "post_time": "2020-11-25T23:49:50.230740",
+      "transaction_type": "number_purchase",
+      "unit_count": 1
+    },
+    {
+      "account_id": 4,
+      "balances": {
+        "cash_balance": 74420,
+        "number_credits": 0,
+        "subscription_balance": 0,
+        "usage_credits": 0
+      },
+      "cash_amount": 5000,
+      "credit_amount": 0,
+      "data": [
+        {
+          "created_time": "Wed, 25 Nov 2020 22:29:49 GMT",
+          "description": "Phone number +15155312536 acquired",
+          "metadata": {
+            "allowed_balances": {
+              "cash_balance": 79420,
+              "number_credits": 0,
+              "subscription_balance": 0,
+              "usage_credits": 0
+            }
+          },
+          "number_type": "local",
+          "phone_number": "+15155312536"
+        }
+      ],
+      "id": 3957829,
+      "post_time": "2020-11-25T22:30:18.805655",
+      "transaction_type": "number_purchase",
+      "unit_count": 1
+    }
+  ]
+}

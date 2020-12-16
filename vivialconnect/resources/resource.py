@@ -335,9 +335,11 @@ class Resource(six.with_metaclass(ResourceMeta, object)):
         return cls._build_object(response)
 
     @classmethod
-    def _find_every(cls, path=None, **kwargs):
+    def _find_every(cls, path=None, root=None, **kwargs):
         url = cls._collection_path(path=path, options=None) + cls._query_string(kwargs)
         response = cls.request.get(url)
+        if root and root in response:
+            response = response[root]
         return cls._build_list(response)
 
     @classmethod

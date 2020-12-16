@@ -1,0 +1,34 @@
+{
+  "transaction": {
+    "account_id": 4,
+    "balances": {
+      "cash_balance": 39420,
+      "number_credits": 0,
+      "subscription_balance": 0,
+      "usage_credits": 0
+    },
+    "cash_amount": 5000,
+    "credit_amount": 0,
+    "data": [
+      {
+        "created_time": "Thu, 26 Nov 2020 00:09:18 GMT",
+        "description": "Phone number +15155312544 acquired",
+        "metadata": {
+          "allowed_balances": {
+            "cash_balance": 44420,
+            "number_credits": 0,
+            "subscription_balance": 0,
+            "usage_credits": 0
+          },
+          "phone_number_tags": {}
+        },
+        "number_type": "local",
+        "phone_number": "+15155312544"
+      }
+    ],
+    "id": 3957836,
+    "post_time": "2020-11-26T00:09:27.367178",
+    "transaction_type": "number_purchase",
+    "unit_count": 1
+  }
+}
